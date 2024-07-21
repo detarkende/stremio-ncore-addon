@@ -169,3 +169,36 @@ If you do not own an Android TV / Chromecast / Firestick / Android phone or simi
 | `users[].preferences.first_preferred_lang`    | `string`            | Required | -                     | Preferred language of the given user of the addon.<br> This setting will be used to rank and order the found torrents and for giving recommendations.                                                   |
 | `users[].preferences.second_preferred_lang`   | `string`            | Optional | -                     | Second preferred language (preferred if the first isn't available) of the given user of the addon.<br> This setting will be used to rank and order the found torrents and for giving recommendations.   |
 | `users[].preferences.preferred_resolutions`   | `Array<string>`     | Required | -                     | A list of resolutions that the user prefers in preferential order.<br> This setting will be used to rank and order the found torrents and for giving recommendations.                                   |
+
+### Example `config.json`
+
+```json
+{
+	"port": 3000,
+	"download_dir": "/media/share/downloads",
+	"torrents_dir": "/media/share/torrents",
+	"secret": "REPLACE_ME",
+	"addon_url": "https://stremio-ncore-addon.example.com",
+	"ncore": {
+		"url": "https://ncore.pro",
+		"username": "NCORE_USERNAME",
+		"password": "NCORE_PASSWORD",
+		"delete_torrents_after_hitnrun": {
+			"enabled": false,
+			"cron": "0 2 * * *"
+		}
+	},
+	"users": [
+		{
+			"username": "ADMIN_USERNAME",
+			"password": "ADMIN_PASSWORD",
+			"role": "admin",
+			"preferences": {
+				"first_preferred_lang": "Hungarian",
+				"second_preferred_lang": "English",
+				"preferred_resolutions": ["720P", "1080P"]
+			}
+		}
+	]
+}
+```
