@@ -1,0 +1,8 @@
+.DS_Store
+node_modules
+state.json
+test-downloads
+config.json
+.vscode/schemas/config.schema.json
+
+dist

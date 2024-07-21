@@ -1,0 +1,23 @@
+{
+	"emeraldwalk.runonsave": {
+		"commands": [
+			{
+				"match": "config.json$",
+				"cmd": "npx tsx scripts/generateConfigSchema.ts"
+			},
+			{
+				"match": "config.schema.ts$",
+				"cmd": "npx tsx scripts/generateConfigSchema.ts"
+			}
+		]
+	},
+	"json.schemas": [
+		{
+			"fileMatch": ["/config.json"],
+			"url": "./.vscode/schemas/config.schema.json"
+		}
+	],
+	"editor.formatOnSave": true,
+	"editor.formatOnPaste": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode"
+}

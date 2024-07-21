@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Generate config JSON schema",
+			"type": "shell",
+			"command": "npx tsx scripts/generateConfigSchema.ts",
+			"group": "none",
+			"runOptions": {
+				"runOn": "folderOpen"
+			},
+			"hide": true
+		}
+	]
+}
