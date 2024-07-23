@@ -1,0 +1,11 @@
+services:
+    stream:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - '3000:3000'
+        volumes:
+            - ./config.json:/app/config.json
+            - ./downloads:/media/share/downloads
+            - ./torrents:/media/share/torrents
