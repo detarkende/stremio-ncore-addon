@@ -25,7 +25,6 @@ export class TorrentStore {
 				{
 					path: config().download_dir,
 					deselect: true,
-					skipVerify: true,
 				},
 				(torrent) => {
 					console.log(
