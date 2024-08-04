@@ -3,8 +3,8 @@
 	"module": "src/index.ts",
 	"type": "module",
 	"scripts": {
-		"dev": "tsx --watch src/index.ts",
-		"start": "npm run build && node dist/index.js",
+		"dev": "tsx --env-file .env --watch src/index.ts",
+		"start": "npm run build && node --env-file .env dist/index.js",
 		"build": "rm -rf dist && tsc && tsc-alias && tsx scripts/fixOutput.ts",
 		"typecheck": "tsc --noemit",
 		"lint": "eslint .",
@@ -58,5 +58,8 @@
 	},
 	"peerDependencies": {
 		"typescript": "^5.0.0"
+	},
+	"engines": {
+		"node": ">=20.6.0"
 	}
 }

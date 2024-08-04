@@ -53,6 +53,8 @@ Most importantly, you need a working (not banned) nCore account that can downloa
 
 You will need a computer/server to host this addon. The addon will run on your computer and search nCore for you. Once you start playing something, the addon will download the torrent to the computer and start seeding it.
 
+You will need Node.js and NPM (Node Package Manager) installed on your machine.
+
 Make sure that the computer you are using has enough free space to accommodate your downloads.
 
 Since nCore requires you to seed content, the computer should ideally be turned on for as long as possible.
@@ -90,11 +92,11 @@ If you do not own an Android TV / Chromecast / Firestick / Android phone or simi
     ```sh
     npm install
     ```
-1. Create the configuration file in the base of the project.
+1. Create the environment variable file in the base of the project.
     ```sh
-    touch config.json
+    touch .env
     ```
-    **[See configuration file reference](#configuration-file-reference)**
+    **[See environment variable reference](#environment-variable-reference)**
 1. Run the start command to test if everything is good to go.
     ```sh
     npm run start
@@ -109,13 +111,13 @@ If you do not own an Android TV / Chromecast / Firestick / Android phone or simi
         npm i -g pm2
         ```
 
-    1. Setup pm2 to run on startup.
+    2. Setup pm2 to run on startup.
 
         ```sh
         pm2 startup
         ```
 
-    1. Start the addon with pm2.
+    3. Start the addon with pm2.
         ```sh
         pm2 start "npm start"
         ```
@@ -126,79 +128,42 @@ If you do not own an Android TV / Chromecast / Firestick / Android phone or simi
     <summary>I don't have an Android TV / Chromecast or similar.</summary>
 
     1. Make sure that the config URL can be reached with HTTPS: `https://<ADDON-URL>/configure`. (Example: https://stremio-addon.example.com/configure)
-    1. Open [Stremio on the web](https://web.strem.io/#/intro?form=login), and log in.
-    1. Go to the configuration URL, log in to the addon with one of the users, then click on "Configure on the web".
-    1. Click on "Install".
-    1. Now you can log in on any device and the plugin will work. (Note: you might have to sync your addons first on some Smart TVs.)
+    2. Open [Stremio on the web](https://web.strem.io/#/intro?form=login), and log in.
+    3. Go to the configuration URL, log in to the addon with one of the users, then click on "Configure on the web".
+    4. Click on "Install".
+    5. Now you can log in on any device and the plugin will work. (Note: you might have to sync your addons first on some Smart TVs.)
      </details>
 
     <details>
     <summary>I have an Android TV / Chromecast or similar.</summary>
 
-    1. Open the app and log in.
-    1. Go to addons.
-    1. Click on the "Add addon" button.
-    1. Type in your server's address. If you have this set up to a certain URL, type that. Otherwise, just replace the parts in this: `http://<SERVER_IP_ADDRESS>:<PORT>/manifest.json`. (Example: https://192.168.0.110:3000/manifest.json)
-    1. Click "Configure" and wait for the configuration window to open.
-    1. Log in with one of the users you saved in your config file.
-    1. Click on "Configure".
-    1. You should be redirected to the Stremio Addons screen. Click "Install" to finish the installation.
-     </details>
+    6. Open the app and log in.
+    7. Go to addons.
+    8. Click on the "Add addon" button.
+    9. Type in your server's address. If you have this set up to a certain URL, type that. Otherwise, just replace the parts in this: `http://<SERVER_IP_ADDRESS>:<PORT>/manifest.json`. (Example: https://192.168.0.110:3000/manifest.json)
+    10. Click "Configure" and wait for the configuration window to open.
+    11. Log in with one of the users you saved in your config file.
+    12. Click on "Configure".
+    13. You should be redirected to the Stremio Addons screen. Click "Install" to finish the installation.
+    </details>
 
-## Configuration file reference
+## Environment variable reference
 
-| Property                                      | Type                | Required | Default value         | Description`                                                                                `                                                                                                           |
-| --------------------------------------------- | ------------------- | -------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `port`                                        | `number`            | Optional | 3000                  | Port number where the server will run.                                                                                                                                                                  |
-| `download_dir`                                | `string`            | Required | -                     | Directory path where the video files will be downloaded to.<br> Should be an empty directory.<br> If the given path doesn't exist, it will be created.                                                  |
-| `torrents_dir`                                | `string`            | Required | -                     | Directory path where the torrent files will be downloaded to.<br> Should be an empty directory.<br> If the given path doesn't exist, it will be created.                                                |
-| `secret`                                      | `string`            | Required | -                     | Unique secret that will be used for safe authentication.<br> **This should be a randomly generated string. It doesn't have to be memorable**<br> Generate one [here](https://randomkeygen.com/#504_wpa) |
-| `addon_url`                                   | `string`            | Optional | http://localhost:3000 | Full URL of the web server (with port number if necessary).<br> This needs to be accessible by the Stremio client.                                                                                      |
-| `ncore`                                       | `object`            | Required |                       |                                                                                                                                                                                                         |
-| `ncore.url`                                   | `string`            | Optional | https://ncore.pro     | URL of the nCore website. This is only here in case the URL changes.<br> Otherwise, you don't need to provide this.                                                                                     |
-| `ncore.username`                              | `string`            | Required | -                     | Your username for nCore.                                                                                                                                                                                |
-| `ncore.password`                              | `string`            | Required | -                     | Your password for nCore.                                                                                                                                                                                |
-| `ncore.delete_torrents_after_hitnrun`         | `object`            | Optional |                       |                                                                                                                                                                                                         |
-| `ncore.delete_torrents_after_hitnrun.enabled` | `boolea`n           | Optional | false                 | Enable automatic deletion of torrents that are not mandatory to seed anymore.                                                                                                                           |
-| `ncore.delete_torrents_after_hitnrun.cron`    | `string`            | Optional | `0 2 * * *`           | Cron expression for running the hitnrun table check. Defaults to "Once every day at 2:00 AM"                                                                                                            |
-| `users`                                       | `Array<object>`     | Required |                       |                                                                                                                                                                                                         |
-| `users[].username`                            | `string`            | Required | -                     | Username for a given user of the addon.                                                                                                                                                                 |
-| `users[].password`                            | `string`            | Required | -                     | Pasword for a given user of the addon.                                                                                                                                                                  |
-| `users[].role`                                | `'admin' \| 'user'` | Optional | user                  | The role of a given user of the addon.                                                                                                                                                                  |
-| `users[].preferences`                         | `object`            | Required |                       |                                                                                                                                                                                                         |
-| `users[].preferences.first_preferred_lang`    | `string`            | Required | -                     | Preferred language of the given user of the addon.<br> This setting will be used to rank and order the found torrents and for giving recommendations.                                                   |
-| `users[].preferences.second_preferred_lang`   | `string`            | Optional | -                     | Second preferred language (preferred if the first isn't available) of the given user of the addon.<br> This setting will be used to rank and order the found torrents and for giving recommendations.   |
-| `users[].preferences.preferred_resolutions`   | `Array<string>`     | Required | -                     | A list of resolutions that the user prefers in preferential order.<br> This setting will be used to rank and order the found torrents and for giving recommendations.                                   |
-
-### Example `config.json`
-
-```json
-{
-	"port": 3000,
-	"download_dir": "/media/share/downloads",
-	"torrents_dir": "/media/share/torrents",
-	"secret": "REPLACE_ME",
-	"addon_url": "https://stremio-ncore-addon.example.com",
-	"ncore": {
-		"url": "https://ncore.pro",
-		"username": "NCORE_USERNAME",
-		"password": "NCORE_PASSWORD",
-		"delete_torrents_after_hitnrun": {
-			"enabled": false,
-			"cron": "0 2 * * *"
-		}
-	},
-	"users": [
-		{
-			"username": "ADMIN_USERNAME",
-			"password": "ADMIN_PASSWORD",
-			"role": "admin",
-			"preferences": {
-				"first_preferred_lang": "Hungarian",
-				"second_preferred_lang": "English",
-				"preferred_resolutions": ["720P", "1080P"]
-			}
-		}
-	]
-}
-```
+| Variable name                     | Required / Optional                      | Description                                                                                                                                                                                          |
+| --------------------------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PORT`                            | Optional (default = `3000`)              | The port where the addon will run.<br>If you are running this from docker, don't change this, change the exposed port instead.                                                                       |
+| `ADDON_URL`                       | Required                                 | The https URL where the addon will be reachable. This should be available from outside your local network.                                                                                           |
+| `APP_SECRET`                      | Required                                 | A random string that will be used to sign the JWTs for authentication. You can generate on [here](https://randomkeygen.com/#504_wpa).                                                                |
+| `DOWNLOADS_DIR`                   | Required                                 | Directory path where the video files will be downloaded to.<br>Should be an empty directory.<br>If the given path doesn't exist, it will be created.                                                 |
+| `TORRENTS_DIR`                    | Required                                 | Directory path where the torrent files will be downloaded to.<br>Should be an empty directory.<br>If the given path doesn't exist, it will be created.                                               |
+| `NCORE_URL`                       | Optional (default = `https://ncore.pro`) | URL of the nCore website. This is only here in case the URL changes.<br>Otherwise, you don't need to provide this.                                                                                   |
+| `NCORE_USERNAME`                  | Required                                 | Your username for nCore.                                                                                                                                                                             |
+| `NCORE_PASSWORD`                  | Required                                 | Your password for nCore.                                                                                                                                                                             |
+| `DELETE_AFTER_HITNRUN`            | Optional (default = `false`)             | Enable automatic deletion of torrents that are not mandatory to seed anymore.                                                                                                                        |
+| `DELETE_AFTER_HITNRUN_CRON`       | Optional (default = `'0 2 * * *'`)       | Cron expression for running the hitnrun table check. Defaults to "Once every day at 2:00 AM"                                                                                                         |
+| `ADMIN_USERNAME`                  | Required                                 | Username for the admin user.                                                                                                                                                                         |
+| `ADMIN_PASSWORD`                  | Required                                 | Password for the admin user.                                                                                                                                                                         |
+| `ADMIN_FIRST_PREFERRED_LANGUAGE`  | Required                                 | Preferred language of the admin user of the addon.<br>This setting will be used to rank and order the found torrents and for giving recommendations.                                                 |
+| `ADMIN_SECOND_PREFERRED_LANGUAGE` | Optional                                 | Second preferred language (preferred if the first isn't available) of the admin user of the addon.<br>This setting will be used to rank and order the found torrents and for giving recommendations. |
+| `ADMIN_PREFERRED_RESOLUTIONS`     | Required                                 | A comma separated list of resolutions that the admin user prefers in preferential order.<br>This setting will be used to rank and order the found torrents and for giving recommendations.           |
+| `USERS`                           | Optional                                 | A JSON array of users as a string.<br>Check the `.env.example` file [here](/.env.example) for an example.                                                                                            |

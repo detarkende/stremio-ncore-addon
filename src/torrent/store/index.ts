@@ -6,7 +6,7 @@ export const store = new TorrentStore();
 
 export const loadTorrents = async (): Promise<void> => {
 	console.log('Looking for torrent files...');
-	const savedTorrentFilePaths = globSync(`${config().torrents_dir}/*.torrent`);
+	const savedTorrentFilePaths = globSync(`${config.TORRENTS_DIR}/*.torrent`);
 	console.log(`Found ${savedTorrentFilePaths.length} torrent files.`);
 	await Promise.allSettled(
 		savedTorrentFilePaths.map((filePath) => {

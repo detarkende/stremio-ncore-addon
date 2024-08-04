@@ -30,9 +30,7 @@ const _downloadTorrent = async (ncoreId: string) => {
 		.parse(torrentReq.headers.get('content-disposition') ?? '')
 		.parameters.filename?.replace(/\.torrent$/i, '');
 
-	const torrentFilePath = `${config().torrents_dir}/${torrentFileName}-${
-		parsedTorrent.infoHash
-	}.torrent`;
+	const torrentFilePath = `${config.TORRENTS_DIR}/${torrentFileName}-${parsedTorrent.infoHash}.torrent`;
 
 	writeFileWithCreateDir(torrentFilePath, Buffer.from(torrentArrayBuffer));
 	return store.addTorrent(torrentFilePath);

@@ -6,13 +6,7 @@ const memoData = {
 	cookieExpirationDate: 0,
 };
 
-export const login = async ({
-	username,
-	password,
-}: {
-	username: string;
-	password: string;
-}): Promise<string> => {
+export const login = async (username: string, password: string): Promise<string> => {
 	if (memoData.pass && memoData.cookieExpirationDate > Date.now() + 1000) {
 		return memoData.pass;
 	}
@@ -22,7 +16,7 @@ export const login = async ({
 	form.append('nev', username);
 	form.append('pass', password);
 	form.append('ne_leptessen_ki', '1');
-	const resp = await fetch(`${config().ncore.url}/login.php`, {
+	const resp = await fetch(`${config.NCORE_URL}/login.php`, {
 		method: 'POST',
 		body: form,
 		redirect: 'manual',

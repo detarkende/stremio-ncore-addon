@@ -5,8 +5,8 @@ import { getDownloadUrlFromNcoreId } from '../getDownloadUrlFromNcoreId';
 import { config } from '@/common/config/config';
 
 export const findDeletableInfoHashes = async (): Promise<string[]> => {
-	const cookie = await login(config().ncore);
-	const request = await fetch(`${config().ncore.url}/hitnrun.php?showall=true`, {
+	const cookie = await login(config.NCORE_USERNAME, config.NCORE_PASSWORD);
+	const request = await fetch(`${config.NCORE_URL}/hitnrun.php?showall=true`, {
 		headers: { cookie },
 	});
 	const html = await request.text();

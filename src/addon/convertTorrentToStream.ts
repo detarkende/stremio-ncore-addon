@@ -9,13 +9,15 @@ import type { FullTorrent } from '@/ncore/getTorrents';
 export const convertTorrentsToStreams = async ({
 	torrents,
 	jwt,
-	origin = config().addon_url,
+	origin = config.ADDON_URL,
 }: {
 	torrents: FullTorrent[];
 	jwt: string;
 	origin?: string;
 }): Promise<Stream[]> => {
-	const { preferences } = (await jwtToUser(jwt))!;
+	const { first_preferred_lang, preferred_resolutions, second_preferred_lang } = (await jwtToUser(
+		jwt,
+	))!;
 
 	// Sort the torrents by file size (ascending)
 	torrents.sort((a, z) => {
@@ -23,15 +25,15 @@ export const convertTorrentsToStreams = async ({
 	});
 	const orderedTorrents = rateList(torrents, [
 		// If the torrent has the user's first preferred language, it gets +3 rating point
-		({ languages }) => (languages.includes(preferences.first_preferred_lang) ? 3 : 0),
+		({ languages }) => (languages.includes(first_preferred_lang) ? 3 : 0),
 		// If the torrent is the same resolution as the user's preference, it gets +2 rating point
-		({ resolution }) => (preferences.preferred_resolutions.includes(resolution) ? 2 : 0),
+		({ resolution }) => (preferred_resolutions.includes(resolution) ? 2 : 0),
 		// If the torrent doesn't have the first preferred language, but has the
 		// second preferred language, it gets +2 rating point
 		({ languages }) =>
-			!languages.includes(preferences.first_preferred_lang) &&
-			preferences.second_preferred_lang &&
-			languages.includes(preferences.second_preferred_lang)
+			!languages.includes(first_preferred_lang) &&
+			second_preferred_lang &&
+			languages.includes(second_preferred_lang)
 				? 2
 				: 0,
 	]);
