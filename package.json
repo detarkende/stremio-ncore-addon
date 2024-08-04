@@ -13,7 +13,7 @@
 		"postinstall": "patch-package"
 	},
 	"dependencies": {
-		"@ctrl/video-filename-parser": "^5.1.0",
+		"@ctrl/video-filename-parser": "^5.2.1",
 		"@hono/node-server": "^1.4.0",
 		"ascii-table3": "^0.9.0",
 		"content-disposition": "^0.5.4",
@@ -21,13 +21,13 @@
 		"hash-sum": "^2.0.0",
 		"hono": "^3.12.1",
 		"jsdom": "^23.2.0",
-		"mime": "^4.0.3",
+		"mime": "^4.0.4",
 		"node-cron": "^3.0.3",
-		"parse-torrent": "^11.0.14",
+		"parse-torrent": "^11.0.17",
 		"patch-package": "^8.0.0",
 		"set-cookie-parser": "^2.6.0",
 		"ts-node": "^10.9.2",
-		"webtorrent": "^2.2.1",
+		"webtorrent": "^2.4.12",
 		"zod": "^3.22.4"
 	},
 	"devDependencies": {
@@ -37,10 +37,10 @@
 		"@types/jest": "^29.5.12",
 		"@types/jsdom": "^21.1.6",
 		"@types/mime": "^3.0.4",
-		"@types/node": "^20.10.7",
+		"@types/node": "^20.14.12",
 		"@types/node-cron": "^3.0.11",
 		"@types/parse-torrent": "^5.8.7",
-		"@types/set-cookie-parser": "^2.4.7",
+		"@types/set-cookie-parser": "^2.4.10",
 		"@types/stremio-addon-sdk": "^1.6.10",
 		"@types/webtorrent": "^0.109.7",
 		"@typescript-eslint/eslint-plugin": "^6.21.0",
@@ -54,7 +54,7 @@
 		"tsc-alias": "^1.8.8",
 		"tsx": "^4.7.0",
 		"typescript": "^5.3.3",
-		"zod-to-json-schema": "^3.22.3"
+		"zod-to-json-schema": "^3.23.1"
 	},
 	"peerDependencies": {
 		"typescript": "^5.0.0"

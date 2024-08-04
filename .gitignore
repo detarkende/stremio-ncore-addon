@@ -6,3 +6,5 @@ config.json
 .vscode/schemas/config.schema.json
 
 dist
+torrents
+downloads
