@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "tsx --env-file .env --watch src/index.ts",
 		"start": "npm run build && node --env-file .env dist/index.js",
-		"build": "rm -rf dist && tsc && tsc-alias && tsx scripts/fixOutput.ts",
+		"build": "rm -rf dist && tsc && tsc-alias",
 		"typecheck": "tsc --noemit",
 		"lint": "eslint .",
 		"test": "jest",
@@ -53,8 +53,7 @@
 		"ts-jest": "^29.1.2",
 		"tsc-alias": "^1.8.8",
 		"tsx": "^4.7.0",
-		"typescript": "^5.3.3",
-		"zod-to-json-schema": "^3.22.3"
+		"typescript": "^5.3.3"
 	},
 	"peerDependencies": {
 		"typescript": "^5.0.0"
