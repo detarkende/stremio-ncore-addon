@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "tsx --env-file .env --watch src/index.ts",
 		"start": "npm run build && node --env-file .env dist/index.js",
-		"build": "rm -rf dist && tsc && tsc-alias",
+		"build": "rm -rf dist && tsc && tsc-alias && tsx scripts/fixOutput.ts",
 		"typecheck": "tsc --noemit",
 		"lint": "eslint .",
 		"test": "jest",
