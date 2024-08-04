@@ -68,7 +68,7 @@ configureRouter.post('/', async (c) => {
 					margin: '5px 0',
 				}}
 			>
-				{`https://${config().addon_url}/auth/${token}/manifest.json`}
+				{`${config().addon_url}/auth/${token}/manifest.json`}
 			</code>
 		</>,
 	);

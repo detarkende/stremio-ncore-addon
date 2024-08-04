@@ -2,14 +2,12 @@ import type { Language, Resolution } from '@ctrl/video-filename-parser';
 import { login } from './login';
 import { downloadAndParseTorrent } from './downloadAndParseTorrent';
 import { config } from '@/common/config/config';
-import {
-	MOVIE_CATEGORIES,
-	SERIES_CATEGORIES,
-	type TorrentCategory,
-} from '@/common/constants/torrentCategories';
+import { MOVIE_CATEGORIES, SERIES_CATEGORIES, type TorrentCategory } from '@/common/constants/torrentCategories';
 import { findTorrentFileIdx } from '@/torrent/findTorrentFileIdx';
 import { isSupportedMedia } from '@/common/constants/mediaExtensions';
 import { memoize } from '@/common/helpers/memoize';
+import { processInBatches } from '@/common/helpers/processInBatches';
+import { BATCH_DELAY, BATCH_SIZE } from '@/common/constants/batches';
 
 const MOVIE_CATEGORY_FILTERS = MOVIE_CATEGORIES.join(',');
 const SERIES_CATEGORY_FILTERS = SERIES_CATEGORIES.join(',');
@@ -51,10 +49,10 @@ export type ParsedDataFromTorrentFile = {
 // The full torrent shape that we use in the addon
 export type FullTorrent = NcoreTorrent &
 	ParsedDataFromTorrentFile & {
-		resolution: Resolution;
-		languages: Language[];
-		selectedFileIdx: number;
-	};
+	resolution: Resolution;
+	languages: Language[];
+	selectedFileIdx: number;
+};
 
 const fetchTorrents = async (query: URLSearchParams): Promise<NcorePageResponseJson> => {
 	const cookies = await login(config().ncore);
@@ -97,13 +95,16 @@ const rawGetTorrents = async (id: string) => {
 	const restPagePromises: Promise<NcorePageResponseJson>[] = [];
 	for (let page = 2; page <= lastPage; page++) {
 		const query = new URLSearchParams({ ...baseParams, oldal: `${page}` });
-		restPagePromises.concat(fetchTorrents(query));
+		restPagePromises.push(fetchTorrents(query));
 	}
 	const pages = [firstPage, ...(await Promise.all(restPagePromises))];
 	const allNcoreTorrents = pages.flatMap((page) => page.results);
 
-	const allTorrentsWithParsedData = await Promise.all(
-		allNcoreTorrents.map(async (torrent) => {
+	const allTorrentsWithParsedData = await processInBatches(
+		allNcoreTorrents,
+		BATCH_SIZE,
+		BATCH_DELAY,
+		async (torrent) => {
 			const torrentData = await downloadAndParseTorrent(torrent.download_url);
 			const { infoHash, files = [] } = torrentData;
 			const [selectedFileIdx, { resolution, languages = [] }] = findTorrentFileIdx(
@@ -118,16 +119,16 @@ const rawGetTorrents = async (id: string) => {
 				languages,
 				selectedFileIdx,
 			};
-		}),
+		},
 	);
-	const fullTorrents = allTorrentsWithParsedData.filter(({ selectedFileIdx, files }) => {
+
+	return allTorrentsWithParsedData.filter(({ selectedFileIdx, files }) => {
 		return (
 			selectedFileIdx !== null &&
 			!!files[selectedFileIdx] &&
 			isSupportedMedia(files[selectedFileIdx]!.path)
 		);
 	}) satisfies FullTorrent[];
-	return fullTorrents;
 };
 
 export const getTorrents = memoize({ fn: rawGetTorrents, cacheTime: 1000 * 60, maxCacheSize: 100 });
