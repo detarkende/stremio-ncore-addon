@@ -3,7 +3,7 @@ import { config } from './config/config';
 import { deleteUnnecessaryTorrents } from '@/ncore/hitnrun/deleteUnnecessaryTorrents';
 
 export const loadCronJobs = () => {
-	if (config().ncore.delete_torrents_after_hitnrun.enabled) {
-		schedule(config().ncore.delete_torrents_after_hitnrun.cron, deleteUnnecessaryTorrents);
+	if (config.DELETE_AFTER_HITNRUN) {
+		schedule(config.DELETE_AFTER_HITNRUN_CRON, deleteUnnecessaryTorrents);
 	}
 };

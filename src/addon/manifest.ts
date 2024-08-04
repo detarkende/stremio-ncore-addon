@@ -4,7 +4,7 @@ import { config } from '@/common/config/config';
 import { jwtToUser } from '@/common/helpers/user';
 
 export const manifest = (req: HonoRequest): Manifest => {
-	const baseUrl = getBaseUrl(req.url) || config().addon_url;
+	const baseUrl = getBaseUrl(req.url) || config.ADDON_URL;
 	return {
 		id: 'detarkende.ncore',
 		behaviorHints: {

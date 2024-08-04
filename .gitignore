@@ -6,3 +6,6 @@ config.json
 .vscode/schemas/config.schema.json
 
 dist
+.env
+.env.*
+!.env.example

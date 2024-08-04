@@ -23,7 +23,7 @@ export class TorrentStore {
 			const torrent = this.client.add(
 				torrentFilePath,
 				{
-					path: config().download_dir,
+					path: config.DOWNLOADS_DIR,
 					deselect: true,
 				},
 				(torrent) => {
@@ -45,10 +45,10 @@ export class TorrentStore {
 	public async getTorrentDownloadPath(infoHash: string) {
 		const torrent = await this.getTorrent(infoHash);
 		if (!torrent) return undefined;
-		const pathWithInfoHash = `${config().download_dir}/${
+		const pathWithInfoHash = `${config.DOWNLOADS_DIR}/${
 			torrent.name
 		} - ${torrent.infoHash.slice(0, 8)}`;
-		const pathWithoutInfoHash = `${config().download_dir}/${torrent.name}`;
+		const pathWithoutInfoHash = `${config.DOWNLOADS_DIR}/${torrent.name}`;
 		if (existsSync(pathWithInfoHash) && lstatSync(pathWithInfoHash).isDirectory())
 			return pathWithInfoHash;
 		if (existsSync(pathWithoutInfoHash) && lstatSync(pathWithoutInfoHash).isDirectory())

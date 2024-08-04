@@ -16,102 +16,84 @@ const resolutionSchema = z.nativeEnum(Resolution, {
 });
 export type PreferenceResolution = z.infer<typeof resolutionSchema>;
 
-export const userSchema = z.object({
-	username: z.string({ required_error: 'Username is required' }),
-	password: z.string({ required_error: 'Password is required' }),
-	role: z.enum(['user', 'admin'], {
-		required_error: 'Role is required',
-		message: 'Invalid value for user role. Only "user" and "admin" are allowed',
-	}),
-	preferences: z
-		.object({
-			first_preferred_lang: languageSchema,
-			second_preferred_lang: languageSchema.optional(),
-			preferred_resolutions: z.array(resolutionSchema),
-		})
-		.refine(
-			(data) => {
-				if ('second_preferred_lang' in data) {
-					return data.first_preferred_lang !== data.second_preferred_lang;
-				}
-				return true;
-			},
-			{
-				message: 'First and second preferred languages cannot be the same',
-			},
-		),
-});
+export const userSchema = z
+	.object({
+		username: z.string({ required_error: 'Username is required' }),
+		password: z.string({ required_error: 'Password is required' }),
+		first_preferred_lang: languageSchema,
+		second_preferred_lang: languageSchema.optional(),
+		preferred_resolutions: z.array(resolutionSchema),
+	})
+	.refine(
+		(data) => {
+			if ('second_preferred_lang' in data) {
+				return data.first_preferred_lang !== data.second_preferred_lang;
+			}
+			return true;
+		},
+		{
+			message: 'First and second preferred languages cannot be the same',
+		},
+	);
 
-export const configSchema = z.object({
-	ncore: z.object({
-		url: z
+export enum UserRole {
+	ADMIN = 'admin',
+	USER = 'user',
+}
+
+export interface User extends z.infer<typeof userSchema> {
+	role: UserRole;
+}
+
+export const configSchema = z
+	.object({
+		PORT: z.number({ coerce: true }).default(3000),
+		APP_SECRET: z.string().min(10),
+		ADDON_URL: z.string().url(),
+		DOWNLOADS_DIR: z.string(),
+		TORRENTS_DIR: z.string(),
+		NCORE_URL: z.string().url().default('https://ncore.pro'),
+		NCORE_USERNAME: z.string(),
+		NCORE_PASSWORD: z.string(),
+		DELETE_AFTER_HITNRUN: z.boolean({ coerce: true }).default(false),
+		DELETE_AFTER_HITNRUN_CRON: z
 			.string()
-			.url()
-			.default('https://ncore.pro')
-			.describe(
-				`URL of the nCore website. This is only here in case the URL changes.\nOtherwise, you don't need to provide this.`,
-			),
-		username: z.string({ required_error: 'Ncore username is required.' }),
-		password: z.string({ required_error: 'Ncore password is required.' }),
-		delete_torrents_after_hitnrun: z
-			.object({
-				enabled: z
-					.boolean()
-					.default(false)
-					.describe(
-						'Enable automatic deletion of torrents that are not mandatory to seed anymore.',
-					),
-				cron: z
-					.string()
-					.refine(cron.validate, { message: 'Invalid cron expression' })
-					.default('0 2 * * *')
-					.describe(
-						'Cron expression for running the hitnrun table check. Defaults to "Once every day at 2:00 AM"',
-					),
+			.refine(cron.validate, { message: 'Invalid cron expression' })
+			.default('0 2 * * *'),
+		ADMIN_USERNAME: z.string(),
+		ADMIN_PASSWORD: z.string(),
+		ADMIN_FIRST_PREFERRED_LANGUAGE: languageSchema,
+		ADMIN_SECOND_PREFERRED_LANGUAGE: languageSchema.optional(),
+		ADMIN_PREFERRED_RESOLUTIONS: z
+			.string()
+			.transform((value) => value.split(','))
+			.pipe(z.array(resolutionSchema)),
+		USERS: z
+			.string()
+			.default('[]')
+			.transform((str, ctx): unknown => {
+				try {
+					return JSON.parse(str);
+				} catch (e) {
+					ctx.addIssue({ code: 'custom', message: 'Invalid JSON' });
+					return z.NEVER;
+				}
 			})
-			.default({
-				enabled: false,
-				cron: '0 2 * * *',
-			}),
-	}),
-	download_dir: z
-		.string({ required_error: 'Download directory is required.' })
-		.describe('Absolute path to the directory where the downloaded files will be saved.'),
-	torrents_dir: z
-		.string({ required_error: 'Torrents directory is required.' })
-		.describe('Absolute path to the directory where the torrent files will be saved.'),
-	port: z.number().default(3000).describe('Port number for the web server.'),
-	addon_url: z
-		.string()
-		.url()
-		.default('http://localhost:3000')
-		.describe(
-			'Full URL of the web server (with port number if necessary).\nThis needs to be accessible by the Stremio client.',
-		),
-	secret: z
-		.string({ required_error: 'JWT secret is required for authentication.' })
-		.min(16)
-		.describe('Secret key for the JWT token.'),
-	users: z
-		.array(userSchema)
-		.min(1, { message: 'At least one user is required' })
-		.refine(
-			(users) => {
-				const usernames = users.map(({ username }) => username);
-				// Check if there are any duplicate usernames
-				return usernames.length === new Set(usernames).size;
-			},
-			{
-				message: 'Usernames must be unique',
-			},
-		)
-		.refine(
-			(users) => {
-				// Check if there is at least one admin user
-				return users.findIndex(({ role }) => role === 'admin') !== -1;
-			},
-			{
-				message: 'At least one admin user is required',
-			},
-		),
-});
+			.pipe(z.array(userSchema)),
+	})
+	.transform((config) => {
+		return {
+			...config,
+			USERS: [
+				...config.USERS.map((user) => ({ ...user, role: UserRole.USER })),
+				{
+					username: config.ADMIN_USERNAME,
+					password: config.ADMIN_PASSWORD,
+					role: UserRole.ADMIN,
+					first_preferred_lang: config.ADMIN_FIRST_PREFERRED_LANGUAGE,
+					second_preferred_lang: config.ADMIN_SECOND_PREFERRED_LANGUAGE,
+					preferred_resolutions: config.ADMIN_PREFERRED_RESOLUTIONS,
+				},
+			] satisfies User[],
+		};
+	});

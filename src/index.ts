@@ -15,7 +15,6 @@ import { loadCronJobs } from '@/common/cronJobs';
 import { playTorrentFileRouter } from '@/torrent/play';
 
 try {
-	config();
 	console.log('Config is successfully loaded and is valid.');
 	await loadTorrents();
 	loadCronJobs();
@@ -34,7 +33,7 @@ try {
 		const { jwt } = c.req.param();
 		const user = await jwtToUser(jwt);
 
-		if (user && !!config().users.find((u) => u.username === user?.username)) {
+		if (user && !!config.USERS.find((u) => u.username === user?.username)) {
 			return next();
 		}
 		throw new HTTPException(401, { message: 'Unauthorized' });
@@ -77,7 +76,7 @@ try {
 	app.use('/auth/:jwt/admin/*', async (c, next) => {
 		const { jwt } = c.req.param();
 		const user = await jwtToUser(jwt);
-		const userFromConfig = config().users.find((u) => u.username === user?.username);
+		const userFromConfig = config.USERS.find((u) => u.username === user?.username);
 		if (userFromConfig && userFromConfig.role === 'admin') {
 			return next();
 		}
@@ -87,10 +86,10 @@ try {
 
 	serve({
 		fetch: app.fetch,
-		port: config().port,
+		port: config.PORT,
 	});
 
-	console.log(`Server started on port ${config().port}!`);
+	console.log(`Server started on port ${config.PORT}!`);
 } catch (e: unknown) {
 	console.error(e);
 	process.exit(1);

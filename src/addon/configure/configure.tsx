@@ -39,7 +39,7 @@ configureRouter.post('/', async (c) => {
 
 	const token = await userToJwt(user);
 
-	const authenticatedUrl = `${config().addon_url}/auth/${token}/manifest.json`;
+	const authenticatedUrl = `${config.ADDON_URL}/auth/${token}/manifest.json`;
 
 	return c.html(
 		<>
@@ -68,7 +68,7 @@ configureRouter.post('/', async (c) => {
 					margin: '5px 0',
 				}}
 			>
-				{`${config().addon_url}/auth/${token}/manifest.json`}
+				{`${config.ADDON_URL}/auth/${token}/manifest.json`}
 			</code>
 		</>,
 	);

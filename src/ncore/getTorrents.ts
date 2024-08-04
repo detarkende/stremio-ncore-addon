@@ -2,7 +2,11 @@ import type { Language, Resolution } from '@ctrl/video-filename-parser';
 import { login } from './login';
 import { downloadAndParseTorrent } from './downloadAndParseTorrent';
 import { config } from '@/common/config/config';
-import { MOVIE_CATEGORIES, SERIES_CATEGORIES, type TorrentCategory } from '@/common/constants/torrentCategories';
+import {
+	MOVIE_CATEGORIES,
+	SERIES_CATEGORIES,
+	type TorrentCategory,
+} from '@/common/constants/torrentCategories';
 import { findTorrentFileIdx } from '@/torrent/findTorrentFileIdx';
 import { isSupportedMedia } from '@/common/constants/mediaExtensions';
 import { memoize } from '@/common/helpers/memoize';
@@ -49,14 +53,14 @@ export type ParsedDataFromTorrentFile = {
 // The full torrent shape that we use in the addon
 export type FullTorrent = NcoreTorrent &
 	ParsedDataFromTorrentFile & {
-	resolution: Resolution;
-	languages: Language[];
-	selectedFileIdx: number;
-};
+		resolution: Resolution;
+		languages: Language[];
+		selectedFileIdx: number;
+	};
 
 const fetchTorrents = async (query: URLSearchParams): Promise<NcorePageResponseJson> => {
-	const cookies = await login(config().ncore);
-	const request = await fetch(`${config().ncore.url}/torrents.php?${query.toString()}`, {
+	const cookies = await login(config.NCORE_USERNAME, config.NCORE_PASSWORD);
+	const request = await fetch(`${config.NCORE_URL}/torrents.php?${query.toString()}`, {
 		headers: {
 			cookie: cookies,
 		},
