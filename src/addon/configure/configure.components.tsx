@@ -1,7 +1,8 @@
-import type { FC } from 'hono/jsx';
+import type { FC, PropsWithChildren } from 'hono/jsx';
 
 type MessageType = 'error' | 'success';
 type ElementWithMessageProps<TExtraProps = object> = TExtraProps &
+	PropsWithChildren &
 	(
 		| { message: string; messageType: MessageType }
 		| { message?: undefined; messageType?: undefined }
