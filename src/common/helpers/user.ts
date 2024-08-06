@@ -9,8 +9,8 @@ type User = z.infer<typeof userSchema>;
 export const jwtToUser = async (jwt: string): Promise<User | undefined> => {
 	try {
 		const userData = await verify(jwt, config.APP_SECRET);
-		if (typeof userData === 'string') {
-			return config.USERS.find((u) => u.username === userData);
+		if ('username' in userData) {
+			return config.USERS.find((u) => u.username === userData.username);
 		}
 	} catch (e) {
 		throw new HTTPException(401, { message: 'Unauthorized' });
@@ -19,7 +19,7 @@ export const jwtToUser = async (jwt: string): Promise<User | undefined> => {
 
 export const userToJwt = async (user: User): Promise<string> => {
 	const { username } = user;
-	return await sign(username, config.APP_SECRET);
+	return await sign({ username }, config.APP_SECRET);
 };
 
 export const getUserByCredentials = async ({

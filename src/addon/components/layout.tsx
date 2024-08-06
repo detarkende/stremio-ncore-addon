@@ -1,6 +1,6 @@
-import type { FC } from 'hono/jsx';
+import type { FC, PropsWithChildren } from 'hono/jsx';
 
-export const Layout: FC<{ title?: string }> = (props) => {
+export const Layout: FC<PropsWithChildren<{ title?: string }>> = (props) => {
 	const { title = 'Stremio nCore addon' } = props;
 	return (
 		<html style={{ height: '100%' }}>
