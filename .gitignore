@@ -9,3 +9,6 @@ dist
 .env
 .env.*
 !.env.example
+
+docker-compose.yaml
+downloads

@@ -84,6 +84,37 @@ If you do not own an Android TV / Chromecast / Firestick / Android phone or simi
 
 **Client**: the device where you will watch the content through the Stremio app.
 
+### Using docker
+
+Example docker compose:
+
+```yml
+---
+services:
+    stremio-ncore-addon:
+        image: detarkende/stremio-ncore-addon:latest
+        container_name: stremio-ncore-addon
+        environment:
+            - ADDON_URL=https://subdomain.example.com
+            - APP_SECRET=changeme
+            - NCORE_USERNAME=ncore_username
+            - NCORE_PASSWORD=ncore_password
+            - DELETE_AFTER_HITNRUN=true
+            - ADMIN_USERNAME=admin
+            - ADMIN_PASSWORD=changeme
+            - ADMIN_FIRST_PREFERRED_LANGUAGE=Hungarian
+            - ADMIN_SECOND_PREFERRED_LANGUAGE=English
+            - ADMIN_PREFERRED_RESOLUTIONS=720P,1080P
+        volumes:
+            - /path/to/downloads:/downloads
+            - /path/to/torrents:/torrents
+        ports:
+            - 3000:3000
+        restart: unless-stopped
+```
+
+### Manual install
+
 1. Clone the repository to the server.
     ```sh
     git clone https://github.com/detarkende/stremio-ncore-addon.git && cd stremio-ncore-addon
