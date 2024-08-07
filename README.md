@@ -86,6 +86,28 @@ If you do not own an Android TV / Chromecast / Firestick / Android phone or simi
 
 ### Using docker
 
+Example docker run command:
+
+```sh
+docker run -d \
+    --name=transmission \
+    -e ADDON_URL=https://subdomain.example.com \
+    -e APP_SECRET=changeme \
+    -e NCORE_USERNAME=ncore_username \
+    -e NCORE_PASSWORD=ncore_password \
+    -e DELETE_AFTER_HITNRUN=true \
+    -e ADMIN_USERNAME=admin \
+    -e ADMIN_PASSWORD=changeme \
+    -e ADMIN_FIRST_PREFERRED_LANGUAGE=Hungarian \
+    -e ADMIN_SECOND_PREFERRED_LANGUAGE=English \
+    -e ADMIN_PREFERRED_RESOLUTIONS=720P,1080P \
+    -p 3000:3000 \
+    -v /path/to/downloads:/downloads \
+    -v /path/to/torrents:/torrents \
+    --restart unless-stopped \
+    detarkende/stremio-ncore-addon:latest
+```
+
 Example docker compose:
 
 ```yml
