@@ -90,7 +90,7 @@ Example docker run command:
 
 ```sh
 docker run -d \
-    --name=transmission \
+    --name=stremio-ncore-addon \
     -e ADDON_URL=https://subdomain.example.com \
     -e APP_SECRET=changeme \
     -e NCORE_USERNAME=ncore_username \
