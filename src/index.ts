@@ -16,7 +16,7 @@ import { playTorrentFileRouter } from '@/torrent/play';
 
 try {
 	console.log('Config is successfully loaded and is valid.');
-	await loadTorrents();
+	loadTorrents();
 	loadCronJobs();
 
 	const app = new Hono();
