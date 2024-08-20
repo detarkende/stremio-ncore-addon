@@ -5,14 +5,27 @@ on:
     pull_request:
         branches: ['master']
 jobs:
-    build:
+    ci:
+        name:
         runs-on: ubuntu-latest
 
         strategy:
             matrix:
                 node-version: [20.x]
+                command:
+                    - cmd: npm run typecheck
+                      name: Check types
+                    - cmd: npm run check-formatting
+                      name: Check formatting with Prettier
+                    - cmd: npm run lint
+                      name: Lint with ESLint
+                    - cmd: npm run test
+                      name: Run unit tests
+                    - cmd: npm run build
+                      name: Run build
         steps:
-            - uses: actions/checkout@v4
+            - name: Checkout code
+              uses: actions/checkout@v4
             - name: Use Node.js ${{ matrix.node-version }}
               uses: actions/setup-node@v4
               with:
@@ -20,13 +33,5 @@ jobs:
                   cache: 'npm'
             - name: Install dependencies
               run: npm install
-            - name: Check types
-              run: npm run typecheck
-            - name: Check formatting with Prettier
-              run: npm run check-formatting
-            - name: Lint with ESLint
-              run: npm run lint
-            - name: Run unit tests
-              run: npm run test
-            - name: Run build
-              run: npm run build
+            - name: ${{ matrix.command.name }}
+              run: ${{ matrix.command.cmd }}
