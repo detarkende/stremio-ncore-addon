@@ -4,34 +4,56 @@ on:
         branches: ['master']
     pull_request:
         branches: ['master']
+env:
+    NODE_VERSION: 20.x
 jobs:
-    ci:
-        name:
+    typecheck:
+        name: Check types
         runs-on: ubuntu-latest
-
-        strategy:
-            matrix:
-                node-version: [20.x]
-                command:
-                    - cmd: npm run typecheck
-                      name: Check types
-                    - cmd: npm run check-formatting
-                      name: Check formatting with Prettier
-                    - cmd: npm run lint
-                      name: Lint with ESLint
-                    - cmd: npm run test
-                      name: Run unit tests
-                    - cmd: npm run build
-                      name: Run build
         steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v4
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
               with:
-                  node-version: ${{ matrix.node-version }}
                   cache: 'npm'
-            - name: Install dependencies
-              run: npm install
-            - name: ${{ matrix.command.name }}
-              run: ${{ matrix.command.cmd }}
+            - run: npm install
+            - run: npm run typecheck
+    lint:
+        name: Lint code with ESLint
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  cache: 'npm'
+            - run: npm install
+            - run: npm run lint
+    check-formatting:
+        name: Check code formatting with Prettier
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  cache: 'npm'
+            - run: npm install
+            - run: npm run check-formatting
+    test:
+        name: Run tests
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  cache: 'npm'
+            - run: npm install
+            - run: npm run test
+    build:
+        name: Build project
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  cache: 'npm'
+            - run: npm install
+            - run: npm run test
