@@ -4,56 +4,31 @@ on:
         branches: ['master']
     pull_request:
         branches: ['master']
-env:
-    NODE_VERSION: 20.x
 jobs:
-    typecheck:
-        name: Check types
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
-              with:
-                  cache: 'npm'
-            - run: npm install
-            - run: npm run typecheck
-    lint:
-        name: Lint code with ESLint
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
-              with:
-                  cache: 'npm'
-            - run: npm install
-            - run: npm run lint
-    check-formatting:
-        name: Check code formatting with Prettier
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
-              with:
-                  cache: 'npm'
-            - run: npm install
-            - run: npm run check-formatting
-    test:
-        name: Run tests
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
-              with:
-                  cache: 'npm'
-            - run: npm install
-            - run: npm run test
     build:
-        name: Build project
+        name:
         runs-on: ubuntu-latest
+
+        strategy:
+            matrix:
+                node-version: [20.x]
         steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - name: Checkout code
+              uses: actions/checkout@v4
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v4
               with:
+                  node-version: ${{ matrix.node-version }}
                   cache: 'npm'
-            - run: npm install
-            - run: npm run test
+            - name: Install dependencies
+              run: npm install
+            - name: Check types
+              run: npm run typecheck
+            - name: Check formatting with Prettier
+              run: npm run check-formatting
+            - name: Lint with ESLint
+              run: npm run lint
+            - name: Run unit tests
+              run: npm run test
+            - name: Run build
+              run: npm run build
