@@ -1,4 +1,4 @@
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const processInBatches = async <T, R>(
 	items: T[],

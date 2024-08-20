@@ -15,9 +15,8 @@ export const convertTorrentsToStreams = async ({
 	jwt: string;
 	origin?: string;
 }): Promise<Stream[]> => {
-	const { first_preferred_lang, preferred_resolutions, second_preferred_lang } = (await jwtToUser(
-		jwt,
-	))!;
+	const { first_preferred_lang, preferred_resolutions, second_preferred_lang } =
+		(await jwtToUser(jwt))!;
 
 	// Sort the torrents by file size (ascending)
 	torrents.sort((a, z) => {
