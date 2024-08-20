@@ -4,6 +4,7 @@ state.json
 test-downloads
 config.json
 .vscode/schemas/config.schema.json
+.eslintcache
 
 dist
 .env
