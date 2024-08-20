@@ -11,7 +11,8 @@
 		"test": "jest",
 		"check-formatting": "prettier --check .",
 		"format": "prettier --write .",
-		"postinstall": "patch-package"
+		"postinstall": "patch-package",
+		"prepare": "husky"
 	},
 	"dependencies": {
 		"@ctrl/video-filename-parser": "^5.2.1",

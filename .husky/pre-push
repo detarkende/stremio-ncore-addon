@@ -1,0 +1,6 @@
+#!/bin/sh
+
+npm run check-formatting
+npm run lint
+npm run test
+npm run build
