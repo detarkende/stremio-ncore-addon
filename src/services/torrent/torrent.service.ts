@@ -1,9 +1,10 @@
 import parseTorrent from 'parse-torrent';
 import type { ParsedShow } from '@ctrl/video-filename-parser';
-import { filenameParse, parseResolution, Resolution } from '@ctrl/video-filename-parser';
+import { filenameParse, parseResolution } from '@ctrl/video-filename-parser';
 import contentDisposition from 'content-disposition';
-import type { NcoreTorrent } from '../ncore';
+import type { TorrentDetails } from '../torrent-source';
 import type { ParsedTorrentDetails } from './types';
+import type { Resolution } from '@/schemas/resolution.schema';
 import { config } from '@/config';
 import type { StreamQuery } from '@/schemas/stream.schema';
 import { writeFileWithCreateDir } from '@/utils/files';
@@ -64,14 +65,8 @@ export class TorrentService {
 		return searchedEpisode ? parsedFileNames.indexOf(searchedEpisode) : -1;
 	}
 
-	public getResolution(torrent: NcoreTorrent, fileName: string): Resolution {
+	public getResolution(torrent: TorrentDetails, fileName: string): Resolution {
 		const resolution = parseResolution(fileName).resolution;
-		if (resolution) {
-			return resolution;
-		}
-		if (['xvid', 'xvid_hun', 'xvidser', 'xvidser_hun'].includes(torrent.category)) {
-			return Resolution.R480P;
-		}
-		return Resolution.R720P;
+		return resolution ?? torrent.fallbackResolution;
 	}
 }

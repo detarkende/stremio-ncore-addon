@@ -8,4 +8,4 @@ export const resolutionSchema = z.nativeEnum(ResolutionEnum, {
 	).join(', ')}`,
 });
 
-export type Resolution = z.infer<typeof resolutionSchema>;
+export { ResolutionEnum as Resolution };

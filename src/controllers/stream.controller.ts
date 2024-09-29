@@ -2,7 +2,6 @@ import type { Context } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import mime from 'mime';
 import { streamQuerySchema } from '@/schemas/stream.schema';
-import type { NcoreService } from '@/services/ncore';
 import type { TorrentService } from '@/services/torrent';
 import type { StreamService } from '@/services/stream';
 import type { UserService } from '@/services/user';
@@ -13,10 +12,11 @@ import { isSupportedMedia } from '@/utils/media-file-extensions';
 import { playSchema } from '@/schemas/play.schema';
 import { parseRangeHeader } from '@/utils/parse-range-header';
 import { HttpStatusCode } from '@/types/http';
+import type { TorrentSource } from '@/services/torrent-source';
 
 export class StreamController {
 	constructor(
-		private ncoreService: NcoreService,
+		private torrentSource: TorrentSource,
 		private torrentService: TorrentService,
 		private streamService: StreamService,
 		private userService: UserService,
@@ -38,7 +38,7 @@ export class StreamController {
 			throw new HTTPException(HttpStatusCode.UNAUTHORIZED, { message: 'Unauthorized' });
 		}
 
-		const torrents = await this.ncoreService.getTorrentsForImdbId({
+		const torrents = await this.torrentSource.getTorrentsForImdbId({
 			imdbId,
 			type,
 		});
@@ -91,7 +91,7 @@ export class StreamController {
 		let torrent = await this.torrentStoreService.getTorrent(infoHash);
 
 		if (!torrent) {
-			const torrentUrl = await this.ncoreService.getTorrentUrlByNcoreId(ncoreId);
+			const torrentUrl = await this.torrentSource.getTorrentUrlBySourceId(ncoreId);
 			const torrentFilePath = await this.torrentService.downloadTorrentFile(torrentUrl);
 			torrent = await this.torrentStoreService.addTorrent(torrentFilePath);
 		}

@@ -35,6 +35,16 @@ export const BATCH_DELAY = 200;
 
 export type TorrentCategory = MovieCategory | SeriesCategory;
 
+export const HUNGARIAN_CATEGORIES: TorrentCategory[] = [
+	MovieCategory.SD_HUN,
+	MovieCategory.DVD_HUN,
+	MovieCategory.DVD9_HUN,
+	MovieCategory.HD_HUN,
+	SeriesCategory.SD_HUN,
+	SeriesCategory.DVD_HUN,
+	SeriesCategory.HD_HUN,
+];
+
 export const defaultNcoreQueryParams: Omit<NcoreQueryParams, 'mire' | 'kivalasztott_tipus'> = {
 	jsons: 'true',
 	miben: 'name',

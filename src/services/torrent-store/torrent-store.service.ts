@@ -5,13 +5,13 @@ import { globSync } from 'glob';
 import type { TorrentStoreStats } from './types';
 import { config } from '@/config';
 import { formatBytes } from '@/utils/bytes';
-import type { NcoreService } from '@/services/ncore';
+import type { TorrentSource } from '@/services/torrent-source';
 
 type TorrentFilePath = string;
 type InfoHash = string;
 
 export class TorrentStoreService {
-	constructor(private ncoreService: NcoreService) {}
+	constructor(private torrentSource: TorrentSource) {}
 
 	private torrentFilePaths = new Map<InfoHash, TorrentFilePath>();
 	private client = new WebTorrent({
@@ -104,7 +104,7 @@ export class TorrentStoreService {
 
 	public async deleteUnnecessaryTorrents() {
 		console.log('Gathering unnecessary torrents...');
-		const deletableInfoHashes = await this.ncoreService.findDeletableInfoHashes();
+		const deletableInfoHashes = await this.torrentSource.getRemovableInfoHashes();
 		console.log(`Found ${deletableInfoHashes.length} deletable torrents.`);
 		deletableInfoHashes.forEach(async (infoHash) => {
 			const torrent = await this.getTorrent(infoHash);

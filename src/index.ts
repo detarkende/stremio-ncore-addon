@@ -9,7 +9,6 @@ import { config } from '@/config';
 import { UserService } from '@/services/user';
 import { ManifestService } from '@/services/manifest';
 import { TorrentStoreService } from '@/services/torrent-store';
-import { NcoreService } from '@/services/ncore';
 import { TorrentService } from '@/services/torrent';
 import { StreamService } from '@/services/stream';
 
@@ -19,6 +18,7 @@ import { StreamController } from '@/controllers/stream.controller';
 import { TorrentController } from '@/controllers/torrent.controller';
 
 import { UserMiddleware } from '@/middlewares/user.middleware';
+import { NcoreService } from '@/services/torrent-source/ncore';
 
 try {
 	const userService = new UserService();

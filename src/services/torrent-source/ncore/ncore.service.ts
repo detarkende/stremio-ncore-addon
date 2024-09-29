@@ -1,23 +1,21 @@
 import cookieParser from 'set-cookie-parser';
 import { JSDOM } from 'jsdom';
-import type { NcorePageResponseJson, NcoreTorrent } from './types';
-import type { TorrentCategory } from './constants';
+import type { TorrentSource } from '../types';
+import type { NcorePageResponseJson } from './types';
 import {
 	BATCH_DELAY,
 	BATCH_SIZE,
 	MOVIE_CATEGORY_FILTERS,
-	MovieCategory,
-	NcoreResolution,
 	SERIES_CATEGORY_FILTERS,
-	SeriesCategory,
 } from './constants';
+import { NcoreTorrentDetails } from './ncore-torrent-details';
 import { config } from '@/config';
-import type { TorrentService, ParsedTorrentDetails } from '@/services/torrent';
+import type { TorrentService } from '@/services/torrent';
 import type { StreamQuery } from '@/schemas/stream.schema';
 import { StreamType } from '@/schemas/stream.schema';
 import { processInBatches } from '@/utils/process-in-batches';
 
-export class NcoreService {
+export class NcoreService implements TorrentSource {
 	constructor(private torrentService: TorrentService) {}
 	private cookiesCache = {
 		pass: null as string | null,
@@ -76,7 +74,7 @@ export class NcoreService {
 	public async getTorrentsForImdbId({
 		imdbId,
 		type,
-	}: Pick<StreamQuery, 'imdbId' | 'type'>): Promise<(NcoreTorrent & ParsedTorrentDetails)[]> {
+	}: Pick<StreamQuery, 'imdbId' | 'type'>): Promise<NcoreTorrentDetails[]> {
 		const baseParams: Record<string, string> = {
 			mire: imdbId,
 			miben: 'imdb',
@@ -109,42 +107,13 @@ export class NcoreService {
 				const parsedData = await this.torrentService.downloadAndParseTorrent(
 					torrent.download_url,
 				);
-				return {
-					...torrent,
-					...parsedData,
-				};
+				return new NcoreTorrentDetails(torrent, parsedData);
 			},
 		);
 		return torrentsWithParsedData;
 	}
 
-	public getNcoreResolutionByCategory = (category: TorrentCategory): NcoreResolution => {
-		switch (category) {
-			case MovieCategory.SD_HUN:
-			case MovieCategory.SD:
-				return NcoreResolution.SD;
-			case MovieCategory.DVD_HUN:
-			case MovieCategory.DVD:
-				return NcoreResolution.DVD;
-			case MovieCategory.DVD9_HUN:
-			case MovieCategory.DVD9:
-				return NcoreResolution.DVD9;
-			case MovieCategory.HD_HUN:
-			case MovieCategory.HD:
-				return NcoreResolution.HD;
-			case SeriesCategory.SD_HUN:
-			case SeriesCategory.SD:
-				return NcoreResolution.SD;
-			case SeriesCategory.DVD_HUN:
-			case SeriesCategory.DVD:
-				return NcoreResolution.DVD;
-			case SeriesCategory.HD_HUN:
-			case SeriesCategory.HD:
-				return NcoreResolution.HD;
-		}
-	};
-
-	public async getTorrentUrlByNcoreId(ncoreId: string) {
+	public async getTorrentUrlBySourceId(ncoreId: string) {
 		const cookies = await this.getCookies(config.NCORE_USERNAME, config.NCORE_PASSWORD);
 		const response = await fetch(
 			`${config.NCORE_URL}/torrents.php?action=details&id=${ncoreId}`,
@@ -164,7 +133,7 @@ export class NcoreService {
 		return downloadLink;
 	}
 
-	public async findDeletableInfoHashes(): Promise<string[]> {
+	public async getRemovableInfoHashes(): Promise<string[]> {
 		const cookie = await this.getCookies(config.NCORE_USERNAME, config.NCORE_PASSWORD);
 		const request = await fetch(`${config.NCORE_URL}/hitnrun.php?showall=true`, {
 			headers: { cookie },
@@ -181,7 +150,7 @@ export class NcoreService {
 			const detailsUrl = row.querySelector('.hnr_tname a')?.getAttribute('href') ?? '';
 			const searchParams = new URLSearchParams(detailsUrl.split('?')[1] ?? '');
 			const ncoreId = searchParams.get('id') ?? '';
-			const downloadUrl = await this.getTorrentUrlByNcoreId(ncoreId);
+			const downloadUrl = await this.getTorrentUrlBySourceId(ncoreId);
 			const { infoHash } = await this.torrentService.downloadAndParseTorrent(downloadUrl);
 			return infoHash;
 		});

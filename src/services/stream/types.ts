@@ -1,9 +1,7 @@
-import type { Resolution } from '@ctrl/video-filename-parser';
-import type { NcoreTorrent } from '../ncore';
-import type { ParsedTorrentDetails } from '../torrent';
+import type { TorrentDetails } from '../torrent-source';
+import type { Resolution } from '@/schemas/resolution.schema';
 
-export type FullTorrent = NcoreTorrent &
-	ParsedTorrentDetails & {
-		fileIndex: number;
-		resolution: Resolution;
-	};
+export type FullTorrent = TorrentDetails & {
+	fileIndex: number;
+	resolution: Resolution;
+};

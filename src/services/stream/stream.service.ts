@@ -1,15 +1,14 @@
 import type { Stream } from 'stremio-addon-sdk';
 import type { FullTorrent } from './types';
-import { HUNGARIAN_CATEGORIES, languageEmojiMap } from './constants';
+import { languageEmojiMap } from './constants';
 import { config } from '@/config';
-import type { NcoreService, TorrentCategory } from '@/services/ncore';
-import { Language } from '@/schemas/language.schema';
+import type { TorrentSource } from '@/services/torrent-source';
 import type { User } from '@/schemas/user.schema';
 import { rateList } from '@/utils/rate-list';
 import { formatBytes } from '@/utils/bytes';
 
 export class StreamService {
-	constructor(private ncoreService: NcoreService) {}
+	constructor(private torrentSource: TorrentSource) {}
 
 	public convertTorrentToStream({
 		torrent,
@@ -20,7 +19,7 @@ export class StreamService {
 		isRecommended: boolean;
 		jwt: string;
 	}): Stream {
-		const torrentId = encodeURIComponent(torrent.torrent_id);
+		const torrentId = encodeURIComponent(torrent.sourceId);
 		const infoHash = encodeURIComponent(torrent.infoHash);
 		const fileIndex = encodeURIComponent(torrent.fileIndex);
 
@@ -35,21 +34,13 @@ export class StreamService {
 	}
 
 	private getStreamDescription(torrent: FullTorrent, isRecommended: boolean): string {
-		const language = HUNGARIAN_CATEGORIES.includes(torrent.category)
-			? Language.HU
-			: Language.EN;
-		const languageEmoji = languageEmojiMap[language];
-		const ncoreResolution = this.ncoreService.getNcoreResolutionByCategory(torrent.category);
+		const languageEmoji = languageEmojiMap[torrent.getLanguage()];
 		const fileSize = torrent.files[torrent.fileIndex]?.length;
 		const fileSizeString = fileSize ? formatBytes(fileSize) : '';
 
 		const recommendedLine = isRecommended ? '⭐️ Recommended\n' : '';
-		const typeLine = `${languageEmoji} | ${ncoreResolution.toUpperCase()}(${torrent.resolution}) | ${fileSizeString}\n`;
-		return recommendedLine + typeLine + torrent.release_name;
-	}
-
-	private getLanguageByCategory(category: TorrentCategory): Language {
-		return HUNGARIAN_CATEGORIES.includes(category) ? Language.HU : Language.EN;
+		const typeLine = `${languageEmoji} | ${torrent.displayResolution(torrent.resolution)} | ${fileSizeString}\n`;
+		return recommendedLine + typeLine + torrent.getName();
 	}
 
 	public orderTorrents({
@@ -61,7 +52,7 @@ export class StreamService {
 	}): FullTorrent[] {
 		const { preferred_lang: preferredLang, preferred_resolutions: preferredResolutions } = user;
 		return rateList(torrents, [
-			({ category }) => (preferredLang === this.getLanguageByCategory(category) ? 3 : 0),
+			(torrent) => (preferredLang === torrent.getLanguage() ? 3 : 0),
 			({ resolution }) => (preferredResolutions.includes(resolution) ? 2 : 0),
 		]);
 	}
