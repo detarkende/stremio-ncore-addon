@@ -1,10 +1,5 @@
 export type { NcoreTorrent } from './types';
-export {
-	getTorrentsForImdbId,
-	getNcoreResolutionByCategory,
-	getTorrentUrlByNcoreId,
-	findDeletableInfoHashes,
-} from './ncore.service';
+export { NcoreService } from './ncore.service';
 export {
 	MovieCategory,
 	SeriesCategory,

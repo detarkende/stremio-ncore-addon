@@ -3,21 +3,23 @@ import { rm } from 'fs/promises';
 import WebTorrent from 'webtorrent';
 import { globSync } from 'glob';
 import type { TorrentStoreStats } from './types';
-import { config } from '@/services/config';
+import { config } from '@/config';
 import { formatBytes } from '@/utils/bytes';
-import * as NcoreService from '@/services/ncore';
+import type { NcoreService } from '@/services/ncore';
 
 type TorrentFilePath = string;
 type InfoHash = string;
 
 export class TorrentStoreService {
-	private static torrentFilePaths = new Map<InfoHash, TorrentFilePath>();
-	private static client = new WebTorrent({
+	constructor(private ncoreService: NcoreService) {}
+
+	private torrentFilePaths = new Map<InfoHash, TorrentFilePath>();
+	private client = new WebTorrent({
 		dht: false,
 		webSeeds: false,
 	});
 
-	public static addTorrent(torrentFilePath: string): Promise<WebTorrent.Torrent> {
+	public addTorrent(torrentFilePath: string): Promise<WebTorrent.Torrent> {
 		return new Promise<WebTorrent.Torrent>((resolve, reject) => {
 			const torrent = this.client.add(
 				torrentFilePath,
@@ -37,11 +39,11 @@ export class TorrentStoreService {
 		});
 	}
 
-	public static async getTorrent(infoHash: InfoHash) {
+	public async getTorrent(infoHash: InfoHash) {
 		return await this.client.get(infoHash);
 	}
 
-	private static getTorrentDownloadPath(torrent: WebTorrent.Torrent) {
+	private getTorrentDownloadPath(torrent: WebTorrent.Torrent) {
 		const pathWithInfoHash = `${config.DOWNLOADS_DIR}/${
 			torrent.name
 		} - ${torrent.infoHash.slice(0, 8)}`;
@@ -53,7 +55,7 @@ export class TorrentStoreService {
 		return undefined;
 	}
 
-	public static async deleteTorrent(infoHash: InfoHash) {
+	public async deleteTorrent(infoHash: InfoHash) {
 		const torrentFilePath = this.torrentFilePaths.get(infoHash);
 		const torrent = await this.getTorrent(infoHash);
 		if (!torrent || !torrentFilePath) {
@@ -69,7 +71,7 @@ export class TorrentStoreService {
 		console.log(`Successfully deleted torrent file for ${torrent.name} - ${torrent.infoHash}.`);
 	}
 
-	public static getStoreStats(): TorrentStoreStats[] {
+	public getStoreStats(): TorrentStoreStats[] {
 		return this.client.torrents
 			.map((torrent) => {
 				if (!torrent.infoHash) return null;
@@ -88,7 +90,7 @@ export class TorrentStoreService {
 			.filter((item): item is TorrentStoreStats => !!item);
 	}
 
-	public static async loadExistingTorrents(): Promise<void> {
+	public async loadExistingTorrents(): Promise<void> {
 		console.log('Looking for torrent files...');
 		const savedTorrentFilePaths = globSync(`${config.TORRENTS_DIR}/*.torrent`);
 		console.log(`Found ${savedTorrentFilePaths.length} torrent files.`);
@@ -100,9 +102,9 @@ export class TorrentStoreService {
 		console.log('Torrent files loaded and verified.');
 	}
 
-	public static async deleteUnnecessaryTorrents() {
+	public async deleteUnnecessaryTorrents() {
 		console.log('Gathering unnecessary torrents...');
-		const deletableInfoHashes = await NcoreService.findDeletableInfoHashes();
+		const deletableInfoHashes = await this.ncoreService.findDeletableInfoHashes();
 		console.log(`Found ${deletableInfoHashes.length} deletable torrents.`);
 		deletableInfoHashes.forEach(async (infoHash) => {
 			const torrent = await this.getTorrent(infoHash);

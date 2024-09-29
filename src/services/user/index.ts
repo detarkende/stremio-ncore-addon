@@ -1,1 +1,1 @@
-export { getUserByJwt, getUserByCredentials, getJwtByUser } from './user.service';
+export { UserService } from './user.service';

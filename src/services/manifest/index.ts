@@ -1,1 +1,1 @@
-export { getBaseManifest, getAuthenticatedManifest } from './manifest.service';
+export { ManifestService } from './manifest.service';
