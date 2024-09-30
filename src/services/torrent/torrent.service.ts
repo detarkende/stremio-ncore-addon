@@ -1,12 +1,7 @@
 import parseTorrent from 'parse-torrent';
-import type { ParsedShow } from '@ctrl/video-filename-parser';
-import { filenameParse, parseResolution } from '@ctrl/video-filename-parser';
 import contentDisposition from 'content-disposition';
-import type { TorrentDetails } from '../torrent-source';
 import type { ParsedTorrentDetails } from './types';
-import type { Resolution } from '@/schemas/resolution.schema';
 import { config } from '@/config';
-import type { StreamQuery } from '@/schemas/stream.schema';
 import { writeFileWithCreateDir } from '@/utils/files';
 
 export class TorrentService {
@@ -42,31 +37,5 @@ export class TorrentService {
 
 		writeFileWithCreateDir(torrentFilePath, Buffer.from(torrentArrayBuffer));
 		return torrentFilePath;
-	}
-
-	public getMediaFileIndex(
-		torrent: ParsedTorrentDetails,
-		{ season, episode }: Pick<StreamQuery, 'season' | 'episode'>,
-	): number {
-		const fileSizes = torrent.files.map((file) => file.length);
-		const biggestFileSize = Math.max(...fileSizes);
-		const biggestFileIndex = fileSizes.indexOf(biggestFileSize);
-
-		if (!season || !episode) {
-			return biggestFileIndex;
-		}
-
-		const parsedFileNames = torrent.files.map(
-			(file) => filenameParse(file.name, true) as ParsedShow,
-		);
-		const searchedEpisode = parsedFileNames.find((info) => {
-			return info.seasons?.includes(season) && info.episodeNumbers?.includes(episode);
-		});
-		return searchedEpisode ? parsedFileNames.indexOf(searchedEpisode) : -1;
-	}
-
-	public getResolution(torrent: TorrentDetails, fileName: string): Resolution {
-		const resolution = parseResolution(fileName).resolution;
-		return resolution ?? torrent.fallbackResolution;
 	}
 }

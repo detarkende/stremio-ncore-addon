@@ -19,19 +19,22 @@ import { TorrentController } from '@/controllers/torrent.controller';
 
 import { UserMiddleware } from '@/middlewares/user.middleware';
 import { NcoreService } from '@/services/torrent-source/ncore';
+import { TorrentSourceManager } from '@/services/torrent-source';
 
 try {
 	const userService = new UserService();
 	const manifestService = new ManifestService();
 	const torrentService = new TorrentService();
 	const ncoreService = new NcoreService(torrentService);
-	const torrentStoreService = new TorrentStoreService(ncoreService);
-	const streamService = new StreamService(ncoreService);
+	const torrentSource = new TorrentSourceManager([ncoreService]);
+
+	const torrentStoreService = new TorrentStoreService(torrentSource);
+	const streamService = new StreamService();
 
 	const manifestController = new ManifestController(manifestService, userService);
 	const loginController = new LoginController(userService);
 	const streamController = new StreamController(
-		ncoreService,
+		torrentSource,
 		torrentService,
 		streamService,
 		userService,

@@ -1,11 +1,18 @@
-import type { ParsedTorrentDetails, TorrentDetails, TorrentFileDetails } from '../types';
+import { TorrentDetails, type ParsedTorrentDetails, type TorrentFileDetails } from '../types';
 import type { NcoreTorrent } from './types';
 import type { TorrentCategory } from './constants';
-import { HUNGARIAN_CATEGORIES, MovieCategory, NcoreResolution, SeriesCategory } from './constants';
+import {
+	HUNGARIAN_CATEGORIES,
+	MovieCategory,
+	NcoreResolution,
+	ncoreResolutionLabels,
+	SeriesCategory,
+} from './constants';
 import { Resolution } from '@/schemas/resolution.schema';
 import { Language } from '@/schemas/language.schema';
 
-export class NcoreTorrentDetails implements TorrentDetails {
+export class NcoreTorrentDetails extends TorrentDetails {
+	public sourceName: string;
 	public sourceId: string;
 	public infoHash: string;
 	public fallbackResolution: Resolution;
@@ -15,6 +22,8 @@ export class NcoreTorrentDetails implements TorrentDetails {
 	private release_name: string;
 
 	constructor(ncoreTorrent: NcoreTorrent, parsedDetails: ParsedTorrentDetails) {
+		super();
+		this.sourceName = 'ncore';
 		this.sourceId = ncoreTorrent.torrent_id;
 		this.infoHash = parsedDetails.infoHash;
 		this.files = parsedDetails.files;
@@ -28,7 +37,7 @@ export class NcoreTorrentDetails implements TorrentDetails {
 	}
 
 	public displayResolution(resolution: Resolution): string {
-		return `${this.getNcoreResolutionByCategory(this.category)} (${resolution})`;
+		return `${ncoreResolutionLabels[this.getNcoreResolutionByCategory(this.category)]} (${resolution})`;
 	}
 
 	public getName(): string {

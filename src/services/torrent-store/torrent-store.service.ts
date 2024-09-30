@@ -2,16 +2,16 @@ import { existsSync, lstatSync } from 'fs';
 import { rm } from 'fs/promises';
 import WebTorrent from 'webtorrent';
 import { globSync } from 'glob';
+import type { ITorrentSourceManager } from '../torrent-source';
 import type { TorrentStoreStats } from './types';
 import { config } from '@/config';
 import { formatBytes } from '@/utils/bytes';
-import type { TorrentSource } from '@/services/torrent-source';
 
 type TorrentFilePath = string;
 type InfoHash = string;
 
 export class TorrentStoreService {
-	constructor(private torrentSource: TorrentSource) {}
+	constructor(private torrentSource: ITorrentSourceManager) {}
 
 	private torrentFilePaths = new Map<InfoHash, TorrentFilePath>();
 	private client = new WebTorrent({

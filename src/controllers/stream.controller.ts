@@ -6,17 +6,16 @@ import type { TorrentService } from '@/services/torrent';
 import type { StreamService } from '@/services/stream';
 import type { UserService } from '@/services/user';
 import type { TorrentStoreService } from '@/services/torrent-store';
-import type { FullTorrent } from '@/services/stream/types';
 import type { User } from '@/schemas/user.schema';
 import { isSupportedMedia } from '@/utils/media-file-extensions';
 import { playSchema } from '@/schemas/play.schema';
 import { parseRangeHeader } from '@/utils/parse-range-header';
 import { HttpStatusCode } from '@/types/http';
-import type { TorrentSource } from '@/services/torrent-source';
+import type { ITorrentSourceManager, TorrentDetails } from '@/services/torrent-source/types';
 
 export class StreamController {
 	constructor(
-		private torrentSource: TorrentSource,
+		private torrentSource: ITorrentSourceManager,
 		private torrentService: TorrentService,
 		private streamService: StreamService,
 		private userService: UserService,
@@ -43,29 +42,17 @@ export class StreamController {
 			type,
 		});
 
-		const torrentsWithMetadata: FullTorrent[] = torrents
-			.map((torrent) => {
-				const fileIndex = this.torrentService.getMediaFileIndex(torrent, {
-					season,
-					episode,
-				});
-				const resolution = this.torrentService.getResolution(
-					torrent,
-					torrent.files[fileIndex]?.name ?? '',
-				);
-				return {
-					...torrent,
-					fileIndex,
-					resolution,
-				};
-			})
-			.filter((torrent) => {
-				const file = torrent.files[torrent.fileIndex];
-				return file !== undefined && isSupportedMedia(file.path);
-			});
+		const torrentsWithMetadata: TorrentDetails[] = torrents.filter((torrent) => {
+			const file = torrent.files[torrent.getMediaFileIndex({ season, episode })];
+			return file !== undefined && isSupportedMedia(file.path);
+		});
+
+		// TODO: remove the type FullTorrent, since the fileIndex and resolution can now be calculated from the TorrentDetails directly. We were spreading TorrentDetails to create FullTorrent, but I think the methods got lost that way or something.
 
 		const orderedTorrents = this.streamService.orderTorrents({
 			torrents: torrentsWithMetadata,
+			season,
+			episode,
 			user,
 		});
 
@@ -74,6 +61,8 @@ export class StreamController {
 				torrent,
 				isRecommended: i === 0,
 				jwt,
+				season,
+				episode,
 			}),
 		);
 
@@ -86,12 +75,18 @@ export class StreamController {
 		if (!result.success) {
 			throw new HTTPException(HttpStatusCode.BAD_REQUEST, { message: result.error.message });
 		}
-		const { ncoreId, infoHash, fileIdx } = result.data;
+		const { sourceName, sourceId, infoHash, fileIdx } = result.data;
 
 		let torrent = await this.torrentStoreService.getTorrent(infoHash);
 
 		if (!torrent) {
-			const torrentUrl = await this.torrentSource.getTorrentUrlBySourceId(ncoreId);
+			const torrentUrl = await this.torrentSource.getTorrentUrlBySourceId({
+				sourceId,
+				sourceName,
+			});
+			if (!torrentUrl) {
+				throw new HTTPException(HttpStatusCode.NOT_FOUND, { message: 'Torrent not found' });
+			}
 			const torrentFilePath = await this.torrentService.downloadTorrentFile(torrentUrl);
 			torrent = await this.torrentStoreService.addTorrent(torrentFilePath);
 		}

@@ -52,3 +52,10 @@ export const defaultNcoreQueryParams: Omit<NcoreQueryParams, 'mire' | 'kivalaszt
 	hogyan: 'DESC',
 	tipus: 'kivalasztottak_kozott',
 };
+
+export const ncoreResolutionLabels: Record<NcoreResolution, string> = {
+	[NcoreResolution.SD]: 'SD',
+	[NcoreResolution.DVD]: 'DVD',
+	[NcoreResolution.DVD9]: 'DVD9',
+	[NcoreResolution.HD]: 'HD',
+};

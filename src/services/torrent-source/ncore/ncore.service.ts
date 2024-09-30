@@ -16,6 +16,8 @@ import { StreamType } from '@/schemas/stream.schema';
 import { processInBatches } from '@/utils/process-in-batches';
 
 export class NcoreService implements TorrentSource {
+	public torrentSourceName = 'ncore';
+
 	constructor(private torrentService: TorrentService) {}
 	private cookiesCache = {
 		pass: null as string | null,

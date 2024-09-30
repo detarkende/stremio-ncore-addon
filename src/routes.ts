@@ -32,8 +32,10 @@ export const applyRoutes = ({
 		streamController.getStreamsForMedia(c),
 	);
 
-	app.get('/auth/:jwt/stream/play/:ncoreId/:infoHash/:fileIdx', user.isAuthenticated(), (c) =>
-		streamController.play(c),
+	app.get(
+		'/auth/:jwt/stream/play/:sourceName/:sourceId/:infoHash/:fileIdx',
+		user.isAuthenticated(),
+		(c) => streamController.play(c),
 	);
 
 	app.get('/auth/:jwt/torrents', user.isAdmin(), (c) => torrentController.getTorrentStats(c));
