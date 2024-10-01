@@ -8,8 +8,8 @@
 		"jsx": "react-jsx",
 		"jsxImportSource": "hono/jsx",
 		"allowJs": true,
-		"outDir": "dist",
-		"rootDir": "src",
+		"outDir": "../dist/server",
+		"rootDir": "./",
 		"strict": true,
 		"forceConsistentCasingInFileNames": true,
 		"noImplicitAny": true,
@@ -18,16 +18,15 @@
 		"skipLibCheck": true,
 		"resolveJsonModule": true,
 		"isolatedModules": true,
-		"baseUrl": ".",
+		"baseUrl": "./",
 		"paths": {
-			"@/*": ["src/*"],
-			"*": ["node_modules/*", "src/types/*"]
+			"@/*": ["./*"]
 		},
 		"lib": ["ESNext"]
 	},
 	"tsc-alias": {
 		"resolveFullPaths": true
 	},
-	"include": ["src/**/*.ts", "src/**/*.tsx"],
-	"exclude": ["node_modules", "**/*.test.ts"]
+	"include": ["./**/*.ts"],
+	"exclude": ["node_modules", "**/*.test.ts", "dist"]
 }
