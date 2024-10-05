@@ -71,12 +71,12 @@ If you do not own an Android TV / Chromecast / Firestick / Android phone or simi
 
 ## Features
 
--   Self-hostable. The downloading machine can be anywhere and you can stream remotely.
--   Seeds torrents after download.
--   Saves torrent files and downloads to disk. If you come back the next day, the files will already be downloaded, so you won't have to wait too long.
--   Configurable to delete torrents when you no longer have to seed them. (Hit'n'run checker)
--   Multiple users without having to tell your nCore password to anyone.
--   Recommendations and torrent ordering based on user preferences (Language + Resolution).
+- Self-hostable. The downloading machine can be anywhere and you can stream remotely.
+- Seeds torrents after download.
+- Saves torrent files and downloads to disk. If you come back the next day, the files will already be downloaded, so you won't have to wait too long.
+- Configurable to delete torrents when you no longer have to seed them. (Hit'n'run checker)
+- Multiple users without having to tell your nCore password to anyone.
+- Recommendations and torrent ordering based on user preferences (Language + Resolution).
 
 ## Setup
 
@@ -113,92 +113,92 @@ Example docker compose:
 ```yml
 ---
 services:
-    stremio-ncore-addon:
-        image: detarkende/stremio-ncore-addon:latest
-        container_name: stremio-ncore-addon
-        environment:
-            - ADDON_URL=https://subdomain.example.com
-            - APP_SECRET=changeme
-            - NCORE_USERNAME=ncore_username
-            - NCORE_PASSWORD=ncore_password
-            - DELETE_AFTER_HITNRUN=true
-            - ADMIN_USERNAME=admin
-            - ADMIN_PASSWORD=changeme
-            - ADMIN_FIRST_PREFERRED_LANGUAGE=Hungarian
-            - ADMIN_SECOND_PREFERRED_LANGUAGE=English
-            - ADMIN_PREFERRED_RESOLUTIONS=720P,1080P
-        volumes:
-            - /path/to/downloads:/downloads
-            - /path/to/torrents:/torrents
-        ports:
-            - 3000:3000
-        restart: unless-stopped
+  stremio-ncore-addon:
+    image: detarkende/stremio-ncore-addon:latest
+    container_name: stremio-ncore-addon
+    environment:
+      - ADDON_URL=https://subdomain.example.com
+      - APP_SECRET=changeme
+      - NCORE_USERNAME=ncore_username
+      - NCORE_PASSWORD=ncore_password
+      - DELETE_AFTER_HITNRUN=true
+      - ADMIN_USERNAME=admin
+      - ADMIN_PASSWORD=changeme
+      - ADMIN_FIRST_PREFERRED_LANGUAGE=Hungarian
+      - ADMIN_SECOND_PREFERRED_LANGUAGE=English
+      - ADMIN_PREFERRED_RESOLUTIONS=720P,1080P
+    volumes:
+      - /path/to/downloads:/downloads
+      - /path/to/torrents:/torrents
+    ports:
+      - 3000:3000
+    restart: unless-stopped
 ```
 
 ### Manual install
 
 1. Clone the repository to the server.
-    ```sh
-    git clone https://github.com/detarkende/stremio-ncore-addon.git && cd stremio-ncore-addon
-    ```
+   ```sh
+   git clone https://github.com/detarkende/stremio-ncore-addon.git && cd stremio-ncore-addon
+   ```
 1. Install the dependencies
-    ```sh
-    npm install
-    ```
+   ```sh
+   npm install
+   ```
 1. Create the environment variable file in the base of the project.
-    ```sh
-    touch .env
-    ```
-    **[See environment variable reference](#environment-variable-reference)**
+   ```sh
+   touch .env
+   ```
+   **[See environment variable reference](#environment-variable-reference)**
 1. Run the start command to test if everything is good to go.
-    ```sh
-    npm run start
-    ```
-    If everything looks good, you can stop the program with `Ctrl^` + `C`.
+   ```sh
+   npm run start
+   ```
+   If everything looks good, you can stop the program with `Ctrl^` + `C`.
 1. Setup the program to run in the background.
    (Recommended way: using `pm2`)
 
-    1. Install pm2:
+   1. Install pm2:
 
-        ```sh
-        npm i -g pm2
-        ```
+      ```sh
+      npm i -g pm2
+      ```
 
-    2. Setup pm2 to run on startup.
+   2. Setup pm2 to run on startup.
 
-        ```sh
-        pm2 startup
-        ```
+      ```sh
+      pm2 startup
+      ```
 
-    3. Start the addon with pm2.
-        ```sh
-        pm2 start "npm start"
-        ```
-        After this, you can check the logs from the server with the `pm2 logs` command.
+   3. Start the addon with pm2.
+      ```sh
+      pm2 start "npm start"
+      ```
+      After this, you can check the logs from the server with the `pm2 logs` command.
 
 1. Finally, install the plugin
-    <details>
-    <summary>I don't have an Android TV / Chromecast or similar.</summary>
+   <details>
+   <summary>I don't have an Android TV / Chromecast or similar.</summary>
 
-    1. Make sure that the config URL can be reached with HTTPS: `https://<ADDON-URL>/configure`. (Example: https://stremio-addon.example.com/configure)
-    2. Open [Stremio on the web](https://web.strem.io/#/intro?form=login), and log in.
-    3. Go to the configuration URL, log in to the addon with one of the users, then click on "Configure on the web".
-    4. Click on "Install".
-    5. Now you can log in on any device and the plugin will work. (Note: you might have to sync your addons first on some Smart TVs.)
-     </details>
+   1. Make sure that the config URL can be reached with HTTPS: `https://<ADDON-URL>/configure`. (Example: https://stremio-addon.example.com/configure)
+   2. Open [Stremio on the web](https://web.strem.io/#/intro?form=login), and log in.
+   3. Go to the configuration URL, log in to the addon with one of the users, then click on "Configure on the web".
+   4. Click on "Install".
+   5. Now you can log in on any device and the plugin will work. (Note: you might have to sync your addons first on some Smart TVs.)
+   </details>
 
-    <details>
-    <summary>I have an Android TV / Chromecast or similar.</summary>
+   <details>
+   <summary>I have an Android TV / Chromecast or similar.</summary>
 
-    6. Open the app and log in.
-    7. Go to addons.
-    8. Click on the "Add addon" button.
-    9. Type in your server's address. If you have this set up to a certain URL, type that. Otherwise, just replace the parts in this: `http://<SERVER_IP_ADDRESS>:<PORT>/manifest.json`. (Example: https://192.168.0.110:3000/manifest.json)
-    10. Click "Configure" and wait for the configuration window to open.
-    11. Log in with one of the users you saved in your config file.
-    12. Click on "Configure".
-    13. You should be redirected to the Stremio Addons screen. Click "Install" to finish the installation.
-    </details>
+   6. Open the app and log in.
+   7. Go to addons.
+   8. Click on the "Add addon" button.
+   9. Type in your server's address. If you have this set up to a certain URL, type that. Otherwise, just replace the parts in this: `http://<SERVER_IP_ADDRESS>:<PORT>/manifest.json`. (Example: https://192.168.0.110:3000/manifest.json)
+   10. Click "Configure" and wait for the configuration window to open.
+   11. Log in with one of the users you saved in your config file.
+   12. Click on "Configure".
+   13. You should be redirected to the Stremio Addons screen. Click "Install" to finish the installation.
+   </details>
 
 ## Environment variable reference
 

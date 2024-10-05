@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "target": "ES2022",
+
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "esModuleInterop": true,
+
+    "outDir": "dist/server",
+    "lib": ["ES2022"],
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/server/*"]
+    }
+  },
+  "tsc-alias": {
+    "resolveFullPaths": true
+  },
+  "include": ["src/server", "src/shared"],
+  "exclude": ["**/*.test.*"]
+}

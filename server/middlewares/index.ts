@@ -1,1 +1,0 @@
-export { applyMiddlewares } from './global';
