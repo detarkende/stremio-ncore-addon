@@ -58,6 +58,7 @@ if (config.DELETE_AFTER_HITNRUN_CRON) {
 }
 
 const baseApp = new Hono();
+baseApp.use(cors());
 
 if (process.env.NODE_ENV === 'production') {
   const clientPath = resolve(import.meta.dirname, '../client');
@@ -79,37 +80,29 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-const app = baseApp.basePath('/api');
+const app = baseApp
+  .basePath('/api')
+  .post('/login', zValidator('json', loginSchema), (c) => loginController.handleLogin(c));
 
-app.use(cors());
+app
+  .get('/manifest.json', (c) => manifestController.getBaseManifest(c))
+  .get('/auth/:jwt/manifest.json', userMiddleware.isAuthenticated(), (c) =>
+    manifestController.getAuthenticatedManifest(c),
+  )
+  .get('/auth/:jwt/stream/:type/:imdbId', userMiddleware.isAuthenticated(), (c) =>
+    streamController.getStreamsForMedia(c),
+  )
+  .get(
+    '/auth/:jwt/stream/play/:sourceName/:sourceId/:infoHash/:fileIdx',
+    userMiddleware.isAuthenticated(),
+    (c) => streamController.play(c),
+  )
+  .get('/auth/:jwt/torrents', userMiddleware.isAdmin(), (c) => torrentController.getTorrentStats(c))
+  .delete('/auth/:jwt/torrents/:infoHash', userMiddleware.isAdmin(), (c) =>
+    torrentController.deleteTorrent(c),
+  );
+
 app.use(logger());
-
-app.get('/manifest.json', (c) => manifestController.getBaseManifest(c));
-app.get('/auth/:jwt/manifest.json', userMiddleware.isAuthenticated(), (c) =>
-  manifestController.getAuthenticatedManifest(c),
-);
-
-const loginRoute = new Hono().post('/login', zValidator('json', loginSchema), (c) =>
-  loginController.handleLogin(c),
-);
-
-app.route('/', loginRoute);
-
-app.get('/auth/:jwt/stream/:type/:imdbId', userMiddleware.isAuthenticated(), (c) =>
-  streamController.getStreamsForMedia(c),
-);
-app.get(
-  '/auth/:jwt/stream/play/:sourceName/:sourceId/:infoHash/:fileIdx',
-  userMiddleware.isAuthenticated(),
-  (c) => streamController.play(c),
-);
-
-app.get('/auth/:jwt/torrents', userMiddleware.isAdmin(), (c) =>
-  torrentController.getTorrentStats(c),
-);
-app.delete('/auth/:jwt/torrents/:infoHash', userMiddleware.isAdmin(), (c) =>
-  torrentController.deleteTorrent(c),
-);
 
 serve({
   fetch: baseApp.fetch,
@@ -118,4 +111,4 @@ serve({
 
 console.log(`Server started on port ${config.PORT}!`);
 
-export type LoginRoute = typeof loginRoute;
+export type ApiRoutes = typeof app;
