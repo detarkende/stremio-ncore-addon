@@ -9,17 +9,19 @@
     "isolatedModules": true,
     "moduleDetection": "force",
     "esModuleInterop": true,
+    "composite": true,
 
-    "outDir": "dist/server",
+    "outDir": "../dist/server",
     "lib": ["ES2022"],
+    "rootDir": "src",
     "baseUrl": "./",
     "paths": {
-      "@/*": ["./src/server/*"]
+      "@/*": ["./src/*"]
     }
   },
   "tsc-alias": {
     "resolveFullPaths": true
   },
-  "include": ["src/server", "src/shared"],
+  "include": ["src/**/*.ts"],
   "exclude": ["**/*.test.*"]
 }

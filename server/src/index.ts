@@ -1,9 +1,5 @@
-import { relative, resolve } from 'path';
-import { existsSync } from 'fs';
-import { readFile } from 'fs/promises';
 import { Hono } from 'hono';
 import { serve } from '@hono/node-server';
-import { serveStatic } from '@hono/node-server/serve-static';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { schedule } from 'node-cron';
@@ -26,6 +22,7 @@ import { NcoreService } from '@/services/torrent-source/ncore';
 import { TorrentSourceManager } from '@/services/torrent-source';
 import { zValidator } from '@hono/zod-validator';
 import { loginSchema } from '@/schemas/login.schema';
+import { applyServeStatic } from './middlewares/serve-static';
 
 const userService = new UserService();
 const manifestService = new ManifestService();
@@ -61,34 +58,16 @@ const baseApp = new Hono();
 baseApp.use(cors());
 
 if (process.env.NODE_ENV === 'production') {
-  const clientPath = resolve(import.meta.dirname, '../client');
-  const relativePath = relative(process.cwd(), clientPath);
-  baseApp.use(async (c, next) => {
-    if (c.req.url.startsWith('/api')) {
-      return next();
-    }
-    let path = new URL(c.req.url).pathname;
-    if (path === '/') {
-      path = '/index.html';
-    }
-    let filePath = resolve(clientPath, path.slice(1));
-    if (existsSync(filePath)) {
-      return serveStatic({ root: relativePath })(c, next);
-    }
-    filePath = resolve(clientPath, 'index.html');
-    return c.html(await readFile(filePath, { encoding: 'utf-8' }));
-  });
+  applyServeStatic(baseApp);
 }
 
 const app = baseApp
-  .basePath('/api')
-  .post('/login', zValidator('json', loginSchema), (c) => loginController.handleLogin(c));
-
-app
   .get('/manifest.json', (c) => manifestController.getBaseManifest(c))
+  .basePath('/api')
   .get('/auth/:jwt/manifest.json', userMiddleware.isAuthenticated(), (c) =>
     manifestController.getAuthenticatedManifest(c),
   )
+  .post('/login', zValidator('json', loginSchema), (c) => loginController.handleLogin(c))
   .get('/auth/:jwt/stream/:type/:imdbId', userMiddleware.isAuthenticated(), (c) =>
     streamController.getStreamsForMedia(c),
   )

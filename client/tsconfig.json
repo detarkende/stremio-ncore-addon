@@ -22,9 +22,14 @@
 
     "baseUrl": "./",
     "paths": {
-      "@/*": ["src/client/*"],
-      "@server/*": ["src/server/*"]
+      "@/*": ["src/*"],
+      "@server/*": ["../server/src/*"]
     }
   },
-  "include": ["src/client"]
+  "include": ["src"],
+  "references": [
+    {
+      "path": "../server/tsconfig.json"
+    }
+  ]
 }

@@ -3,14 +3,11 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "dev": "tsx --env-file ../.env --watch index.ts",
-    "start": "node --env-file ../.env dist/server/index.js",
-    "build": "rm -rf dist/server && tsc && tsc-alias",
+    "dev": "NODE_ENV=development tsx --tsconfig tsconfig.json --env-file ../.env --watch src/index.ts",
+    "start": "node --env-file ../.env ../dist/server/index.js",
+    "build": "rm -rf ../dist/server && tsc && tsc-alias",
     "typecheck": "tsc --noemit",
-    "lint": "eslint -c .eslintrc.cjs .",
-    "test": "jest",
-    "check-formatting": "prettier --check .",
-    "format": "prettier --write ."
+    "test": "jest"
   },
   "dependencies": {
     "@ctrl/video-filename-parser": "^5.2.1",
@@ -27,6 +24,7 @@
     "parse-torrent": "^11.0.17",
     "set-cookie-parser": "^2.6.0",
     "webtorrent": "^2.5.0",
+    "vitest": "^2.1.2",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -42,11 +40,7 @@
     "@types/set-cookie-parser": "^2.4.10",
     "@types/stremio-addon-sdk": "^1.6.11",
     "@types/webtorrent": "^0.109.8",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
     "eslint": "^8.57.0",
-    "eslint-import-resolver-typescript": "^3.6.1",
-    "eslint-plugin-import": "^2.29.1",
     "jest": "^29.7.0",
     "stremio-addon-sdk": "^1.6.10",
     "ts-jest": "^29.2.4",
