@@ -59,8 +59,10 @@ baseApp.use(cors());
 
 if (process.env.NODE_ENV === 'production') {
   applyServeStatic(baseApp);
+  baseApp.use(logger());
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const app = baseApp
   .get('/manifest.json', (c) => manifestController.getBaseManifest(c))
   .basePath('/api')
@@ -80,8 +82,6 @@ const app = baseApp
   .delete('/auth/:jwt/torrents/:infoHash', userMiddleware.isAdmin(), (c) =>
     torrentController.deleteTorrent(c),
   );
-
-app.use(logger());
 
 serve({
   fetch: baseApp.fetch,

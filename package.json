@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "pnpm build:server && pnpm build:client",
+    "build": "rm -rf dist && pnpm build:server && pnpm build:client",
     "build:server": "pnpm --filter server build",
     "build:client": "pnpm --filter client build",
     "dev": "pnpm dev:server & pnpm dev:client",
@@ -16,6 +16,10 @@
     "lint": "eslint .",
     "test": "vitest run"
   },
+  "workspaces": [
+    "client",
+    "server"
+  ],
   "dependencies": {
     "hono": "^4.6.3",
     "zod": "^3.23.8"
@@ -33,6 +37,7 @@
     "vitest": "^2.1.2"
   },
   "pnpm": {
+    "allowNonAppliedPatches": true,
     "patchedDependencies": {
       "@types/parse-torrent": "patches/@types__parse-torrent.patch",
       "@types/stremio-addon-sdk": "patches/@types__stremio-addon-sdk.patch",
