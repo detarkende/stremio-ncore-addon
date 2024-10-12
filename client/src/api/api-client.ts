@@ -1,4 +1,6 @@
 import { hc } from 'hono/client';
 import type { ApiRoutes } from '@server/index';
 
-export const client = hc<ApiRoutes>('/');
+const baseUrl = window.location.origin;
+
+export const api = hc<ApiRoutes>(baseUrl);
