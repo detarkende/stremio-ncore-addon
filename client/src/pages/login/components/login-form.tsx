@@ -22,9 +22,11 @@ import {
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Alert } from '@/components/ui/alert';
 import { useLogin } from '../hooks/use-login';
-import { SuccessMessage } from './success-message';
+import { Redirect } from 'wouter';
+import { useJwtStore } from '@/stores/jwt';
 
 export const LoginForm = () => {
+  const { jwt, setJwt } = useJwtStore();
   const { mutateAsync: login, data, isError, error } = useLogin();
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -36,7 +38,16 @@ export const LoginForm = () => {
     formState: { isSubmitting, isValid, isValidating },
   } = form;
 
-  const handleSubmit = form.handleSubmit(async (data) => await login({ json: data }));
+  const handleSubmit = form.handleSubmit(async (data) => {
+    const response = await login({ json: data });
+    if (response.success) {
+      setJwt(response.jwt);
+    }
+  });
+
+  if (jwt) {
+    return <Redirect to="/account" />;
+  }
 
   return (
     <Form {...form}>
@@ -94,7 +105,6 @@ export const LoginForm = () => {
           {data && !data.success && (
             <Alert variant="error" title="Error" description={data.message} />
           )}
-          {data && data.success && <SuccessMessage jwt={data.jwt} />}
         </div>
       </form>
     </Form>

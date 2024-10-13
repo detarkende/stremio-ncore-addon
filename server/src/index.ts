@@ -22,7 +22,8 @@ import { NcoreService } from '@/services/torrent-source/ncore';
 import { TorrentSourceManager } from '@/services/torrent-source';
 import { zValidator } from '@hono/zod-validator';
 import { loginSchema } from '@/schemas/login.schema';
-import { applyServeStatic } from './middlewares/serve-static';
+import { applyServeStatic } from '@/middlewares/serve-static';
+import { UserController } from '@/controllers/user.controller';
 
 const userService = new UserService();
 const manifestService = new ManifestService();
@@ -35,6 +36,7 @@ const streamService = new StreamService();
 
 const manifestController = new ManifestController(manifestService, userService);
 const loginController = new LoginController(userService);
+const userController = new UserController(userService);
 const streamController = new StreamController(
   torrentSource,
   torrentService,
@@ -69,6 +71,7 @@ const app = baseApp
   .get('/auth/:jwt/manifest.json', userMiddleware.isAuthenticated(), (c) =>
     manifestController.getAuthenticatedManifest(c),
   )
+  .get('/auth/:jwt/me', userMiddleware.isAuthenticated(), (c) => userController.getMe(c))
   .post('/login', zValidator('json', loginSchema), (c) => loginController.handleLogin(c))
   .get('/auth/:jwt/stream/:type/:imdbId', userMiddleware.isAuthenticated(), (c) =>
     streamController.getStreamsForMedia(c),

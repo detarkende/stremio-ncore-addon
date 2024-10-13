@@ -33,7 +33,6 @@ export class StreamService {
     const description = this.getStreamDescription(torrent, isRecommended, { season, episode });
     return {
       url: `${config.ADDON_URL}/api/auth/${jwt}/stream/play/${sourceName}/${sourceId}/${infoHash}/${fileIndex}`,
-      title: description,
       description,
       behaviorHints: {
         notWebReady: true,

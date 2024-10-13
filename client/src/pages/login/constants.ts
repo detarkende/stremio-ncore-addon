@@ -22,5 +22,3 @@ export const defaultValues: DefaultValues<LoginFormValues> = {
   username: '',
   password: '',
 };
-
-export const STREMIO_WEB_URL = 'https://web.stremio.com';

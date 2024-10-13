@@ -1,15 +1,11 @@
 import { api } from '@/api';
-import { Alert } from '@/components/ui/alert';
 import { STREMIO_WEB_URL } from '../constants';
 import { Button } from '@/components/ui/button';
 import { TruncatedText } from '@/components/ui/truncated-text';
 import { CopyToClipboardButton } from '@/components/ui/copy-to-clipboard-button';
+import { ExternalLink } from 'lucide-react';
 
-interface SuccessMessageProps {
-  jwt: string;
-}
-
-export const SuccessMessage = ({ jwt }: SuccessMessageProps) => {
+export const AddToStremio = ({ jwt }: { jwt: string }) => {
   const manifestUrl = api.api.auth[':jwt']['manifest.json'].$url({ param: { jwt } }).toString();
   const stremioUrl = (() => {
     const url = new URL(manifestUrl);
@@ -21,20 +17,20 @@ export const SuccessMessage = ({ jwt }: SuccessMessageProps) => {
 
   return (
     <div className="space-y-8">
-      <Alert
-        variant="success"
-        title="Successful login"
-        description="You have successfully logged in"
-      />
       <div className="flex gap-x-4 gap-y-2 justify-center items-center flex-wrap">
-        <Button asChild size="lg">
+        <Button asChild size="lg" className="bg-green-600 hover:bg-green-700">
           <a href={stremioUrl} target="_blank" rel="noreferrer">
             Add in the Stremio app
           </a>
         </Button>
-        <Button asChild size="lg">
+        <Button
+          asChild
+          size="lg"
+          className="bg-green-600 hover:bg-green-700 flex items-center gap-x-1"
+        >
           <a href={addOnWebUrl} target="_blank" rel="noreferrer">
-            Add on the Web
+            <span>Add on the Web</span>
+            <ExternalLink size={16} />
           </a>
         </Button>
       </div>
