@@ -9,7 +9,7 @@
     "dev": "pnpm dev:server & pnpm dev:client",
     "dev:server": "pnpm --filter server dev",
     "dev:client": "pnpm --filter client dev",
-    "start": "NODE_ENV=production node --env-file .env dist/server/index.js",
+    "start": "NODE_ENV=production node dist/server/index.js",
     "ci": "pnpm check-formatting && pnpm lint && pnpm test",
     "check-formatting": "prettier --check .",
     "format": "prettier --write .",

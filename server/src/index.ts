@@ -50,7 +50,7 @@ const userMiddleware = new UserMiddleware(userService);
 
 console.log('Config is successfully loaded and is valid.');
 
-await torrentStoreService.loadExistingTorrents();
+torrentStoreService.loadExistingTorrents();
 if (config.DELETE_AFTER_HITNRUN_CRON) {
   console.log('Scheduling cron job for deleting torrents after hitnrun...');
   schedule(config.DELETE_AFTER_HITNRUN_CRON, torrentStoreService.deleteUnnecessaryTorrents);

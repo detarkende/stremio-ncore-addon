@@ -31,4 +31,4 @@ ENV TORRENTS_DIR="/torrents"
 ENV DOWNLOADS_DIR="/downloads"
 
 EXPOSE 3000
-CMD ["node", "dist/server/index.js"]
+CMD ["pnpm", "start"]

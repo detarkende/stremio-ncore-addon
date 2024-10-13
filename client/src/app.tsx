@@ -12,7 +12,6 @@ export const App = () => {
     <ThemeProvider defaultTheme="light" storageKey="ui-theme">
       <div className="dark:bg-neutral-950 bg-neutral-100 dark:text-white h-full">
         <Switch>
-          <Route path="/">{jwt ? <Redirect to="/account" /> : <Redirect to="/login" />}</Route>
           <Route path="/login">
             <LoginPage />
           </Route>
@@ -25,6 +24,7 @@ export const App = () => {
           <Route path="/torrents">
             <TorrentsPage />
           </Route>
+          <Route path="*">{jwt ? <Redirect to="/account" /> : <Redirect to="/login" />}</Route>
         </Switch>
       </div>
     </ThemeProvider>
