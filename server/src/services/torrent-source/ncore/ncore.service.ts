@@ -1,7 +1,12 @@
 import cookieParser from 'set-cookie-parser';
 import { JSDOM } from 'jsdom';
 import type { TorrentSource } from '../types';
-import type { NcorePageResponseJson } from './types';
+import {
+  NcoreOrderBy,
+  NcoreSearchBy,
+  type NcorePageResponseJson,
+  type NcoreQueryParams,
+} from './types';
 import {
   BATCH_DELAY,
   BATCH_SIZE,
@@ -14,11 +19,16 @@ import type { TorrentService } from '@/services/torrent';
 import type { StreamQuery } from '@/schemas/stream.schema';
 import { StreamType } from '@/schemas/stream.schema';
 import { processInBatches } from '@/utils/process-in-batches';
+import { CinemeatService } from '@/services/cinemeta';
+import { isSupportedMedia } from '@/utils/media-file-extensions';
 
 export class NcoreService implements TorrentSource {
   public torrentSourceName = 'ncore';
 
-  constructor(private torrentService: TorrentService) {}
+  constructor(
+    private torrentService: TorrentService,
+    private cinemetaService: CinemeatService,
+  ) {}
   private cookiesCache = {
     pass: null as string | null,
     cookieExpirationDate: 0,
@@ -73,18 +83,11 @@ export class NcoreService implements TorrentSource {
     } satisfies NcorePageResponseJson;
   }
 
-  public async getTorrentsForImdbId({
-    imdbId,
-    type,
-  }: Pick<StreamQuery, 'imdbId' | 'type'>): Promise<NcoreTorrentDetails[]> {
-    const baseParams: Record<string, string> = {
-      mire: imdbId,
-      miben: 'imdb',
-      miszerint: 'seeders',
+  private async getTorrentsForQuery(queryParams: NcoreQueryParams): Promise<NcoreTorrentDetails[]> {
+    const baseParams = {
+      ...queryParams,
       tipus: 'kivalasztottak_kozott',
       jsons: 'true',
-      kivalasztott_tipus:
-        type === StreamType.MOVIE ? MOVIE_CATEGORY_FILTERS : SERIES_CATEGORY_FILTERS,
     };
 
     // fetching the first page to get the last page number
@@ -111,6 +114,54 @@ export class NcoreService implements TorrentSource {
       },
     );
     return torrentsWithParsedData;
+  }
+
+  private filterTorrentsBySeasonAndEpisode(
+    torrents: NcoreTorrentDetails[],
+    { season, episode }: { season?: number; episode?: number },
+  ) {
+    return torrents.filter((torrent) => {
+      const file = torrent.files[torrent.getMediaFileIndex({ season, episode })];
+      return file !== undefined && isSupportedMedia(file.path);
+    });
+  }
+
+  public async getTorrentsForImdbId({
+    imdbId,
+    type,
+    season,
+    episode,
+  }: Pick<StreamQuery, 'imdbId' | 'type' | 'season' | 'episode'>): Promise<NcoreTorrentDetails[]> {
+    let torrents = await this.getTorrentsForQuery({
+      mire: imdbId,
+      miben: NcoreSearchBy.IMDB,
+      miszerint: NcoreOrderBy.SEEDERS,
+      kivalasztott_tipus:
+        type === StreamType.MOVIE ? MOVIE_CATEGORY_FILTERS : SERIES_CATEGORY_FILTERS,
+    });
+    torrents = this.filterTorrentsBySeasonAndEpisode(torrents, { season, episode });
+
+    if (torrents.length > 0) {
+      return torrents;
+    }
+    try {
+      const {
+        meta: { name },
+      } = await this.cinemetaService.getMetadataByImdbId(type, imdbId);
+      torrents = await this.getTorrentsForQuery({
+        mire: name,
+        miben: NcoreSearchBy.NAME,
+        miszerint: NcoreOrderBy.SEEDERS,
+        kivalasztott_tipus:
+          type === StreamType.MOVIE ? MOVIE_CATEGORY_FILTERS : SERIES_CATEGORY_FILTERS,
+      });
+      torrents = this.filterTorrentsBySeasonAndEpisode(torrents, { season, episode });
+
+      return torrents;
+    } catch (error) {
+      console.error('Failed to get metadata from Cinemeta', error);
+      return [];
+    }
   }
 
   public async getTorrentUrlBySourceId(ncoreId: string) {

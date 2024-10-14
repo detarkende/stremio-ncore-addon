@@ -74,7 +74,9 @@ export abstract class TorrentDetails implements ParsedTorrentDetails {
 
 export interface TorrentSource {
   torrentSourceName: string;
-  getTorrentsForImdbId: (params: Pick<StreamQuery, 'imdbId' | 'type'>) => Promise<TorrentDetails[]>;
+  getTorrentsForImdbId: (
+    params: Pick<StreamQuery, 'imdbId' | 'type' | 'episode' | 'season'>,
+  ) => Promise<TorrentDetails[]>;
   getTorrentUrlBySourceId: (sourceId: string) => Promise<string | null>;
   getRemovableInfoHashes: () => Promise<string[]>;
 }

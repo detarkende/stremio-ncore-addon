@@ -22,12 +22,31 @@ export type NcorePageResponseJson = {
   perpage: `${number}`;
 };
 
+export enum NcoreSearchBy {
+  NAME = 'name',
+  DESCRIPTION = 'leiras',
+  IMDB = 'imdb',
+  TAGS = 'cimke',
+}
+
+export enum NcoreOrderBy {
+  NAME = 'name',
+  CREATION_TIME = 'ctime',
+  SEEDERS = 'seeders',
+  TIMES_COMPLETED = 'times_completed',
+  SIZE = 'size',
+  LEECHERS = 'leechers',
+}
+
+export enum NcoreOrderDirection {
+  DESC = 'DESC',
+  ASC = 'ASC',
+}
+
 export type NcoreQueryParams = {
   mire: string;
-  miben: 'name' | 'leiras' | 'imdb' | 'cimke';
-  miszerint: 'name' | 'ctime' | 'seeders' | 'times_completed' | 'size' | 'leechers';
-  hogyan?: 'DESC' | 'ASC';
-  tipus: 'kivalasztottak_kozott';
+  miben: NcoreSearchBy;
+  miszerint: NcoreOrderBy;
+  hogyan?: NcoreOrderDirection;
   kivalasztott_tipus: string;
-  jsons: 'true';
 };

@@ -7,11 +7,10 @@ import type { StreamService } from '@/services/stream';
 import type { UserService } from '@/services/user';
 import type { TorrentStoreService } from '@/services/torrent-store';
 import type { User } from '@/schemas/user.schema';
-import { isSupportedMedia } from '@/utils/media-file-extensions';
 import { playSchema } from '@/schemas/play.schema';
 import { parseRangeHeader } from '@/utils/parse-range-header';
 import { HttpStatusCode } from '@/types/http';
-import type { ITorrentSourceManager, TorrentDetails } from '@/services/torrent-source/types';
+import type { ITorrentSourceManager } from '@/services/torrent-source/types';
 
 export class StreamController {
   constructor(
@@ -44,17 +43,12 @@ export class StreamController {
     const torrents = await this.torrentSource.getTorrentsForImdbId({
       imdbId,
       type,
+      season,
+      episode,
     });
-
-    const torrentsWithMetadata: TorrentDetails[] = torrents.filter((torrent) => {
-      const file = torrent.files[torrent.getMediaFileIndex({ season, episode })];
-      return file !== undefined && isSupportedMedia(file.path);
-    });
-
-    // TODO: remove the type FullTorrent, since the fileIndex and resolution can now be calculated from the TorrentDetails directly. We were spreading TorrentDetails to create FullTorrent, but I think the methods got lost that way or something.
 
     const orderedTorrents = this.streamService.orderTorrents({
-      torrents: torrentsWithMetadata,
+      torrents,
       season,
       episode,
       user,

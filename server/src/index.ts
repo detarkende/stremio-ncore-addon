@@ -24,11 +24,13 @@ import { zValidator } from '@hono/zod-validator';
 import { loginSchema } from '@/schemas/login.schema';
 import { applyServeStatic } from '@/middlewares/serve-static';
 import { UserController } from '@/controllers/user.controller';
+import { CinemeatService } from './services/cinemeta';
 
 const userService = new UserService();
 const manifestService = new ManifestService();
 const torrentService = new TorrentService();
-const ncoreService = new NcoreService(torrentService);
+const cinemetaService = new CinemeatService();
+const ncoreService = new NcoreService(torrentService, cinemetaService);
 const torrentSource = new TorrentSourceManager([ncoreService]);
 
 const torrentStoreService = new TorrentStoreService(torrentSource);

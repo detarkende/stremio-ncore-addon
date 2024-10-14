@@ -34,7 +34,7 @@ export class TorrentSourceManager implements ITorrentSourceManager {
   }
 
   public async getTorrentsForImdbId(
-    params: Pick<StreamQuery, 'imdbId' | 'type'>,
+    params: Pick<StreamQuery, 'imdbId' | 'type' | 'season' | 'episode'>,
   ): Promise<TorrentDetails[]> {
     const promises = this.sources.map(async (source) => source.getTorrentsForImdbId(params));
     const results = (await awaitAllReachablePromises(promises)).flat();

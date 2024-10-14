@@ -1,5 +1,3 @@
-import type { NcoreQueryParams } from './types';
-
 export enum NcoreResolution {
   SD = 'xvid',
   DVD = 'dvd',
@@ -44,14 +42,6 @@ export const HUNGARIAN_CATEGORIES: TorrentCategory[] = [
   SeriesCategory.DVD_HUN,
   SeriesCategory.HD_HUN,
 ];
-
-export const defaultNcoreQueryParams: Omit<NcoreQueryParams, 'mire' | 'kivalasztott_tipus'> = {
-  jsons: 'true',
-  miben: 'name',
-  miszerint: 'ctime',
-  hogyan: 'DESC',
-  tipus: 'kivalasztottak_kozott',
-};
 
 export const ncoreResolutionLabels: Record<NcoreResolution, string> = {
   [NcoreResolution.SD]: 'SD',
