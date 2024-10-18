@@ -1,4 +1,4 @@
-export const SUPPORTED_MEDIA_EXTENSIONS = [
+const SUPPORTED_MEDIA_EXTENSIONS = [
   'mkv',
   'avi',
   'mp4',
