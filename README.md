@@ -4,11 +4,14 @@
 
 A self-hostable Stremio addon that lets you stream content straight from nCore.
 
-![demo gif](./assets/stremio-ncore-addon-demo-video.webp)
+![demo video](./assets/stremio-ncore-addon-demo-video.webp)
 
-> **IMPORTANT:** This project is very much in its alpha phase. The setup is still a bit rough and even a full rewrite is not out of the picture. It's the early days of the project, so don't expect stability yet, but feel free to experiment with it.
+> [!WARNING]
+> This project is very much in its alpha phase. The setup is still a bit rough and even a full rewrite is not out of the picture. It's the early days of the project, so don't expect stability yet, but feel free to experiment with it.
+> When you update, expect new or removed env vars and new or removed volumes from the docker compose config.
 
-> **IMPORTANT:** I maintain this project in my free time as a hobby. Feel free to leave suggestions or feedback in the form of issues, but don't _expect_ free labor. Rude and entitled issues will be deleted without explanation.
+> [!IMPORTANT] I maintain this project in my free time as a hobby. Feel free to leave suggestions or feedback in the form of issues, but don't _expect_ free labor. Rude or entitled issues will be deleted without explanation.
+> The project is source-available, meaning that I currently don't accept contributions.
 
 ## FAQ
 
@@ -49,29 +52,20 @@ The addon will even rank them based on your configured preferences (language + r
 View answer
 </summary>
 
-Most importantly, you need a working (not banned) nCore account that can download torrents.
-
-You will need a computer/server to host this addon. The addon will run on your computer and search nCore for you. Once you start playing something, the addon will download the torrent to the computer and start seeding it.
-
-You will need Node.js and NPM (Node Package Manager) installed on your machine.
-
-Make sure that the computer you are using has enough free space to accommodate your downloads.
-
-Since nCore requires you to seed content, the computer should ideally be turned on for as long as possible.
-
-For watching the content, you will need a smart TV, Android TV box, Chromecast, or something similar. Using a PC or Mac will also work great. Stremio can work well on mobile devices, but for iOS, it might require some extra setup. You will need to download Stremio to your device and create an account.
-
-When you are running the addon, you are essentially running a server on your computer. Your device needs to be able to access this server somehow. The easiest solution is to have the server and the client (the smart TV for example) on the same network (they need to be connected to the same router). This way, you will be able to add the addon through its local address.
-
-You will also need to install Node.js and some sort of manager to run it continuously (pm2 is recommended).
-
-If you do not own an Android TV / Chromecast / Firestick / Android phone or similar device, then you will need to set up HTTPS on the server's URL. This might be difficult for beginners. I'm working on an easier solution for this.
+- nCore account (that isn't banned)
+- A computer to host this program on
+  - Docker needs to be installed
+  - Needs enough free space where the downloaded files will fit.
+  - This computer should ideally always be on (because it needs to seed the files back to nCore)
+- A device that can run Stremio (newer LG/Samsung Smart TVs, an Android TV box, or just a laptop/PC)
+- Your own domain name with HTTPS (tutorials coming soon...)
+  - If you use Stremio on computer or an Android TV box and you don't want to share the addon with your friends and family, then this step can be optional.
 
 </details>
 
 ## Features
 
-- Self-hostable. The downloading machine can be anywhere and you can stream remotely.
+- Self-hostable. The downloading PC/server can be anywhere and you can stream remotely.
 - Seeds torrents after download.
 - Saves torrent files and downloads to disk. If you come back the next day, the files will already be downloaded, so you won't have to wait too long.
 - Configurable to delete torrents when you no longer have to seed them. (Hit'n'run checker)
@@ -86,35 +80,13 @@ If you do not own an Android TV / Chromecast / Firestick / Android phone or simi
 
 ### Using docker
 
-Example docker run command:
-
-```sh
-docker run -d \
-    --name=stremio-ncore-addon \
-    -e ADDON_URL=https://subdomain.example.com \
-    -e APP_SECRET=changeme \
-    -e NCORE_USERNAME=ncore_username \
-    -e NCORE_PASSWORD=ncore_password \
-    -e DELETE_AFTER_HITNRUN=true \
-    -e ADMIN_USERNAME=admin \
-    -e ADMIN_PASSWORD=changeme \
-    -e ADMIN_FIRST_PREFERRED_LANGUAGE=Hungarian \
-    -e ADMIN_SECOND_PREFERRED_LANGUAGE=English \
-    -e ADMIN_PREFERRED_RESOLUTIONS=720P,1080P \
-    -p 3000:3000 \
-    -v /path/to/downloads:/downloads \
-    -v /path/to/torrents:/torrents \
-    --restart unless-stopped \
-    detarkende/stremio-ncore-addon:latest
-```
-
 Example docker compose:
 
 ```yml
 ---
 services:
   stremio-ncore-addon:
-    image: detarkende/stremio-ncore-addon:latest
+    image: detarkende/stremio-ncore-addon:0.3.0
     container_name: stremio-ncore-addon
     environment:
       - ADDON_URL=https://subdomain.example.com
@@ -124,8 +96,7 @@ services:
       - DELETE_AFTER_HITNRUN=true
       - ADMIN_USERNAME=admin
       - ADMIN_PASSWORD=changeme
-      - ADMIN_FIRST_PREFERRED_LANGUAGE=Hungarian
-      - ADMIN_SECOND_PREFERRED_LANGUAGE=English
+      - ADMIN_PREFERRED_LANGUAGE=hu
       - ADMIN_PREFERRED_RESOLUTIONS=720P,1080P
     volumes:
       - /path/to/downloads:/downloads
@@ -135,48 +106,11 @@ services:
     restart: unless-stopped
 ```
 
-### Manual install
+> [!IMPORTANT]
+> Don't use the `latest` tag for now in your docer compose. The environment variables are going to change in many ways,
+> so I recommend using a fixed tag version of the docker image.
 
-1. Clone the repository to the server.
-   ```sh
-   git clone https://github.com/detarkende/stremio-ncore-addon.git && cd stremio-ncore-addon
-   ```
-1. Install the dependencies
-   ```sh
-   npm install
-   ```
-1. Create the environment variable file in the base of the project.
-   ```sh
-   touch .env
-   ```
-   **[See environment variable reference](#environment-variable-reference)**
-1. Run the start command to test if everything is good to go.
-   ```sh
-   npm run start
-   ```
-   If everything looks good, you can stop the program with `Ctrl^` + `C`.
-1. Setup the program to run in the background.
-   (Recommended way: using `pm2`)
-
-   1. Install pm2:
-
-      ```sh
-      npm i -g pm2
-      ```
-
-   2. Setup pm2 to run on startup.
-
-      ```sh
-      pm2 startup
-      ```
-
-   3. Start the addon with pm2.
-      ```sh
-      pm2 start "npm start"
-      ```
-      After this, you can check the logs from the server with the `pm2 logs` command.
-
-1. Finally, install the plugin
+1. Install the plugin on the device where you use Stremio
    <details>
    <summary>I don't have an Android TV / Chromecast or similar.</summary>
 
@@ -196,27 +130,39 @@ services:
    9. Type in your server's address. If you have this set up to a certain URL, type that. Otherwise, just replace the parts in this: `http://<SERVER_IP_ADDRESS>:<PORT>/manifest.json`. (Example: https://192.168.0.110:3000/manifest.json)
    10. Click "Configure" and wait for the configuration window to open.
    11. Log in with one of the users you saved in your config file.
-   12. Click on "Configure".
+   12. Click on "Add in the Stremio app".
    13. You should be redirected to the Stremio Addons screen. Click "Install" to finish the installation.
    </details>
 
 ## Environment variable reference
 
-| Variable name                     | Required / Optional                      | Description                                                                                                                                                                                          |
-| --------------------------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `PORT`                            | Optional (default = `3000`)              | The port where the addon will run.<br>If you are running this from docker, don't change this, change the exposed port instead.                                                                       |
-| `ADDON_URL`                       | Required                                 | The https URL where the addon will be reachable. This should be available from outside your local network.                                                                                           |
-| `APP_SECRET`                      | Required                                 | A random string that will be used to sign the JWTs for authentication. You can generate on [here](https://randomkeygen.com/#504_wpa).                                                                |
-| `DOWNLOADS_DIR`                   | Required                                 | Directory path where the video files will be downloaded to.<br>Should be an empty directory.<br>If the given path doesn't exist, it will be created.                                                 |
-| `TORRENTS_DIR`                    | Required                                 | Directory path where the torrent files will be downloaded to.<br>Should be an empty directory.<br>If the given path doesn't exist, it will be created.                                               |
-| `NCORE_URL`                       | Optional (default = `https://ncore.pro`) | URL of the nCore website. This is only here in case the URL changes.<br>Otherwise, you don't need to provide this.                                                                                   |
-| `NCORE_USERNAME`                  | Required                                 | Your username for nCore.                                                                                                                                                                             |
-| `NCORE_PASSWORD`                  | Required                                 | Your password for nCore.                                                                                                                                                                             |
-| `DELETE_AFTER_HITNRUN`            | Optional (default = `false`)             | Enable automatic deletion of torrents that are not mandatory to seed anymore.                                                                                                                        |
-| `DELETE_AFTER_HITNRUN_CRON`       | Optional (default = `'0 2 * * *'`)       | Cron expression for running the hitnrun table check. Defaults to "Once every day at 2:00 AM"                                                                                                         |
-| `ADMIN_USERNAME`                  | Required                                 | Username for the admin user.                                                                                                                                                                         |
-| `ADMIN_PASSWORD`                  | Required                                 | Password for the admin user.                                                                                                                                                                         |
-| `ADMIN_FIRST_PREFERRED_LANGUAGE`  | Required                                 | Preferred language of the admin user of the addon.<br>This setting will be used to rank and order the found torrents and for giving recommendations.                                                 |
-| `ADMIN_SECOND_PREFERRED_LANGUAGE` | Optional                                 | Second preferred language (preferred if the first isn't available) of the admin user of the addon.<br>This setting will be used to rank and order the found torrents and for giving recommendations. |
-| `ADMIN_PREFERRED_RESOLUTIONS`     | Required                                 | A comma separated list of resolutions that the admin user prefers in preferential order.<br>This setting will be used to rank and order the found torrents and for giving recommendations.           |
-| `USERS`                           | Optional                                 | A JSON array of users as a string.<br>Check the `.env.example` file [here](/.env.example) for an example.                                                                                            |
+| Variable name                 | Required / Optional                      | Description                                                                                                                                                                                |
+| ----------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ADDON_URL`                   | Required                                 | The https URL where the addon will be reachable. This should be available from outside your local network.                                                                                 |
+| `APP_SECRET`                  | Required                                 | A random string that will be used to sign the JWTs for authentication. You can generate on [here](https://randomkeygen.com/#504_wpa).                                                      |
+| `NCORE_USERNAME`              | Required                                 | Your username for nCore.                                                                                                                                                                   |
+| `NCORE_PASSWORD`              | Required                                 | Your password for nCore.                                                                                                                                                                   |
+| `ADMIN_USERNAME`              | Required                                 | Username for the admin user.                                                                                                                                                               |
+| `ADMIN_PASSWORD`              | Required                                 | Password for the admin user.                                                                                                                                                               |
+| `ADMIN_PREFERRED_LANGUAGE`    | Required                                 | Preferred language of the admin user of the addon.<br>This setting will be used to rank and order the found torrents and for giving recommendations.                                       |
+| `ADMIN_PREFERRED_RESOLUTIONS` | Required                                 | A comma separated list of resolutions that the admin user prefers in preferential order.<br>This setting will be used to rank and order the found torrents and for giving recommendations. |
+|                               |                                          |                                                                                                                                                                                            |
+| `PORT`                        | Optional (default = `3000`)              | The port where the addon will run.<br>If you are running this from docker, don't change this, change the exposed port instead.                                                             |
+| `DOWNLOADS_DIR`               | Required (Optional for docker)           | Directory path where the video files will be downloaded to.<br>Should be an empty directory.<br>If the given path doesn't exist, it will be created.                                       |
+| `TORRENTS_DIR`                | Required (Optional for docker)           | Directory path where the torrent files will be downloaded to.<br>Should be an empty directory.<br>If the given path doesn't exist, it will be created.                                     |
+| `NCORE_URL`                   | Optional (default = `https://ncore.pro`) | URL of the nCore website. This is only here in case the URL changes.<br>Otherwise, you don't need to provide this.                                                                         |
+| `DELETE_AFTER_HITNRUN`        | Optional (default = `false`)             | Enable automatic deletion of torrents that are not mandatory to seed anymore.                                                                                                              |
+| `DELETE_AFTER_HITNRUN_CRON`   | Optional (default = `'0 2 * * *'`)       | Cron expression for running the hitnrun table check. Defaults to "Once every day at 2:00 AM"                                                                                               |
+| `USERS`                       | Optional                                 | A JSON array of users as a string.<br>Check the `.env.example` file [here](/.env.example) for an example.                                                                                  |
+
+## Roadmap
+
+- [x] Admin panel for torrents
+- [x] Sort torrents based on user preferences
+- [ ] Add database + install flow in WebUI to replace most environment variables
+- [ ] Integrate with [local-ip.co](http://local-ip.co/) to allow https for local network
+- [ ] Add more unit tests to backend
+- [ ] Add unit tests to frontend
+- [ ] Create user friendly tutorials
+  - [ ] Add video tutorials
+  - [ ] Add a documentation website
