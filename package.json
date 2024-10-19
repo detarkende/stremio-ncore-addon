@@ -16,10 +16,6 @@
     "lint": "eslint .",
     "test": "vitest run"
   },
-  "workspaces": [
-    "client",
-    "server"
-  ],
   "dependencies": {
     "hono": "^4.6.3",
     "zod": "^3.23.8"
@@ -43,5 +39,6 @@
       "@types/stremio-addon-sdk": "patches/@types__stremio-addon-sdk.patch",
       "@types/webtorrent": "patches/@types__webtorrent.patch"
     }
-  }
+  },
+  "packageManager": "pnpm@9.12.2"
 }
