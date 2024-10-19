@@ -11,7 +11,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { TruncatedText } from '@/components/ui/truncated-text';
 import { useMe } from '@/hooks/use-me';
 import { useJwtStore } from '@/stores/jwt';
 import { useQuery } from '@tanstack/react-query';
@@ -76,24 +75,26 @@ export const TorrentsPage = () => {
   return (
     <Container>
       <div className="overflow-x-auto md:overflow-x-visible w-full">
-        <Table className="table-fixed">
+        <Table className="w-full">
           <TableCaption>Your currently active torrents</TableCaption>
           <TableHeader>
             <TableRow className="text-nowrap">
-              <TableHead className="w-max md:w-full">
-                <span className="min-w-11 max-w-[50%]">Release name</span>
+              <TableHead>
+                <span>Release name</span>
               </TableHead>
-              <TableHead className="w-max">Downloaded</TableHead>
-              <TableHead className="w-max">Total size</TableHead>
-              <TableHead className="w-max">Progress</TableHead>
-              <TableHead className="w-max">Actions</TableHead>
+              <TableHead>Downloaded</TableHead>
+              <TableHead>Total size</TableHead>
+              <TableHead>Progress</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody ref={animatedParent}>
             {torrents.map((torrent) => (
               <TableRow key={torrent.hash}>
                 <TableCell>
-                  <TruncatedText>{torrent.name}</TruncatedText>
+                  <span className="break-all line-clamp-3 overflow-hidden overflow-ellipsis">
+                    {torrent.name}
+                  </span>
                 </TableCell>
                 <TableCell>{torrent.downloaded}</TableCell>
                 <TableCell>{torrent.size}</TableCell>
