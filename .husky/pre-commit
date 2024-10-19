@@ -1,5 +1,4 @@
 #!/bin/sh
 
-npm run format
-npm run typecheck
-npm run lint
+pnpm run format
+pnpm run ci

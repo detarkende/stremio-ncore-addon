@@ -1,0 +1,17 @@
+diff --git a/index.d.ts b/index.d.ts
+index 12bd2d7f10786953e9e8472c1adac867a9fe919c..c68c05534ddb9d4fdb5e7561219f0c85057124fd 100644
+--- a/index.d.ts
++++ b/index.d.ts
+@@ -7,9 +7,9 @@ declare const ParseTorrent: ParseTorrent.ParseTorrent;
+ 
+ declare namespace ParseTorrent {
+     interface ParseTorrent {
+-        (torrent: string): MagnetUri.Instance;
+-        (torrent: Buffer): MagnetUri.Instance | ParseTorrentFile.Instance;
+-        (torrent: Instance | MagnetUri.Instance | ParseTorrentFile.Instance): Instance;
++        (torrent: string): Promise<MagnetUri.Instance>;
++        (torrent: Buffer): Promise<MagnetUri.Instance | ParseTorrentFile.Instance>;
++        (torrent: Instance | MagnetUri.Instance | ParseTorrentFile.Instance): Promise<Instance>;
+ 
+         toMagnetURI: typeof MagnetUri.encode;
+         toTorrentFile: typeof ParseTorrentFile.encode;
