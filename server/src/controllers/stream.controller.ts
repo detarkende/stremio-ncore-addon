@@ -115,6 +115,14 @@ export class StreamController {
     console.log(`Range: ${start}-${end}`);
 
     const stream = file.stream({ start, end });
-    return new Response(stream);
+    return new Response(stream, {
+      status: 206,
+      headers: {
+        'Content-Range': `bytes ${start}-${end}/${file.length}`,
+        'Content-Length': `${end - start + 1}`,
+        'Content-Type': fileType,
+        'Accept-Ranges': 'bytes',
+      },
+    });
   }
 }
