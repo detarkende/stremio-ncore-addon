@@ -34,7 +34,6 @@ export class ConfigService {
       admin,
       nonAdminUsers,
     } = data;
-    console.log('Creating configuration:', data);
     return await this.db.transaction(async (tx) => {
       const [config] = await tx
         .insert(configurationTable)

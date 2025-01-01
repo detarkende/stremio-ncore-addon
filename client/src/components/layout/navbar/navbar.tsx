@@ -8,7 +8,7 @@ import { MenuIcon, XIcon } from 'lucide-react';
 import { UserRole } from '@server/db/schema/users';
 
 export const Navbar = () => {
-  const navSidebarRef = useRef<HTMLUListElement>(null);
+  const navSidebarRef = useRef<HTMLDivElement>(null);
   const { data: user } = useMe();
   const isAdmin = user?.role === UserRole.ADMIN;
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
@@ -47,7 +47,7 @@ export const Navbar = () => {
           <Link to={ROUTES.ACCOUNT}>
             <h1 className="font-bold">SNA</h1>
           </Link>
-          <div>
+          <div ref={navSidebarRef}>
             <button
               aria-controls="navbar-links"
               aria-expanded={isNavbarOpen}
@@ -57,7 +57,6 @@ export const Navbar = () => {
               {isNavbarOpen ? <XIcon size={24} /> : <MenuIcon size={24} />}
             </button>
             <ul
-              ref={navSidebarRef}
               id="navbar-links"
               className={styles.navLinks}
               data-state={isNavbarOpen ? 'open' : 'closed'}

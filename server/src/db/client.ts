@@ -5,6 +5,13 @@ import { resolve } from 'path';
 import { env } from '@/env';
 import { SQLiteTransaction } from 'drizzle-orm/sqlite-core';
 import { ExtractTablesWithRelations } from 'drizzle-orm';
+import { existsSync, mkdirSync } from 'fs';
+
+const configDir = resolve(env.ADDON_DIR, 'config');
+
+if (!existsSync(configDir)) {
+  mkdirSync(configDir);
+}
 
 const db = drizzle(resolve(env.ADDON_DIR, 'config/sna.db'), { casing: 'snake_case' });
 

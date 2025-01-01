@@ -48,6 +48,7 @@ import {
   editUserSchema,
   updatePasswordSchema,
 } from './schemas/user.schema';
+import { HttpStatusCode } from './types/http';
 
 const userService = new UserService(db);
 const configService = new ConfigService(db, userService);
@@ -122,9 +123,19 @@ const app = new Hono<HonoEnv>()
 
   .get('/config/is-configured', (c) => configController.getIsConfigured(c))
   .get('/config', isAdmin, (c) => configController.getConfig(c))
-  .post('/config', zValidator('json', createConfigSchema), (c) =>
-    configController.createConfig(c),
-  )
+  .post('/config', zValidator('json', createConfigSchema), async (c) => {
+    try {
+      await configController.createConfig(c);
+      console.log('Configuration created successfully.');
+      return c.json({ message: 'Configuration created successfully.' });
+    } catch (e) {
+      console.error('Error creating configuration:', e);
+      return c.json(
+        { message: 'Unknown error occurred while creating configuration.' },
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+  })
   .put('/config', isAdmin, zValidator('json', updateConfigSchema), (c) =>
     configController.updateConfig(c),
   )

@@ -1,5 +1,7 @@
 .navbar {
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 50;
 
   ul.navLinks {
     display: flex;
@@ -7,26 +9,17 @@
     row-gap: theme('spacing.6');
     position: absolute;
     top: 100%;
-    right: 0;
-    left: 20%;
+    right: 0px;
+    width: 80%;
     height: calc(100vh - 100%);
     @apply bg-opacity-50 bg-neutral-300 backdrop-blur-md backdrop-brightness-90;
     padding: theme('spacing.6');
     text-align: right;
     z-index: 50;
-
-    transition-property: opacity, transform;
-    transition-timing-function: ease-out;
-    transition-duration: 0.25s;
+    white-space: nowrap;
 
     &[data-state='closed'] {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-
-    &[data-state='open'] {
-      transform: translateX(0);
-      opacity: 1;
+      display: none;
     }
 
     @screen md {
@@ -37,8 +30,7 @@
         flex-direction: row;
         column-gap: theme('spacing.6');
         padding: 0;
-        transform: translateX(0);
-        opacity: 1;
+        display: flex;
       }
     }
 
