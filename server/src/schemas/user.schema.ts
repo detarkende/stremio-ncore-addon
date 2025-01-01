@@ -1,31 +1,21 @@
+import { Language, Resolution } from '@/db/schema/users';
 import { z } from 'zod';
-import { resolutionSchema } from './resolution.schema';
-import { languageSchema } from './language.schema';
 
-export enum UserRole {
-  ADMIN = 'admin',
-  USER = 'user',
-}
+export const createUserSchema = z.object({
+  username: z.string().min(1, 'Username is required'),
+  password: z.string().min(1, 'Password is required'),
+  preferredLanguage: z.nativeEnum(Language, {
+    required_error: 'Preferred language is required',
+  }),
+  preferredResolutions: z
+    .array(z.nativeEnum(Resolution))
+    .min(1, 'At least one resolution is required'),
+});
 
-export const userSchema = z
-  .object({
-    username: z.string({ required_error: 'Username is required' }),
-    password: z.string({ required_error: 'Password is required' }),
-    preferred_lang: languageSchema,
-    preferred_resolutions: z.array(resolutionSchema),
-  })
-  .refine(
-    (data) => {
-      if ('second_preferred_lang' in data) {
-        return data.preferred_lang !== data.second_preferred_lang;
-      }
-      return true;
-    },
-    {
-      message: 'First and second preferred languages cannot be the same',
-    },
-  );
+export const editUserSchema = createUserSchema.omit({
+  password: true,
+});
 
-export interface User extends z.infer<typeof userSchema> {
-  role: UserRole;
-}
+export const updatePasswordSchema = createUserSchema.pick({
+  password: true,
+});

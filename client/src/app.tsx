@@ -1,32 +1,60 @@
 import { Redirect, Route, Switch } from 'wouter';
-import { ThemeProvider } from '@/components/theme-provider';
-import { LoginPage } from '@/pages/login';
-import { AccountPage } from './pages/account';
-import { TorrentsPage } from './pages/torrents';
-import { useJwtStore } from './stores/jwt';
+import { useMe } from './hooks/use-me';
+import { useIsConfigured } from './hooks/use-is-configured';
+import { Toaster } from './components/ui/sonner';
+import { Layout } from './components/layout';
+import { ROUTES } from './constants/routes';
+import { lazy, Suspense } from 'react';
+import { PageLoader } from './components/ui/page-loader';
+
+const SettingsPage = lazy(() => import('@/pages/settings'));
+const LoginPage = lazy(() => import('@/pages/login'));
+const AccountPage = lazy(() => import('@/pages/account'));
+const TorrentsPage = lazy(() => import('@/pages/torrents'));
+const SetupPage = lazy(() => import('@/pages/setup'));
 
 export const App = () => {
-  const { jwt } = useJwtStore();
+  const { me } = useMe();
 
+  const { isConfigured } = useIsConfigured();
   return (
-    <ThemeProvider defaultTheme="light" storageKey="ui-theme">
-      <div className="dark:bg-neutral-950 bg-neutral-100 dark:text-white h-full">
-        <Switch>
-          <Route path="/login">
+    <Layout>
+      <Switch>
+        <Route path={ROUTES.SETUP}>
+          <Suspense fallback={<PageLoader />}>
+            <SetupPage />
+          </Suspense>
+        </Route>
+        {isConfigured === false && <Redirect to={ROUTES.SETUP} />}
+        <Route path={ROUTES.LOGIN}>
+          <Suspense fallback={<PageLoader />}>
             <LoginPage />
-          </Route>
-          <Route path="/configure">
-            <Redirect to="/login" />
-          </Route>
-          <Route path="/account">
+          </Suspense>
+        </Route>
+        {me === null && <Redirect to={ROUTES.LOGIN} />}
+        <Route path="/configure">
+          <Redirect to={ROUTES.LOGIN} />
+        </Route>
+        <Route path={ROUTES.ACCOUNT}>
+          <Suspense fallback={<PageLoader />}>
             <AccountPage />
-          </Route>
-          <Route path="/torrents">
+          </Suspense>
+        </Route>
+        <Route path={ROUTES.SETTINGS}>
+          <Suspense fallback={<PageLoader />}>
+            <SettingsPage />
+          </Suspense>
+        </Route>
+        <Route path={ROUTES.TORRENTS}>
+          <Suspense fallback={<PageLoader />}>
             <TorrentsPage />
-          </Route>
-          <Route path="*">{jwt ? <Redirect to="/account" /> : <Redirect to="/login" />}</Route>
-        </Switch>
-      </div>
-    </ThemeProvider>
+          </Suspense>
+        </Route>
+        <Route path="*">
+          {me ? <Redirect to={ROUTES.ACCOUNT} /> : <Redirect to={ROUTES.LOGIN} />}
+        </Route>
+      </Switch>
+      <Toaster />
+    </Layout>
   );
 };

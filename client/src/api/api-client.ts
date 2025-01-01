@@ -3,4 +3,6 @@ import type { ApiRoutes } from '@server/index';
 
 const baseUrl = window.location.origin;
 
-export const api = hc<ApiRoutes>(baseUrl);
+const apiBaseUrl = `${baseUrl}/api`;
+
+export const api = hc<ApiRoutes>(apiBaseUrl);

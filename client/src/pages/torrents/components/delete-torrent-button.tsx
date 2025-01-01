@@ -5,18 +5,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TORRENTS_QUERY_KEY } from '../constants';
 import { FullScreenLoader } from '@/components/ui/full-screen-loader';
 
-export const DeleteTorrentButton = ({
-  torrent,
-  jwt,
-}: {
-  torrent: TorrentStoreStats;
-  jwt: string;
-}) => {
+export const DeleteTorrentButton = ({ torrent }: { torrent: TorrentStoreStats }) => {
   const queryClient = useQueryClient();
   const { mutateAsync: deleteTorrent, isPending } = useMutation({
     mutationFn: async () => {
-      await api.api.auth[':jwt'].torrents[':infoHash'].$delete({
-        param: { infoHash: torrent.hash, jwt },
+      await api.torrents[':infoHash'].$delete({
+        param: { infoHash: torrent.hash },
       });
     },
   });

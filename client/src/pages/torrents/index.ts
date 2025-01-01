@@ -1,1 +1,1 @@
-export { TorrentsPage } from './torrents.page';
+export { TorrentsPage as default } from './torrents.page';

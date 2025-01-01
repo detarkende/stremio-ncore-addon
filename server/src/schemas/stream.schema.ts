@@ -8,7 +8,7 @@ export enum StreamType {
 const imdbSchema = z.string().startsWith('tt').endsWith('.json');
 
 export const streamQuerySchema = z
-  .object({ jwt: z.string() })
+  .object({ deviceToken: z.string() })
   .and(
     z.discriminatedUnion('type', [
       z.object({
@@ -26,7 +26,11 @@ export const streamQuerySchema = z
   )
   .transform((data) => {
     if (data.type === StreamType.TV_SHOW) {
-      const [imdbId, season, episode] = data.imdbId.split(':') as [string, string, string];
+      const [imdbId, season, episode] = data.imdbId.split(':') as [
+        string,
+        string,
+        string,
+      ];
       return {
         ...data,
         imdbId,
@@ -34,7 +38,12 @@ export const streamQuerySchema = z
         episode: parseInt(episode),
       };
     }
-    return { ...data, season: undefined, episode: undefined };
+    return {
+      ...data,
+      imdbId: data.imdbId.replace('.json', ''),
+      season: undefined,
+      episode: undefined,
+    };
   });
 
 export type StreamQuery = z.infer<typeof streamQuerySchema>;

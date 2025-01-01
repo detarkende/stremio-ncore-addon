@@ -1,8 +1,8 @@
 diff --git a/index.d.ts b/index.d.ts
-index ad40714b8decfe3815889ad2cdf77d7dd4b7ff54..6c75dfd888db94a495d081f96832b76ac42b05a4 100644
+index cecebd1d96e56c37b827ec1ec9e0253a78120726..31a32ec24828930ce6e0b6c6c32fa8aaab7cf0b6 100644
 --- a/index.d.ts
 +++ b/index.d.ts
-@@ -65,6 +65,7 @@ declare namespace WebTorrent {
+@@ -69,6 +69,7 @@ declare namespace WebTorrent {
          urlList?: string[] | undefined;
          maxWebConns?: number | undefined;
          path?: string | undefined;
@@ -10,35 +10,35 @@ index ad40714b8decfe3815889ad2cdf77d7dd4b7ff54..6c75dfd888db94a495d081f96832b76a
          store?(chunkLength: number, storeOpts: { length: number; files: File[]; torrent: Torrent }): any;
          private?: boolean | undefined;
          destroyStoreOnDestroy?: boolean | undefined;
-@@ -72,6 +73,7 @@ declare namespace WebTorrent {
-         skipVerify?: boolean | undefined;
+@@ -77,6 +78,7 @@ declare namespace WebTorrent {
          preloadedStore?(): void;
          strategy?: string | undefined;
+         createdBy?: string | undefined;
 +        deselect?: boolean | undefined;
      }
  
      interface TorrentDestroyOptions {
-@@ -133,7 +135,7 @@ declare namespace WebTorrent {
+@@ -137,7 +139,7 @@ declare namespace WebTorrent {
          readonly torrents: Torrent[];
  
          // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 -        get(torrentId: Torrent | string | Buffer): Torrent | void;
 +        get(torrentId: Torrent | string | Buffer): Promise<Torrent | undefined>;
  
-         readonly downloadSpeed: number;
+         throttleDownload(rate: number): boolean | undefined;
  
-@@ -141,6 +143,10 @@ declare namespace WebTorrent {
+@@ -148,6 +150,10 @@ declare namespace WebTorrent {
+         readonly uploadSpeed: number;
  
          readonly progress: number;
- 
++        
 +        readonly offset: number;
-+
++        
 +        readonly type: string;
-+
+ 
          readonly ratio: number;
      }
- 
-@@ -203,7 +209,7 @@ declare namespace WebTorrent {
+@@ -211,7 +217,7 @@ declare namespace WebTorrent {
  
          readonly maxWebConns: number;
  
@@ -47,16 +47,16 @@ index ad40714b8decfe3815889ad2cdf77d7dd4b7ff54..6c75dfd888db94a495d081f96832b76a
  
          addPeer(peer: string | SimplePeer): boolean;
  
-@@ -229,6 +235,8 @@ declare namespace WebTorrent {
+@@ -236,6 +242,8 @@ declare namespace WebTorrent {
+         on(event: "download" | "upload", callback: (bytes: number) => void): this;
  
          on(event: "wire", callback: (wire: Wire, addr?: string) => void): this;
- 
++        
 +        on(event: "verified", callback: (piece_index: number) => void): this;
-+
+ 
          on(event: "noPeers", callback: (announceType: "tracker" | "dht") => void): this;
      }
- 
-@@ -251,6 +259,8 @@ declare namespace WebTorrent {
+@@ -259,6 +267,8 @@ declare namespace WebTorrent {
  
          createReadStream(opts?: { start: number; end: number }): NodeJS.ReadableStream;
  
@@ -65,7 +65,7 @@ index ad40714b8decfe3815889ad2cdf77d7dd4b7ff54..6c75dfd888db94a495d081f96832b76a
          getBuffer(callback: (err: string | Error | undefined, buffer?: Buffer) => void): void;
  
          appendTo(
-@@ -284,8 +294,14 @@ declare namespace WebTorrent {
+@@ -292,8 +302,14 @@ declare namespace WebTorrent {
          getBlob(callback: (err: string | Error | undefined, blob?: Blob) => void): void;
  
          getBlobURL(callback: (err: string | Error | undefined, blobURL?: string) => void): void;

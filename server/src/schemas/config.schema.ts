@@ -1,56 +1,42 @@
-import z from 'zod';
-import cron from 'node-cron';
-import { type User, UserRole, userSchema } from './user.schema';
-import { languageSchema } from './language.schema';
-import { resolutionSchema } from './resolution.schema';
+// @ts-expect-error - Ignore import error. This is imported from the source of node-cron because this way we don't import node-specific code in the browser.
+import validate from 'node-cron/src/pattern-validation.js';
+import { z } from 'zod';
+import { createUserSchema } from './user.schema';
 
-export const configSchema = z
-  .object({
-    PORT: z.number({ coerce: true }).default(3000),
-    APP_SECRET: z.string().min(10),
-    ADDON_URL: z.string().url(),
-    DOWNLOADS_DIR: z.string(),
-    TORRENTS_DIR: z.string(),
-    NCORE_URL: z.string().url().default('https://ncore.pro'),
-    NCORE_USERNAME: z.string(),
-    NCORE_PASSWORD: z.string(),
-    DELETE_AFTER_HITNRUN: z.boolean({ coerce: true }).default(false),
-    DELETE_AFTER_HITNRUN_CRON: z
-      .string()
-      .refine(cron.validate, { message: 'Invalid cron expression' })
-      .default('0 2 * * *'),
-    ADMIN_USERNAME: z.string(),
-    ADMIN_PASSWORD: z.string(),
-    ADMIN_PREFERRED_LANGUAGE: languageSchema,
-    ADMIN_PREFERRED_RESOLUTIONS: z
-      .string()
-      .transform((value) => value.split(','))
-      .pipe(z.array(resolutionSchema)),
-    USERS: z
-      .string()
-      .default('[]')
-      .transform((str, ctx): unknown => {
-        try {
-          return JSON.parse(str);
-        } catch {
-          ctx.addIssue({ code: 'custom', message: 'Invalid JSON' });
-          return z.NEVER;
-        }
-      })
-      .pipe(z.array(userSchema)),
-  })
-  .transform((config) => {
-    return {
-      ...config,
-      USERS: [
-        ...config.USERS.map((user) => ({ ...user, role: UserRole.USER })),
-        {
-          username: config.ADMIN_USERNAME,
-          password: config.ADMIN_PASSWORD,
-          role: UserRole.ADMIN,
-          preferred_lang: config.ADMIN_PREFERRED_LANGUAGE,
-          preferred_resolutions: config.ADMIN_PREFERRED_RESOLUTIONS,
-        },
-      ] satisfies User[],
-    };
-  });
+export const createConfigSchema = z.object({
+  addonUrl: z
+    .string()
+    .min(1)
+    .url()
+    .refine((v) => !v.endsWith('/'), 'Addon URL must not end with a slash.'),
+  ncoreUsername: z.string().min(1),
+  ncorePassword: z.string().min(1),
+  admin: createUserSchema,
+  nonAdminUsers: z.array(createUserSchema),
+  deleteAfterHitnrun: z.union([
+    z.object({ enabled: z.literal(false), cron: z.literal('') }),
+    z.object({
+      enabled: z.literal(true),
+      cron: z
+        .string()
+        .min(1)
+        .refine((value) => {
+          try {
+            validate(value);
+            return true;
+          } catch {
+            return false;
+          }
+        }, 'Invalid cron expression.'),
+    }),
+  ]),
+});
+
+export type CreateConfigRequest = z.infer<typeof createConfigSchema>;
+
+export const updateConfigSchema = createConfigSchema.omit({
+  admin: true,
+  nonAdminUsers: true,
+});
+
+export type UpdateConfigRequest = z.infer<typeof updateConfigSchema>;

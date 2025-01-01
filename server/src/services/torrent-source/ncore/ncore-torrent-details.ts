@@ -1,4 +1,8 @@
-import { TorrentDetails, type ParsedTorrentDetails, type TorrentFileDetails } from '../types';
+import {
+  TorrentDetails,
+  type ParsedTorrentDetails,
+  type TorrentFileDetails,
+} from '../types';
 import type { NcoreTorrent } from './types';
 import type { TorrentCategory } from './constants';
 import {
@@ -8,8 +12,7 @@ import {
   ncoreResolutionLabels,
   SeriesCategory,
 } from './constants';
-import { Resolution } from '@/schemas/resolution.schema';
-import { Language } from '@/schemas/language.schema';
+import { Language, Resolution } from '@/db/schema/users';
 
 export class NcoreTorrentDetails extends TorrentDetails {
   public sourceName: string;
@@ -17,6 +20,8 @@ export class NcoreTorrentDetails extends TorrentDetails {
   public infoHash: string;
   public fallbackResolution: Resolution;
   public files: TorrentFileDetails[];
+  /** If true, then this torrent might not belong to the searched movie/show. */
+  public isSpeculated?: boolean = false;
 
   private category: TorrentCategory;
   private release_name: string;

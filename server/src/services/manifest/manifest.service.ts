@@ -1,9 +1,17 @@
-import type { User } from '@/schemas/user.schema';
-import { config } from '@/config';
 import { CustomManifest } from './types';
+import { ConfigService } from '../config';
+import { DeviceTokenService } from '../device-token';
+import { UserService } from '../user';
 
 export class ManifestService {
+  constructor(
+    private configService: ConfigService,
+    private userService: UserService,
+    private deviceTokenService: DeviceTokenService,
+  ) {}
+
   public getBaseManifest() {
+    const config = this.configService.getConfig();
     return {
       id: 'detarkende.ncore',
       behaviorHints: {
@@ -11,7 +19,7 @@ export class ManifestService {
         configurable: true,
         configurationRequired: true,
       },
-      baseUrl: config.ADDON_URL,
+      baseUrl: config.addonUrl,
       version: '0.0.1',
       name: 'nCore',
       description: 'Provides streams from a personal nCore account.',
@@ -19,15 +27,19 @@ export class ManifestService {
       resources: ['stream'],
       types: ['movie', 'series'],
       idPrefixes: ['tt'],
-      logo: `${config.ADDON_URL}/stremio-ncore-addon-logo-rounded.png`,
+      logo: `${config.addonUrl}/stremio-ncore-addon-logo-rounded.png`,
     } as const satisfies CustomManifest;
   }
 
-  public getAuthenticatedManifest(user: User) {
+  public async getAuthenticatedManifest(deviceToken: string) {
+    const [user, deviceTokenDetails] = await Promise.all([
+      this.userService.getUserByDeviceTokenOrThrow(deviceToken),
+      this.deviceTokenService.getDeviceTokenDetails(deviceToken),
+    ]);
     const baseManifest = this.getBaseManifest();
     return {
       ...baseManifest,
-      description: `Provides streams from a personal nCore account. Logged in as ${user.username}`,
+      description: `Provides streams from a personal nCore account.\nLogged in as ${user.username}.\nDevice name: ${deviceTokenDetails.name}`,
       behaviorHints: {
         ...baseManifest.behaviorHints,
         configurationRequired: false,

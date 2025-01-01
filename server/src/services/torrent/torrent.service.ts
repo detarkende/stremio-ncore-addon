@@ -1,11 +1,17 @@
 import parseTorrent from 'parse-torrent';
 import contentDisposition from 'content-disposition';
 import type { ParsedTorrentDetails } from './types';
-import { config } from '@/config';
 import { writeFileWithCreateDir } from '@/utils/files';
+import { env } from '@/env';
+import { createCache } from '@/utils/cache';
+
+const DownloadAndParseTorrentCache = createCache();
 
 export class TorrentService {
-  public async downloadAndParseTorrent(torrentUrl: string): Promise<ParsedTorrentDetails> {
+  @DownloadAndParseTorrentCache()
+  public async downloadAndParseTorrent(
+    torrentUrl: string,
+  ): Promise<ParsedTorrentDetails> {
     const torrentResponse = await fetch(torrentUrl);
     const buffer = await torrentResponse.arrayBuffer();
     const torrentData = await parseTorrent(new Uint8Array(buffer));
@@ -33,7 +39,7 @@ export class TorrentService {
       .parse(torrentReq.headers.get('content-disposition') ?? '')
       .parameters.filename?.replace(/\.torrent$/i, '');
 
-    const torrentFilePath = `${config.TORRENTS_DIR}/${torrentFileName}-${parsedTorrent.infoHash}.torrent`;
+    const torrentFilePath = `${env.TORRENTS_DIR}/${torrentFileName}-${parsedTorrent.infoHash}.torrent`;
 
     writeFileWithCreateDir(torrentFilePath, Buffer.from(torrentArrayBuffer));
     return torrentFilePath;
