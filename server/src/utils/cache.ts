@@ -37,5 +37,3 @@ export function Cached<ReturnedT extends {}, Args extends unknown[]>({
     };
   };
 }
-
-export const createCache = () => {};

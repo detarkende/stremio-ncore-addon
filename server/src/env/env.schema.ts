@@ -18,5 +18,3 @@ export const envSchema = z
       CACHE_DIR: env.CACHE_DIR ?? `${env.ADDON_DIR}/cache`,
     };
   });
-
-export type Env = z.infer<typeof envSchema>;

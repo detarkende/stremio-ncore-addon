@@ -7,7 +7,7 @@ import { eq } from 'drizzle-orm';
 import { SESSION_MAX_DURATION, SESSION_REFRESH_INTERVAL_MS } from './constants';
 import { User } from '@/types/user';
 
-export type SessionValidationResult =
+type SessionValidationResult =
   | { session: Session; user: User }
   | { session: null; user: null };
 
