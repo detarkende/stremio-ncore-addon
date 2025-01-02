@@ -21,20 +21,6 @@
           "notNull": true,
           "autoincrement": false
         },
-        "ncore_username": {
-          "name": "ncore_username",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "ncore_password": {
-          "name": "ncore_password",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
         "delete_after_hitnrun": {
           "name": "delete_after_hitnrun",
           "type": "integer",

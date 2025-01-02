@@ -5,8 +5,6 @@ export type SetupFormValues = CreateConfigRequest;
 
 export const defaultSetupFormValues: SetupFormValues = {
   addonUrl: '',
-  ncoreUsername: '',
-  ncorePassword: '',
   admin: {
     username: '',
     password: '',

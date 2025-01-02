@@ -15,7 +15,5 @@ export const getUpdateAddonSettingsDefaultValues = (
           enabled: false,
           cron: '',
         },
-    ncoreUsername: config.ncoreUsername,
-    ncorePassword: config.ncorePassword,
   };
 };

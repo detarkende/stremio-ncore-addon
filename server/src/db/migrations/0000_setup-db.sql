@@ -1,8 +1,6 @@
 CREATE TABLE `configuration` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`addon_url` text NOT NULL,
-	`ncore_username` text NOT NULL,
-	`ncore_password` text NOT NULL,
 	`delete_after_hitnrun` integer DEFAULT false NOT NULL,
 	`delete_after_hitnrun_cron` text DEFAULT '0 2 * * *' NOT NULL
 );

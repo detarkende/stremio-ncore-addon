@@ -9,8 +9,6 @@ export const createConfigSchema = z.object({
     .min(1)
     .url()
     .refine((v) => !v.endsWith('/'), 'Addon URL must not end with a slash.'),
-  ncoreUsername: z.string().min(1),
-  ncorePassword: z.string().min(1),
   admin: createUserSchema,
   nonAdminUsers: z.array(createUserSchema),
   deleteAfterHitnrun: z.union([

@@ -4,6 +4,8 @@ export const envSchema = z
   .object({
     PORT: z.coerce.number().default(3000),
     ADDON_DIR: z.string(),
+    NCORE_USERNAME: z.string(),
+    NCORE_PASSWORD: z.string(),
     TORRENTS_DIR: z.string().optional(),
     DOWNLOADS_DIR: z.string().optional(),
     CACHE_DIR: z.string().optional(),

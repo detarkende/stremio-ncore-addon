@@ -73,8 +73,7 @@ export class NcoreService implements TorrentSource {
   }
 
   private async fetchTorrents(query: URLSearchParams): Promise<NcorePageResponseJson> {
-    const config = this.configService.getConfig();
-    const cookies = await this.getCookies(config.ncoreUsername, config.ncorePassword);
+    const cookies = await this.getCookies(env.NCORE_USERNAME, env.NCORE_PASSWORD);
     const request = await fetch(`${env.NCORE_URL}/torrents.php?${query.toString()}`, {
       headers: {
         cookie: cookies,
@@ -192,8 +191,7 @@ export class NcoreService implements TorrentSource {
   }
 
   public async getTorrentUrlBySourceId(ncoreId: string) {
-    const config = this.configService.getConfig();
-    const cookies = await this.getCookies(config.ncoreUsername, config.ncorePassword);
+    const cookies = await this.getCookies(env.NCORE_USERNAME, env.NCORE_PASSWORD);
     const response = await fetch(
       `${env.NCORE_URL}/torrents.php?action=details&id=${ncoreId}`,
       {
@@ -212,8 +210,7 @@ export class NcoreService implements TorrentSource {
   }
 
   public async getRemovableInfoHashes(): Promise<string[]> {
-    const config = this.configService.getConfig();
-    const cookie = await this.getCookies(config.ncoreUsername, config.ncorePassword);
+    const cookie = await this.getCookies(env.NCORE_USERNAME, env.NCORE_PASSWORD);
     const request = await fetch(`${env.NCORE_URL}/hitnrun.php?showall=true`, {
       headers: { cookie },
     });

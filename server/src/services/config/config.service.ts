@@ -26,21 +26,12 @@ export class ConfigService {
   };
 
   public async createConfig(data: CreateConfigRequest): Promise<Configuration> {
-    const {
-      addonUrl,
-      ncoreUsername,
-      ncorePassword,
-      deleteAfterHitnrun,
-      admin,
-      nonAdminUsers,
-    } = data;
+    const { addonUrl, deleteAfterHitnrun, admin, nonAdminUsers } = data;
     return await this.db.transaction(async (tx) => {
       const [config] = await tx
         .insert(configurationTable)
         .values({
           addonUrl,
-          ncoreUsername,
-          ncorePassword,
           deleteAfterHitnrun: deleteAfterHitnrun.enabled,
           deleteAfterHitnrunCron: deleteAfterHitnrun.cron || undefined,
         })
@@ -59,15 +50,13 @@ export class ConfigService {
   }
 
   public async updateConfig(data: UpdateConfigRequest): Promise<Configuration> {
-    const { addonUrl, ncoreUsername, ncorePassword, deleteAfterHitnrun } = data;
+    const { addonUrl, deleteAfterHitnrun } = data;
     console.log('Updating configuration:', data);
     try {
       const [config] = await this.db
         .update(configurationTable)
         .set({
           addonUrl,
-          ncoreUsername,
-          ncorePassword,
           deleteAfterHitnrun: deleteAfterHitnrun.enabled,
           deleteAfterHitnrunCron: deleteAfterHitnrun.cron || undefined,
         })
