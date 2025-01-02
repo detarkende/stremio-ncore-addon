@@ -15,7 +15,7 @@ import {
 } from '@server/db/schema/users';
 import { CreateUserRequest } from '@server/types/user';
 
-export type UserFieldsProps = {
+type UserFieldsProps = {
   baseName: 'admin' | `nonAdminUsers.${number}` | 'user';
   hidePassword?: boolean;
 };
