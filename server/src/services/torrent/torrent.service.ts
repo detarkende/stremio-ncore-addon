@@ -3,12 +3,15 @@ import contentDisposition from 'content-disposition';
 import type { ParsedTorrentDetails } from './types';
 import { writeFileWithCreateDir } from '@/utils/files';
 import { env } from '@/env';
-import { createCache } from '@/utils/cache';
-
-const DownloadAndParseTorrentCache = createCache();
+import { Cached, DEFAULT_TTL } from '@/utils/cache';
 
 export class TorrentService {
-  @DownloadAndParseTorrentCache()
+  @Cached({
+    max: 1_000,
+    ttl: DEFAULT_TTL,
+    ttlAutopurge: true,
+    generateKey: (torrentUrl) => torrentUrl,
+  })
   public async downloadAndParseTorrent(
     torrentUrl: string,
   ): Promise<ParsedTorrentDetails> {

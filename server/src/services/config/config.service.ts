@@ -13,13 +13,13 @@ export class ConfigService {
     private userService: UserService,
   ) {}
 
-  public getConfig = (): Configuration => {
+  public getConfig(): Configuration {
     const config = this.db.select().from(configurationTable).limit(1).get();
     if (!config) {
       throw new MissingConfigError('No configuration found in the database.');
     }
     return config;
-  };
+  }
 
   public getConfigOrNull = (): Configuration | null => {
     return this.db.select().from(configurationTable).limit(1).get() ?? null;

@@ -22,9 +22,7 @@ import { CinemeatService } from '@/services/cinemeta';
 import { isSupportedMedia } from '@/utils/media-file-extensions';
 import { ConfigService } from '@/services/config';
 import { env } from '@/env';
-import { createCache } from '@/utils/cache';
-
-const TorrentQueryCache = createCache();
+import { Cached, DEFAULT_MAX, DEFAULT_TTL } from '@/utils/cache';
 
 export class NcoreService implements TorrentSource {
   public torrentSourceName = 'ncore';
@@ -74,7 +72,6 @@ export class NcoreService implements TorrentSource {
     return fullCookieString;
   }
 
-  @TorrentQueryCache()
   private async fetchTorrents(query: URLSearchParams): Promise<NcorePageResponseJson> {
     const config = this.configService.getConfig();
     const cookies = await this.getCookies(config.ncoreUsername, config.ncorePassword);
@@ -95,6 +92,12 @@ export class NcoreService implements TorrentSource {
     } satisfies NcorePageResponseJson;
   }
 
+  @Cached({
+    max: DEFAULT_MAX,
+    ttl: DEFAULT_TTL,
+    ttlAutopurge: true,
+    generateKey: (queryParams) => new URLSearchParams(queryParams).toString(),
+  })
   private async getTorrentsForQuery(
     queryParams: NcoreQueryParams,
   ): Promise<NcoreTorrentDetails[]> {
@@ -144,6 +147,7 @@ export class NcoreService implements TorrentSource {
     });
   }
 
+  // TODO: incorrect caching ("Severence" results showing up for "Red One")
   public async getTorrentsForImdbId({
     imdbId,
     type,
