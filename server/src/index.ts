@@ -3,7 +3,6 @@ import { contextStorage } from 'hono/context-storage';
 import { serve } from '@hono/node-server';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
-import { schedule } from 'node-cron';
 
 import { UserService } from '@/services/user';
 import { ManifestService } from '@/services/manifest';
@@ -71,6 +70,7 @@ const isDeviceAuthenticated = createDeviceTokenMiddleware(userService);
 
 const torrentStoreService = new TorrentStoreService(torrentSource);
 const streamService = new StreamService(configService, userService);
+configService.torrentStoreService = torrentStoreService;
 
 const configController = new ConfigController(configService);
 const manifestController = new ManifestController(manifestService);
@@ -86,17 +86,9 @@ const streamController = new StreamController(
 );
 const torrentController = new TorrentController(torrentStoreService);
 
-console.log('Config is successfully loaded and is valid.');
-
 torrentStoreService.loadExistingTorrents();
 
-if (configService.getConfigOrNull()?.deleteAfterHitnrun) {
-  console.log('Scheduling cron job for deleting torrents after hitnrun...');
-  schedule(
-    configService.getConfig().deleteAfterHitnrunCron,
-    torrentStoreService.deleteUnnecessaryTorrents,
-  );
-}
+configService.scheduleDeleteAfterHitnrunCron();
 
 const baseApp = new Hono();
 baseApp.use(cors());
