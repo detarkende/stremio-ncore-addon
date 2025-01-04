@@ -26,6 +26,7 @@ export class TorrentStoreService {
         {
           path: env.DOWNLOADS_DIR,
           deselect: true,
+          storeCacheSlots: 0,
         },
         (torrent) => {
           console.log(
