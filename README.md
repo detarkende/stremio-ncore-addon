@@ -79,7 +79,11 @@ View answer
 
 **Client**: the device where you will watch the content through the Stremio app.
 
+### Beginner guide
+
 [If you're not familiar with selfhosting, follow this guide.](./docs/installation-guides/beginners/beginners.md)
+
+### Advanced guide
 
 [If you know your way around selfhosting and Docker, follow this guide.](./docs/installation-guides/advanced/advanced.md)
 
