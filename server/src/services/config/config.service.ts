@@ -20,7 +20,13 @@ export class ConfigService {
   public deleteAfterHitnrunCronTask: ScheduledTask | null = null;
 
   public scheduleDeleteAfterHitnrunCron() {
-    const config = this.getConfig();
+    const config = this.getConfigOrNull();
+    if (!config) {
+      console.log(
+        'Missing config in config service. Cannot schedule deleteAfterHitnrun cron.',
+      );
+      return;
+    }
     this.deleteAfterHitnrunCronTask?.stop();
     this.deleteAfterHitnrunCronTask = null;
     if (!this.torrentStoreService) {
