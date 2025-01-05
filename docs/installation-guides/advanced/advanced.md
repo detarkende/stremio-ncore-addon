@@ -20,6 +20,13 @@ services:
     restart: unless-stopped
 ```
 
+> [!WARNING]
+> Until the addon hadn't reached V1, it is **NOT RECOMMENDED** to use the `latest` image tag.
+> 
+> Upgrading to newer minor versions might need manual changes (e.g. changing environment variables or volumes), it could lead to downtime.
+>
+> Once the project reaches V1, these things should be more stable and breaking changes will only occur during major upgrades.
+
 ## Required environment variables
 
 | Variable name    | Description                    |
