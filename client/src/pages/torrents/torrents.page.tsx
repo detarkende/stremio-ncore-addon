@@ -12,25 +12,22 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useMe } from '@/hooks/use-me';
-import { useJwtStore } from '@/stores/jwt';
 import { useQuery } from '@tanstack/react-query';
 import { PropsWithChildren } from 'react';
 import { Redirect } from 'wouter';
 import { DeleteTorrentButton } from './components/delete-torrent-button';
 import { TORRENTS_QUERY_KEY } from './constants';
+import { UserRole } from '@server/db/schema/users';
 
 const Container = ({ children }: PropsWithChildren) => (
-  <div className="container pt-6 pb-24 min-h-full">
-    <div className="h-full flex flex-col items-center justify-center space-y-8">
-      <h1 className="text-2xl font-semibold">Torrents</h1>
-      {children}
-    </div>
+  <div className="h-full pt-6 pb-24 flex flex-col space-y-8">
+    <h1 className="text-2xl font-semibold text-center">Torrents</h1>
+    {children}
   </div>
 );
 
 export const TorrentsPage = () => {
-  const { jwt } = useJwtStore();
-  const { data: user } = useMe(jwt);
+  const { data: user } = useMe();
   const {
     data: torrents,
     isLoading,
@@ -39,16 +36,16 @@ export const TorrentsPage = () => {
   } = useQuery({
     queryKey: [TORRENTS_QUERY_KEY],
     queryFn: async () => {
-      const req = await api.api.auth[':jwt'].torrents.$get({ param: { jwt: jwt ?? '' } });
+      const req = await api.torrents.$get();
       return await req.json();
     },
-    enabled: !!jwt && !!user && user.role === 'admin',
+    enabled: !!user && user.role === UserRole.ADMIN,
     refetchInterval: 10_000,
   });
 
   const [animatedParent] = useAutoAnimate();
 
-  if (user && user.role !== 'admin') {
+  if (user && user.role !== UserRole.ADMIN) {
     return <Redirect to="/account" />;
   }
 
@@ -99,7 +96,11 @@ export const TorrentsPage = () => {
                 <TableCell>{torrent.downloaded}</TableCell>
                 <TableCell>{torrent.size}</TableCell>
                 <TableCell>{torrent.progress}</TableCell>
-                <TableCell>{jwt && <DeleteTorrentButton torrent={torrent} jwt={jwt} />}</TableCell>
+                <TableCell>
+                  {user?.role === UserRole.ADMIN && (
+                    <DeleteTorrentButton torrent={torrent} />
+                  )}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

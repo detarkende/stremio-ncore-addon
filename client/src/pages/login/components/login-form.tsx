@@ -20,14 +20,31 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { Alert } from '@/components/ui/alert';
-import { useLogin } from '../hooks/use-login';
 import { Redirect } from 'wouter';
-import { useJwtStore } from '@/stores/jwt';
+import { useMe } from '@/hooks/use-me';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { api } from '@/api';
+import { handleError, HttpError } from '@/lib/errors';
+import { QueryKeys } from '@/constants/query-keys';
+import { toast } from 'sonner';
 
 export const LoginForm = () => {
-  const { jwt, setJwt } = useJwtStore();
-  const { mutateAsync: login, data, isError, error } = useLogin();
+  const { data: me } = useMe();
+  const queryClient = useQueryClient();
+  const { mutateAsync: login } = useMutation({
+    mutationFn: async (credentials: LoginFormValues) => {
+      const req = await api.login.$post({ json: credentials });
+      const res = await req.json();
+      if (!res.success) {
+        throw new HttpError(req);
+      }
+    },
+    onError: (e) => handleError(e, 'Failed to login'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.ME] });
+      toast.success('Logged in successfully');
+    },
+  });
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     mode: 'all',
@@ -39,13 +56,10 @@ export const LoginForm = () => {
   } = form;
 
   const handleSubmit = form.handleSubmit(async (data) => {
-    const response = await login({ json: data });
-    if (response.success) {
-      setJwt(response.jwt);
-    }
+    await login(data);
   });
 
-  if (jwt) {
+  if (me) {
     return <Redirect to="/account" />;
   }
 
@@ -100,12 +114,6 @@ export const LoginForm = () => {
             </Button>
           </CardFooter>
         </Card>
-        <div className="max-w-xl w-full">
-          {isError && <Alert variant="error" title="Error" description={error.message} />}
-          {data && !data.success && (
-            <Alert variant="error" title="Error" description={data.message} />
-          )}
-        </div>
       </form>
     </Form>
   );

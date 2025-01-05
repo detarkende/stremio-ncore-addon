@@ -8,7 +8,10 @@ interface CopyToClipboardButtonProps {
   duration?: number;
 }
 
-export const CopyToClipboardButton = ({ text, duration = 2000 }: CopyToClipboardButtonProps) => {
+export const CopyToClipboardButton = ({
+  text,
+  duration = 2000,
+}: CopyToClipboardButtonProps) => {
   const [open, setOpen] = useState(false);
 
   const copyToClipboard = () => {
@@ -23,7 +26,7 @@ export const CopyToClipboardButton = ({ text, duration = 2000 }: CopyToClipboard
         <TooltipTrigger asChild>
           <Button
             variant="ghost"
-            className="size-10 px-[14px]"
+            className="size-7 px-2"
             type="button"
             onClick={copyToClipboard}
           >
@@ -31,7 +34,7 @@ export const CopyToClipboardButton = ({ text, duration = 2000 }: CopyToClipboard
           </Button>
         </TooltipTrigger>
         <TooltipContent>
-          <p className="flex gap-x-2 items-center">
+          <p className="flex gap-x-2 items-center font-sans">
             <Check size={12} className="text-green-600" strokeWidth={4} />
             <span>Copied to clipboard</span>
           </p>

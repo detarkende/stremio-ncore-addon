@@ -1,12 +1,21 @@
 import { cn } from '@/lib/utils';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useEffect, useRef, useState } from 'react';
 
 interface TruncatedTextProps extends React.HTMLAttributes<HTMLDivElement> {
   children: string;
 }
 
-export const TruncatedText = ({ children, className = '', ...props }: TruncatedTextProps) => {
+export const TruncatedText = ({
+  children,
+  className = '',
+  ...props
+}: TruncatedTextProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
@@ -35,7 +44,10 @@ export const TruncatedText = ({ children, className = '', ...props }: TruncatedT
             ref={ref}
             {...props}
             data-is-overflowing={isOverflowing}
-            className={cn('whitespace-nowrap overflow-hidden overflow-ellipsis', className)}
+            className={cn(
+              'whitespace-nowrap overflow-hidden overflow-ellipsis',
+              className,
+            )}
           >
             {children}
           </div>

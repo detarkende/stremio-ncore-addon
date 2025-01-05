@@ -1,0 +1,42 @@
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+
+  ul.navLinks {
+    display: flex;
+    flex-direction: column;
+    row-gap: theme('spacing.6');
+    position: absolute;
+    top: 100%;
+    right: 0px;
+    width: 80%;
+    height: calc(100vh - 100%);
+    @apply bg-opacity-50 bg-neutral-300 backdrop-blur-md backdrop-brightness-90;
+    padding: theme('spacing.6');
+    text-align: right;
+    z-index: 50;
+    white-space: nowrap;
+
+    &[data-state='closed'] {
+      display: none;
+    }
+
+    @screen md {
+      &[data-state='closed'],
+      &[data-state='open'] {
+        @apply bg-opacity-50 bg-transparent backdrop-blur-none backdrop-brightness-100;
+        position: static;
+        flex-direction: row;
+        column-gap: theme('spacing.6');
+        padding: 0;
+        display: flex;
+      }
+    }
+
+    a:hover {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+  }
+}

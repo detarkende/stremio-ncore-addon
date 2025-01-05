@@ -8,39 +8,26 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useJwtStore } from '@/stores/jwt';
 import { Separator } from '@radix-ui/react-separator';
-import { useQueryClient } from '@tanstack/react-query';
-import { PropsWithChildren } from 'react';
-import { Link, Redirect } from 'wouter';
-import { AddToStremio } from './components/add-to-stremio';
+import { Redirect } from 'wouter';
 import { useMe } from '@/hooks/use-me';
-
-const Container = ({ children }: PropsWithChildren) => (
-  <div className="container pt-6 pb-24 min-h-full">
-    <div className="h-full flex flex-col items-center justify-center space-y-8">{children}</div>
-  </div>
-);
-
-const ME_QUERY_KEY = 'me';
+import { DeviceTokenList } from './components/device-token-list';
+import { UserActions } from '@/components/user';
 
 export const AccountPage = () => {
-  const { jwt, logout } = useJwtStore();
-  const { data: user, isLoading, isError, error, refetch } = useMe(jwt);
-  const queryClient = useQueryClient();
+  const { me, logout, isLoading, isError, error, refetch } = useMe();
 
-  const handleLogout = () => {
-    logout();
-    queryClient.invalidateQueries({ queryKey: [ME_QUERY_KEY] });
+  const handleLogout = async () => {
+    await logout();
   };
 
-  if (!jwt) {
+  if (!me) {
     return <Redirect to="/configure" />;
   }
 
   if (isError) {
     return (
-      <Container>
+      <div className="flex flex-col items-center">
         <Card className="w-full max-w-xl">
           <CardHeader>
             <CardTitle>Error</CardTitle>
@@ -55,76 +42,46 @@ export const AccountPage = () => {
             <Button onClick={handleLogout}>Login</Button>
           </CardFooter>
         </Card>
-      </Container>
+      </div>
     );
   }
 
   return (
-    <Container>
+    <div className="flex flex-col items-center">
       <Card className="w-full max-w-xl">
         <CardHeader>
-          <CardTitle>
-            Welcome,{' '}
-            {isLoading ? (
-              <Skeleton className="w-32 rounded-md h-7 inline-block align-sub" />
-            ) : (
-              <span>{user?.username}</span>
-            )}
-          </CardTitle>
+          <div className="flex items-center justify-between gap-4">
+            <CardTitle>
+              Welcome,{' '}
+              {isLoading ? (
+                <Skeleton className="w-32 rounded-md h-7 inline-block align-sub" />
+              ) : (
+                <span>{me?.username}</span>
+              )}
+            </CardTitle>
+            <UserActions user={me} isDeleteEnabled={false} />
+          </div>
         </CardHeader>
         <Separator decorative orientation="horizontal" className="mb-4 border" />
 
         <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="col-span-full">
-            <h3 className="text-lg font-bold">Role</h3>
-            <p>
-              {isLoading ? (
-                <Skeleton className="w-32 rounded-md h-4 align-sub" />
-              ) : (
-                <div className="flex gap-3">
-                  <span>{user?.role.toLocaleUpperCase()}</span>
-                  <Link
-                    className="font-medium underline underline-offset-4 hover:decoration-2"
-                    to="/torrents"
-                  >
-                    See active torrents
-                  </Link>
-                </div>
-              )}
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-bold">Preferred language</h3>
-            <p>
-              {isLoading ? (
-                <Skeleton className="w-32 rounded-md h-4 align-sub" />
-              ) : (
-                user?.preferred_lang
-              )}
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-bold">Preferred resolutions</h3>
-            <p>
-              {isLoading ? (
-                <Skeleton className="w-32 rounded-md h-4 align-sub" />
-              ) : (
-                user?.preferred_resolutions.join(', ')
-              )}
-            </p>
-          </div>
-          <div className="col-span-full h-8"></div>
-          <div className="col-span-full">
-            <AddToStremio jwt={jwt} />
+            <h3 className="text-lg font-bold">Your devices</h3>
+            <p className="text-slate-500">Select or create a device to add to Stremio</p>
+            <DeviceTokenList />
           </div>
         </CardContent>
         <Separator decorative orientation="horizontal" className="mb-4 border" />
         <CardFooter className="flex items-center justify-end">
-          <Button onClick={handleLogout} className="min-w-full sm:min-w-0" variant="destructive">
+          <Button
+            onClick={handleLogout}
+            className="min-w-full sm:min-w-0"
+            variant="destructive"
+          >
             Logout
           </Button>
         </CardFooter>
       </Card>
-    </Container>
+    </div>
   );
 };

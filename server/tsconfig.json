@@ -3,6 +3,7 @@
     "experimentalDecorators": true,
     "skipLibCheck": true,
     "target": "ES2022",
+    "strict": true,
 
     "module": "ESNext",
     "moduleResolution": "node",

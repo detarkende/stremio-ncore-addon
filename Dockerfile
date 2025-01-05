@@ -27,8 +27,6 @@ COPY --from=build /app/dist ./dist
 VOLUME [ "/torrents", "/downloads" ]
 
 ENV NODE_ENV="production"
-ENV TORRENTS_DIR="/torrents"
-ENV DOWNLOADS_DIR="/downloads"
-
+ENV ADDON_DIR="/addon"
 EXPOSE 3000
 CMD ["pnpm", "start"]

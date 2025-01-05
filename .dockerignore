@@ -1,0 +1,8 @@
+docs
+assets
+node_modules
+downloads
+dist
+.github
+.vscode
+.husky

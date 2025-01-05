@@ -2,27 +2,32 @@ import type { Stream } from 'stremio-addon-sdk';
 import type { TorrentDetails } from '../torrent-source';
 import type { TorrentFileDetails } from '../torrent-source/types';
 import { languageEmojiMap } from './constants';
-import { config } from '@/config';
-import type { User } from '@/schemas/user.schema';
 import { rateList } from '@/utils/rate-list';
 import { formatBytes } from '@/utils/bytes';
+import { ConfigService } from '../config';
+import { UserService } from '../user';
+import { User } from '@/types/user';
 
 export class StreamService {
-  constructor() {}
+  constructor(
+    private configService: ConfigService,
+    private userService: UserService,
+  ) {}
 
   public convertTorrentToStream({
     torrent,
     isRecommended,
-    jwt,
+    deviceToken,
     season,
     episode,
   }: {
     torrent: TorrentDetails;
     isRecommended: boolean;
-    jwt: string;
+    deviceToken: string;
     season: number | undefined;
     episode: number | undefined;
   }): Stream {
+    const config = this.configService.getConfig();
     const torrentFileIndex = torrent.getMediaFileIndex({ season, episode });
 
     const sourceName = encodeURIComponent(torrent.sourceName);
@@ -30,9 +35,12 @@ export class StreamService {
     const infoHash = encodeURIComponent(torrent.infoHash);
     const fileIndex = encodeURIComponent(torrentFileIndex);
 
-    const description = this.getStreamDescription(torrent, isRecommended, { season, episode });
+    const description = this.getStreamDescription(torrent, isRecommended, {
+      season,
+      episode,
+    });
     return {
-      url: `${config.ADDON_URL}/api/auth/${jwt}/stream/play/${sourceName}/${sourceId}/${infoHash}/${fileIndex}`,
+      url: `${config.addonUrl}/api/auth/${deviceToken}/stream/play/${sourceName}/${sourceId}/${infoHash}/${fileIndex}`,
       description,
       behaviorHints: {
         notWebReady: true,
@@ -51,12 +59,18 @@ export class StreamService {
     const file = torrent.files[fileIndex] as TorrentFileDetails;
     const fileSizeString = formatBytes(file.length);
 
-    const recommendedLine = isRecommended ? '⭐️ Recommended\n' : '';
+    const mediaType = season && episode ? 'show' : 'movie';
+
+    const recommendedLine =
+      isRecommended && !torrent.isSpeculated ? '⭐️ Recommended\n' : '';
+    const warningLine = torrent.isSpeculated
+      ? `⚠️ <strong>Speculated</strong> ⚠️\nThis might be a different ${mediaType}!\n`
+      : '';
     const typeLine = `${languageEmoji} | ${torrent.displayResolution(torrent.getResolution(file.name))} | ${fileSizeString}\n`;
-    return recommendedLine + typeLine + torrent.getName();
+    return warningLine + recommendedLine + typeLine + torrent.getName();
   }
 
-  public orderTorrents({
+  public async orderTorrents({
     torrents,
     user,
     season,
@@ -66,10 +80,11 @@ export class StreamService {
     user: User;
     season: number | undefined;
     episode: number | undefined;
-  }): TorrentDetails[] {
-    const { preferred_lang: preferredLang, preferred_resolutions: preferredResolutions } = user;
+  }): Promise<TorrentDetails[]> {
+    const { preferredLanguage, preferredResolutions } = user;
+
     return rateList(torrents, [
-      (torrent) => (preferredLang === torrent.getLanguage() ? 3 : 0),
+      (torrent) => (preferredLanguage === torrent.getLanguage() ? 3 : 0),
       (torrent) => {
         const fileIndex = torrent.getMediaFileIndex({ season, episode });
         const resolution = torrent.getResolution(torrent.files[fileIndex]!.name);

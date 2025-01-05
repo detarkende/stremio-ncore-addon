@@ -6,7 +6,6 @@ import type { TorrentService } from '@/services/torrent';
 import type { StreamService } from '@/services/stream';
 import type { UserService } from '@/services/user';
 import type { TorrentStoreService } from '@/services/torrent-store';
-import type { User } from '@/schemas/user.schema';
 import { playSchema } from '@/schemas/play.schema';
 import { parseRangeHeader } from '@/utils/parse-range-header';
 import { HttpStatusCode } from '@/types/http';
@@ -29,16 +28,9 @@ export class StreamController {
         message: result.error.message,
       });
     }
-    const { imdbId, type, episode, season, jwt } = result.data;
+    const { imdbId, type, episode, season, deviceToken } = result.data;
 
-    let user: User;
-    try {
-      user = await this.userService.getUserByJwt(jwt);
-    } catch {
-      throw new HTTPException(HttpStatusCode.UNAUTHORIZED, {
-        message: 'Unauthorized',
-      });
-    }
+    const user = await this.userService.getUserByDeviceTokenOrThrow(deviceToken);
 
     const torrents = await this.torrentSource.getTorrentsForImdbId({
       imdbId,
@@ -47,7 +39,7 @@ export class StreamController {
       episode,
     });
 
-    const orderedTorrents = this.streamService.orderTorrents({
+    const orderedTorrents = await this.streamService.orderTorrents({
       torrents,
       season,
       episode,
@@ -58,7 +50,7 @@ export class StreamController {
       this.streamService.convertTorrentToStream({
         torrent,
         isRecommended: i === 0,
-        jwt,
+        deviceToken,
         season,
         episode,
       }),

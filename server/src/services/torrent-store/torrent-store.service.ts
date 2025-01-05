@@ -4,8 +4,8 @@ import WebTorrent from 'webtorrent';
 import { globSync } from 'glob';
 import type { ITorrentSourceManager } from '../torrent-source';
 import type { TorrentStoreStats } from './types';
-import { config } from '@/config';
 import { formatBytes } from '@/utils/bytes';
+import { env } from '@/env';
 
 type TorrentFilePath = string;
 type InfoHash = string;
@@ -24,11 +24,14 @@ export class TorrentStoreService {
       const torrent = this.client.add(
         torrentFilePath,
         {
-          path: config.DOWNLOADS_DIR,
+          path: env.DOWNLOADS_DIR,
           deselect: true,
+          storeCacheSlots: 0,
         },
         (torrent) => {
-          console.log(`Torrent ${torrent.name} - ${torrent.infoHash} verified and added.`);
+          console.log(
+            `Torrent ${torrent.name} - ${torrent.infoHash} verified and added.`,
+          );
           this.torrentFilePaths.set(torrent.infoHash, torrentFilePath);
           resolve(torrent);
         },
@@ -42,10 +45,10 @@ export class TorrentStoreService {
   }
 
   private getTorrentDownloadPath(torrent: WebTorrent.Torrent) {
-    const pathWithInfoHash = `${config.DOWNLOADS_DIR}/${
+    const pathWithInfoHash = `${env.DOWNLOADS_DIR}/${
       torrent.name
     } - ${torrent.infoHash.slice(0, 8)}`;
-    const pathWithoutInfoHash = `${config.DOWNLOADS_DIR}/${torrent.name}`;
+    const pathWithoutInfoHash = `${env.DOWNLOADS_DIR}/${torrent.name}`;
     if (existsSync(pathWithInfoHash) && lstatSync(pathWithInfoHash).isDirectory())
       return pathWithInfoHash;
     if (existsSync(pathWithoutInfoHash) && lstatSync(pathWithoutInfoHash).isDirectory())
@@ -63,10 +66,14 @@ export class TorrentStoreService {
     await this.client.remove(infoHash, { destroyStore: false });
     if (torrentDownloadPath) {
       await rm(torrentDownloadPath, { recursive: true });
-      console.log(`Successfully deleted download for ${torrent.name} - ${torrent.infoHash}.`);
+      console.log(
+        `Successfully deleted download for ${torrent.name} - ${torrent.infoHash}.`,
+      );
     }
     await rm(torrentFilePath);
-    console.log(`Successfully deleted torrent file for ${torrent.name} - ${torrent.infoHash}.`);
+    console.log(
+      `Successfully deleted torrent file for ${torrent.name} - ${torrent.infoHash}.`,
+    );
   }
 
   public getStoreStats(): TorrentStoreStats[] {
@@ -90,7 +97,7 @@ export class TorrentStoreService {
 
   public async loadExistingTorrents(): Promise<void> {
     console.log('Looking for torrent files...');
-    const savedTorrentFilePaths = globSync(`${config.TORRENTS_DIR}/*.torrent`);
+    const savedTorrentFilePaths = globSync(`${env.TORRENTS_DIR}/*.torrent`);
     console.log(`Found ${savedTorrentFilePaths.length} torrent files.`);
     await Promise.allSettled(
       savedTorrentFilePaths.map((filePath) => {

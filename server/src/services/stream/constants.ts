@@ -1,4 +1,4 @@
-import { Language } from '@/schemas/language.schema';
+import { Language } from '@/db/schema/users';
 
 export const languageEmojiMap: Record<Language, string> = {
   [Language.HU]: '🇭🇺',
