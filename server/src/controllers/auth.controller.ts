@@ -27,7 +27,6 @@ export class AuthController {
       expires: session.expiresAt,
       httpOnly: true,
       path: '/',
-      secure: true,
       sameSite: 'Strict',
     });
     return c.json({ success: true, message: undefined });
