@@ -8,7 +8,6 @@ export const envSchema = z
     NCORE_PASSWORD: z.string(),
     TORRENTS_DIR: z.string().optional(),
     DOWNLOADS_DIR: z.string().optional(),
-    CACHE_DIR: z.string().optional(),
     NCORE_URL: z.string().url().default('https://ncore.pro'),
     CINEMETA_URL: z.string().url().default('https://v3-cinemeta.strem.io'),
   })
@@ -17,6 +16,5 @@ export const envSchema = z
       ...env,
       TORRENTS_DIR: env.TORRENTS_DIR ?? `${env.ADDON_DIR}/torrents`,
       DOWNLOADS_DIR: env.DOWNLOADS_DIR ?? `${env.ADDON_DIR}/downloads`,
-      CACHE_DIR: env.CACHE_DIR ?? `${env.ADDON_DIR}/cache`,
     };
   });
