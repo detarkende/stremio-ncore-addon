@@ -146,7 +146,6 @@ export class NcoreService implements TorrentSource {
     });
   }
 
-  // TODO: incorrect caching ("Severence" results showing up for "Red One")
   public async getTorrentsForImdbId({
     imdbId,
     type,
