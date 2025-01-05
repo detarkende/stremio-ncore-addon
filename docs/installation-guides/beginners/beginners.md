@@ -154,3 +154,5 @@ Fill out the details in the following way:
 (Of course you should select your own domain in the dropdown).
 
 ## You're done! 🎉
+
+The addon is now running at your Addon URL. You should now check out the Client Setup Guide to know how to add the addon to your TV / media device.

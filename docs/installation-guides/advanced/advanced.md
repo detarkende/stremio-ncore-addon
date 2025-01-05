@@ -22,7 +22,7 @@ services:
 
 > [!WARNING]
 > Until the addon hadn't reached V1, it is **NOT RECOMMENDED** to use the `latest` image tag.
-> 
+>
 > Upgrading to newer minor versions might need manual changes (e.g. changing environment variables or volumes), it could lead to downtime.
 >
 > Once the project reaches V1, these things should be more stable and breaking changes will only occur during major upgrades.
@@ -50,3 +50,7 @@ services:
 > If you would like to place the torrents, the config and the downloads into 3 separate places (so not everything in the same dir),
 > then I recommend setting the env vars manually (e.g. `DOWNLOADS_DIR=/my-downloads/dir`)
 > and mounting individual volumes for them.
+
+## Stremio client setup
+
+To add the addon to Stremio follow the [Client Setup Guide](../../client-setup.md).
