@@ -47,7 +47,6 @@ import {
   editUserSchema,
   updatePasswordSchema,
 } from './schemas/user.schema';
-import { HttpStatusCode } from './types/http';
 
 const userService = new UserService(db);
 const configService = new ConfigService(db, userService);
@@ -60,8 +59,17 @@ const manifestService = new ManifestService(
 );
 const torrentService = new TorrentService();
 const cinemetaService = new CinemeatService();
-const ncoreService = new NcoreService(configService, torrentService, cinemetaService);
-const torrentSource = new TorrentSourceManager([ncoreService]);
+const torrentSource = new TorrentSourceManager([
+  env.NCORE_URL && env.NCORE_USERNAME && env.NCORE_PASSWORD
+    ? new NcoreService(
+        torrentService,
+        cinemetaService,
+        env.NCORE_URL,
+        env.NCORE_USERNAME,
+        env.NCORE_PASSWORD,
+      )
+    : null,
+]);
 
 const isAuthenticated = createAuthMiddleware(sessionService);
 const isAdmin = createAdminMiddleware(sessionService);
@@ -72,7 +80,7 @@ const torrentStoreService = new TorrentStoreService(torrentSource);
 const streamService = new StreamService(configService, userService);
 configService.torrentStoreService = torrentStoreService;
 
-const configController = new ConfigController(configService);
+const configController = new ConfigController(configService, torrentSource);
 const manifestController = new ManifestController(manifestService);
 const authController = new AuthController(userService, sessionService);
 const deviceTokenController = new DeviceTokenController(deviceTokenService);
@@ -114,20 +122,13 @@ const app = new Hono<HonoEnv>()
   )
 
   .get('/config/is-configured', (c) => configController.getIsConfigured(c))
+  .get('/config/torrent-sources/issues', (c) =>
+    configController.getTorrentSourceConfigIssues(c),
+  )
   .get('/config', isAdmin, (c) => configController.getConfig(c))
-  .post('/config', zValidator('json', createConfigSchema), async (c) => {
-    try {
-      await configController.createConfig(c);
-      console.log('Configuration created successfully.');
-      return c.json({ message: 'Configuration created successfully.' });
-    } catch (e) {
-      console.error('Error creating configuration:', e);
-      return c.json(
-        { message: 'Unknown error occurred while creating configuration.' },
-        HttpStatusCode.INTERNAL_SERVER_ERROR,
-      );
-    }
-  })
+  .post('/config', zValidator('json', createConfigSchema), (c) =>
+    configController.createConfig(c),
+  )
   .put('/config', isAdmin, zValidator('json', updateConfigSchema), (c) =>
     configController.updateConfig(c),
   )

@@ -20,24 +20,25 @@ import { StreamType } from '@/schemas/stream.schema';
 import { processInBatches } from '@/utils/process-in-batches';
 import { CinemeatService } from '@/services/cinemeta';
 import { isSupportedMedia } from '@/utils/media-file-extensions';
-import { ConfigService } from '@/services/config';
-import { env } from '@/env';
 import { Cached, DEFAULT_MAX, DEFAULT_TTL } from '@/utils/cache';
 
 export class NcoreService implements TorrentSource {
-  public torrentSourceName = 'ncore';
+  public name = 'ncore';
+  public displayName = 'nCore';
 
   constructor(
-    private configService: ConfigService,
     private torrentService: TorrentService,
     private cinemetaService: CinemeatService,
+    private ncoreUrl: string,
+    private ncoreUsername: string,
+    private ncorePassword: string,
   ) {}
   private cookiesCache = {
     pass: null as string | null,
     cookieExpirationDate: 0,
   };
 
-  private async getCookies(username: string, password: string): Promise<string> {
+  public async getCookies(username: string, password: string): Promise<string> {
     if (
       this.cookiesCache.pass &&
       this.cookiesCache.cookieExpirationDate > Date.now() + 1000
@@ -50,7 +51,7 @@ export class NcoreService implements TorrentSource {
     form.append('nev', username);
     form.append('pass', password);
     form.append('ne_leptessen_ki', '1');
-    const resp = await fetch(`${env.NCORE_URL}/login.php`, {
+    const resp = await fetch(`${this.ncoreUrl}/login.php`, {
       method: 'POST',
       body: form,
       redirect: 'manual',
@@ -72,9 +73,19 @@ export class NcoreService implements TorrentSource {
     return fullCookieString;
   }
 
+  public async getConfigIssues(): Promise<string | null> {
+    try {
+      await this.getCookies(this.ncoreUsername, this.ncorePassword);
+      return null;
+    } catch {
+      console.error('Failed to log in to nCore while checking nCore config');
+      return 'Failed to log in to nCore. Check your credentials in the environment variables.';
+    }
+  }
+
   private async fetchTorrents(query: URLSearchParams): Promise<NcorePageResponseJson> {
-    const cookies = await this.getCookies(env.NCORE_USERNAME, env.NCORE_PASSWORD);
-    const request = await fetch(`${env.NCORE_URL}/torrents.php?${query.toString()}`, {
+    const cookies = await this.getCookies(this.ncoreUsername, this.ncorePassword);
+    const request = await fetch(`${this.ncoreUrl}/torrents.php?${query.toString()}`, {
       headers: {
         cookie: cookies,
       },
@@ -166,33 +177,33 @@ export class NcoreService implements TorrentSource {
     if (torrents.length > 0) {
       return torrents;
     }
+    let name = '';
     try {
-      const {
-        meta: { name },
-      } = await this.cinemetaService.getMetadataByImdbId(type, imdbId);
-      torrents = await this.getTorrentsForQuery({
-        mire: name,
-        miben: NcoreSearchBy.NAME,
-        miszerint: NcoreOrderBy.SEEDERS,
-        kivalasztott_tipus:
-          type === StreamType.MOVIE ? MOVIE_CATEGORY_FILTERS : SERIES_CATEGORY_FILTERS,
-      });
-      torrents.forEach((torrent) => {
-        torrent.isSpeculated = true;
-      });
-      torrents = this.filterTorrentsBySeasonAndEpisode(torrents, { season, episode });
-
-      return torrents;
+      const cinemetaData = await this.cinemetaService.getMetadataByImdbId(type, imdbId);
+      name = cinemetaData.meta.name;
     } catch (error) {
       console.error('Failed to get metadata from Cinemeta', error);
       return [];
     }
+    torrents = await this.getTorrentsForQuery({
+      mire: name,
+      miben: NcoreSearchBy.NAME,
+      miszerint: NcoreOrderBy.SEEDERS,
+      kivalasztott_tipus:
+        type === StreamType.MOVIE ? MOVIE_CATEGORY_FILTERS : SERIES_CATEGORY_FILTERS,
+    });
+    torrents.forEach((torrent) => {
+      torrent.isSpeculated = true;
+    });
+    torrents = this.filterTorrentsBySeasonAndEpisode(torrents, { season, episode });
+
+    return torrents;
   }
 
   public async getTorrentUrlBySourceId(ncoreId: string) {
-    const cookies = await this.getCookies(env.NCORE_USERNAME, env.NCORE_PASSWORD);
+    const cookies = await this.getCookies(this.ncoreUsername, this.ncorePassword);
     const response = await fetch(
-      `${env.NCORE_URL}/torrents.php?action=details&id=${ncoreId}`,
+      `${this.ncoreUrl}/torrents.php?action=details&id=${ncoreId}`,
       {
         headers: {
           cookie: cookies,
@@ -202,15 +213,15 @@ export class NcoreService implements TorrentSource {
 
     const html = await response.text();
     const { document } = new JSDOM(html).window;
-    const downloadLink = `${env.NCORE_URL}/${document
+    const downloadLink = `${this.ncoreUrl}/${document
       .querySelector('.download > a')
       ?.getAttribute('href')}`;
     return downloadLink;
   }
 
   public async getRemovableInfoHashes(): Promise<string[]> {
-    const cookie = await this.getCookies(env.NCORE_USERNAME, env.NCORE_PASSWORD);
-    const request = await fetch(`${env.NCORE_URL}/hitnrun.php?showall=true`, {
+    const cookie = await this.getCookies(this.ncoreUsername, this.ncorePassword);
+    const request = await fetch(`${this.ncoreUrl}/hitnrun.php?showall=true`, {
       headers: { cookie },
     });
     const html = await request.text();

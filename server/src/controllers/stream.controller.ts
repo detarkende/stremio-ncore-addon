@@ -9,11 +9,11 @@ import type { TorrentStoreService } from '@/services/torrent-store';
 import { playSchema } from '@/schemas/play.schema';
 import { parseRangeHeader } from '@/utils/parse-range-header';
 import { HttpStatusCode } from '@/types/http';
-import type { ITorrentSourceManager } from '@/services/torrent-source/types';
+import type { TorrentSourceManager } from '@/services/torrent-source';
 
 export class StreamController {
   constructor(
-    private torrentSource: ITorrentSourceManager,
+    private torrentSource: TorrentSourceManager,
     private torrentService: TorrentService,
     private streamService: StreamService,
     private userService: UserService,
