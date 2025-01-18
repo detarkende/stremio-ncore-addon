@@ -1,13 +1,17 @@
 import { UserRole } from '@/db/schema/users';
 import { CreateConfigRequest, UpdateConfigRequest } from '@/schemas/config.schema';
 import { ConfigService } from '@/services/config';
+import { TorrentSourceManager } from '@/services/torrent-source';
 import { HonoEnv } from '@/types/hono-env';
 import { HttpStatusCode } from '@/types/http';
 import { Context } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 
 export class ConfigController {
-  constructor(private configService: ConfigService) {}
+  constructor(
+    private configService: ConfigService,
+    private torrentSourceManager: TorrentSourceManager,
+  ) {}
 
   public async getIsConfigured(c: Context<HonoEnv>) {
     const configuration = this.configService.getConfigOrNull();
@@ -39,9 +43,14 @@ export class ConfigController {
       }
 
       await this.configService.createConfig(data);
+      console.log('Configuration created successfully.');
+      return c.json({ message: 'Configuration created successfully.' });
     } catch (e) {
       console.error('Error creating configuration:', e);
-      throw new HTTPException(HttpStatusCode.INTERNAL_SERVER_ERROR);
+      return c.json(
+        { message: 'Unknown error occurred while creating configuration.' },
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -59,5 +68,10 @@ export class ConfigController {
 
     const updatedConfig = await this.configService.updateConfig(c.req.valid('json'));
     return c.json(updatedConfig);
+  }
+
+  public async getTorrentSourceConfigIssues(c: Context<HonoEnv>) {
+    const issues = await this.torrentSourceManager.getSourceConfigIssues();
+    return c.json(issues);
   }
 }

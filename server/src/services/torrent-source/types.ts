@@ -82,18 +82,18 @@ export abstract class TorrentDetails implements ParsedTorrentDetails {
 }
 
 export interface TorrentSource {
-  torrentSourceName: string;
+  name: string;
+  displayName: string;
   getTorrentsForImdbId: (
     params: Pick<StreamQuery, 'imdbId' | 'type' | 'episode' | 'season'>,
   ) => Promise<TorrentDetails[]>;
   getTorrentUrlBySourceId: (sourceId: string) => Promise<string | null>;
   getRemovableInfoHashes: () => Promise<string[]>;
+  getConfigIssues: () => Promise<string | null>;
 }
 
-export interface ITorrentSourceManager
-  extends Omit<TorrentSource, 'torrentSourceName' | 'getTorrentUrlBySourceId'> {
-  getTorrentUrlBySourceId: (props: {
-    sourceId: string;
-    sourceName: string;
-  }) => Promise<string | null>;
+export interface TorrentSourceIssue {
+  id: string;
+  sourceName: string;
+  message: string;
 }

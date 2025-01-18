@@ -13,6 +13,7 @@ import { Redirect } from 'wouter';
 import { useMe } from '@/hooks/use-me';
 import { DeviceTokenList } from './components/device-token-list';
 import { UserActions } from '@/components/user';
+import { TorrentSourceIssues } from '@/components/torrent-source-issues';
 
 export const AccountPage = () => {
   const { me, logout, isLoading, isError, error, refetch } = useMe();
@@ -47,7 +48,8 @@ export const AccountPage = () => {
   }
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center gap-4">
+      <TorrentSourceIssues />
       <Card className="w-full max-w-xl">
         <CardHeader>
           <div className="flex items-center justify-between gap-4">
