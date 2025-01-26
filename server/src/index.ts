@@ -3,6 +3,8 @@ import { contextStorage } from 'hono/context-storage';
 import { serve } from '@hono/node-server';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
+import fs from 'node:fs';
+import { createServer } from 'node:https';
 
 import { UserService } from '@/services/user';
 import { ManifestService } from '@/services/manifest';
@@ -101,7 +103,14 @@ configService.scheduleDeleteAfterHitnrunCron();
 const baseApp = new Hono();
 baseApp.use(cors());
 
+const keyFile = fs.readFileSync('server/private.key')
+const certFile = fs.readFileSync('server/certificate.crt')
+
 baseApp.get('/manifest.json', (c) => manifestController.getBaseManifest(c));
+if (env.PKI_VALIDATION_URL) {
+  const sslAuthFile = fs.readFileSync('server/ssl_auth.txt')
+  baseApp.get(env.PKI_VALIDATION_URL, (c) => c.body(sslAuthFile))
+}
 
 if (process.env.NODE_ENV === 'production') {
   applyServeStatic(baseApp);
@@ -181,10 +190,16 @@ const app = new Hono<HonoEnv>()
   .delete('/torrents/:infoHash', isAdmin, (c) => torrentController.deleteTorrent(c));
 
 baseApp.route('/api', app);
+console.log('Foobar 123!');
 
 serve({
   fetch: baseApp.fetch,
   port: env.PORT,
+  createServer: createServer,
+  serverOptions: {
+    key: keyFile,
+    cert: certFile,
+  },
 });
 
 console.log(`Server started on port ${env.PORT}!`);

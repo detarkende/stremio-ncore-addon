@@ -10,6 +10,7 @@ export const envSchema = z
     DOWNLOADS_DIR: z.string().optional(),
     NCORE_URL: z.string().url().default('https://ncore.pro'),
     CINEMETA_URL: z.string().url().default('https://v3-cinemeta.strem.io'),
+    PKI_VALIDATION_URL: z.string().optional(),
   })
   .transform((env) => {
     return {

@@ -3,10 +3,17 @@ WORKDIR /app
 
 RUN npm install -g pnpm
 
+ARG CERT_FILE
+ARG KEY_FILE
+ARG SSL_AUTH_FILE
+
 COPY package.json pnpm-lock.yaml .npmrc pnpm-workspace.yaml ./
 COPY ./patches ./patches
 COPY ./server/package.json ./server/package.json
 COPY ./client/package.json ./client/package.json
+COPY ${CERT_FILE} ./server/certificate.crt
+COPY ${KEY_FILE} ./server/private.key
+COPY ${SSL_AUTH_FILE} ./server/ssl_auth.txt
 
 
 FROM base AS prod-deps
