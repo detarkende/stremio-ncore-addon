@@ -45,6 +45,9 @@ services:
 | `CONFIG_DIR`    | The directory where the addon will place the configuration files (e.g. SQLite db file). By default, it will be `ADDON_DIR`/config                                                                                                           |
 | `NCORE_URL`     | The URL of nCore. It's set by default, but if for some reason nCore changes URLs again and the addon isn't maintained by that point, then you can just change it yourself.                                                                  |
 | `CINEMETA_URL`  | The URL of Cinemeta. It's set by default, but if for some reason Cinemeta changes URLs again and the addon isn't maintained by that point, then you can just change it yourself.                                                            |
+| `CERT_FILE`     | The route to the cert file you want to use for https.                                                            |
+| `KEY_FILE`      | The route to the key file you want to use for https.                                                            |
+| `SSL_AUTH_FILE` | The route to the auth file you'd like to expose to the web for a certificate service, such as ZeroSSL, to read from and verify your site.                                                            |
 
 > [!TIP]
 > If you would like to place the torrents, the config and the downloads into 3 separate places (so not everything in the same dir),
