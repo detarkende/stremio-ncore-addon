@@ -58,11 +58,16 @@ export abstract class TorrentDetails implements ParsedTorrentDetails {
       return biggestFileIndex;
     }
 
-    const parsedFileNames = this.files.map(
-      (file) => filenameParse(file.name, true) as ParsedShow,
-    );
-    const searchedEpisode = parsedFileNames.find((info) => {
-      return info.seasons?.includes(season) && info.episodeNumbers?.includes(episode);
+    const parsedFileNames = this.files.map((file) => ({
+      file,
+      parsed: filenameParse(file.name, true) as ParsedShow,
+    }));
+    const searchedEpisode = parsedFileNames.find(({ file, parsed }) => {
+      return (
+        !file.path.toLocaleLowerCase().includes('sample') &&
+        parsed.seasons?.includes(season) &&
+        parsed.episodeNumbers?.includes(episode)
+      );
     });
     return searchedEpisode ? parsedFileNames.indexOf(searchedEpisode) : -1;
   }
