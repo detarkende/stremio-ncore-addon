@@ -12,4 +12,5 @@ dist
 !.env.example
 
 docker-compose.yaml
+docker-compose.yml
 downloads

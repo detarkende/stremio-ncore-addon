@@ -90,6 +90,16 @@ Go back to the **Cloudflared** tab, paste the command into the **Tunnel Connecto
 
 You can close **Cloudflared** now, but don't close **Cloudflare Zero Trust**.
 
+### 3.3 Create a free SSL certificate with ZeroSSL so you can access the extension via HTTPS
+
+Go to [zerossl.com](https://zerossl.com/), create an account and follow their guide to create a free SSL certificate for your domain.
+
+You can download your certificate from this page.
+
+![Download and install certificate](./assets/zerossl.png)
+
+Extract the files from the archive to the root folder of your application.
+
 ## Step 4 - Install Stremio nCore addon in CasaOS.
 
 Back on the CasaOS Dashboard, click the Plus icon and add a customized app.
@@ -104,8 +114,8 @@ name: stremio-ncore-addon
 services:
   stremio-ncore-addon:
     environment:
-      - NCORE_PASSWORD=
-      - NCORE_USERNAME=
+      - NCORE_PASSWORD=${NCORE_PASSWORD}
+      - NCORE_USERNAME=${NCORE_USERNAME}
     image: detarkende/stremio-ncore-addon:0.5.0
     ports:
       - target: 3000
@@ -116,6 +126,11 @@ services:
       - type: bind
         source: /DATA/AppData/stremio-ncore-addon
         target: /addon
+    build:
+      args:
+        - CERT_FILE=${CERT_FILE}
+        - KEY_FILE=${KEY_FILE}
+        - SSL_AUTH_FILE=${SSL_AUTH_FILE}
 x-casaos:
   icon: https://github.com/detarkende/stremio-ncore-addon/blob/master/client/public/stremio-ncore-addon-logo-rounded.png?raw=true
   scheme: https
