@@ -46,6 +46,8 @@ export class StreamController {
       user,
     });
 
+    const { preferredLanguage } = user;
+
     const streams = orderedTorrents.map((torrent, i) =>
       this.streamService.convertTorrentToStream({
         torrent,
@@ -53,6 +55,7 @@ export class StreamController {
         deviceToken,
         season,
         episode,
+        preferredLanguage,
       }),
     );
 
