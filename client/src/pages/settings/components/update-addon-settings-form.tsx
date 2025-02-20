@@ -11,7 +11,13 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-export const UpdateAddonSettingsForm = ({ config }: { config: Configuration }) => {
+export const UpdateAddonSettingsForm = ({
+  config,
+  localUrl,
+}: {
+  config: Configuration;
+  localUrl?: string;
+}) => {
   const { mutateAsync, isPending } = useMutation({
     mutationKey: [MutationKeys.UPDATE_SETTINGS],
     mutationFn: async (data: UpdateConfigRequest) => {
@@ -38,7 +44,7 @@ export const UpdateAddonSettingsForm = ({ config }: { config: Configuration }) =
   return (
     <FormProvider {...form}>
       <form onSubmit={onSubmit} className="space-y-12 max-w-[600px]">
-        <SettingsFormFields />
+        <SettingsFormFields localUrl={localUrl} />
         <div className="flex gap-4">
           <Button
             variant="outline"

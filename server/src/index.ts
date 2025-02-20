@@ -3,6 +3,7 @@ import { contextStorage } from 'hono/context-storage';
 import { serve } from '@hono/node-server';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
+import { createServer } from 'node:https';
 
 import { UserService } from '@/services/user';
 import { ManifestService } from '@/services/manifest';
@@ -47,6 +48,7 @@ import {
   editUserSchema,
   updatePasswordSchema,
 } from './schemas/user.schema';
+import { createServerOptions } from './utils/server-options';
 
 const userService = new UserService(db);
 const configService = new ConfigService(db, userService);
@@ -125,6 +127,7 @@ const app = new Hono<HonoEnv>()
   .get('/config/torrent-sources/issues', (c) =>
     configController.getTorrentSourceConfigIssues(c),
   )
+  .get('/config/local-url', (c) => configController.getLocalUrl(c))
   .get('/config', isAdmin, (c) => configController.getConfig(c))
   .post('/config', zValidator('json', createConfigSchema), (c) =>
     configController.createConfig(c),
@@ -182,11 +185,20 @@ const app = new Hono<HonoEnv>()
 
 baseApp.route('/api', app);
 
+// HTTP server
 serve({
   fetch: baseApp.fetch,
   port: env.PORT,
 });
+console.log(`HTTP server started on port ${env.PORT}!`);
 
-console.log(`Server started on port ${env.PORT}!`);
+// HTTPS server
+serve({
+  fetch: baseApp.fetch,
+  port: env.HTTPS_PORT,
+  createServer,
+  serverOptions: await createServerOptions(),
+});
+console.log(`HTTPS server started on port ${env.HTTPS_PORT}!`);
 
 export type ApiRoutes = typeof app;

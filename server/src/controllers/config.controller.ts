@@ -18,6 +18,11 @@ export class ConfigController {
     return c.json({ isConfigured: !!configuration });
   }
 
+  public async getLocalUrl(c: Context<HonoEnv>) {
+    const localUrl = this.configService.getAddonUrl('', true);
+    return c.json({ localUrl });
+  }
+
   public async getConfig(c: Context<HonoEnv>) {
     const configuration = this.configService.getConfigOrNull();
     const { user } = c.var;
