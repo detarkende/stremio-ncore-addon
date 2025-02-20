@@ -10,6 +10,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { DeviceToken } from '@server/db/schema/device-tokens';
+import { useConfig } from '@/hooks/use-config';
 
 export const DeviceTokenItem = ({
   deviceToken,
@@ -18,12 +19,16 @@ export const DeviceTokenItem = ({
   deviceToken: DeviceToken;
   onDelete: (token: DeviceToken) => void;
 }) => {
-  const manifestUrl = api.auth[':deviceToken']['manifest.json']
-    .$url({ param: { deviceToken: deviceToken.token } })
-    .toString();
-  const stremioUrl = manifestUrl.replace(/https?/, 'stremio');
+  const { config } = useConfig();
+  const manifestUrl = api.auth[':deviceToken']['manifest.json'].$url({
+    param: { deviceToken: deviceToken.token },
+  });
+  const addonManifestUrl = manifestUrl
+    .toString()
+    .replace(manifestUrl.origin, config?.addonUrl ?? '');
+  const stremioUrl = addonManifestUrl.replace(/https?/, 'stremio');
 
-  const addOnWebUrl = `${STREMIO_WEB_URL}/#/addons?addon=${encodeURIComponent(manifestUrl)}`;
+  const addOnWebUrl = `${STREMIO_WEB_URL}/#/addons?addon=${encodeURIComponent(addonManifestUrl)}`;
 
   return (
     <div className="space-y-8">
@@ -60,8 +65,8 @@ export const DeviceTokenItem = ({
         <CollapsibleContent className="space-y-1 py-2">
           <p className="text-gray-600">Add the following URL as an addon in stremio.</p>
           <p className="px-3 bg-gray-200 rounded-sm text-gray-800 flex justify-between items-center gap-x-1 font-mono">
-            <TruncatedText className="py-2">{manifestUrl}</TruncatedText>
-            <CopyToClipboardButton text={manifestUrl} />
+            <TruncatedText className="py-2">{addonManifestUrl}</TruncatedText>
+            <CopyToClipboardButton text={addonManifestUrl} />
           </p>
         </CollapsibleContent>
       </Collapsible>

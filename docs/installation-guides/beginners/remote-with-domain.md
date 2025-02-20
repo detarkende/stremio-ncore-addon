@@ -4,6 +4,15 @@ This installation guide will guide you through the recommended installation proc
 
 If you are not experienced with selfhosting, then this is the guide for you.
 
+> [!IMPORTANT]
+>
+> This guide requires you to get a domain name, which you need to pay an annual fee for.
+> This is the only way you can access your addon from outside of your home and share it with friends or family.
+>
+> If you don't need that, you can also read the [Local only](./local-only.md) guide, which doesn't require you to buy a domain.
+>
+> You can change your mind later and switch between the two.
+
 ## Step 1 - Set up a server
 
 You need to have a server that will download and stream the content for you. Don't worry, you don't need anything fancy, an old PC or a Raspberry Pi will be perfectly fine.
@@ -86,7 +95,7 @@ On the **Configure** page, click on **Windows**, then copy the command.
 
 Go back to the **Cloudflared** tab, paste the command into the **Tunnel Connector Token** textbox. Remove the unnecessary command keywords at the beginning to only leave the token itself. Click on **Save** and **Start**.
 
-![Paste command and remove commands to only leave the token in place](./assets/cloudflare-delete-command.webm)
+https://github.com/user-attachments/assets/54c07d0f-063b-41e1-af21-44cfa84da9f7
 
 You can close **Cloudflared** now, but don't close **Cloudflare Zero Trust**.
 
@@ -106,7 +115,7 @@ services:
     environment:
       - NCORE_PASSWORD=
       - NCORE_USERNAME=
-    image: detarkende/stremio-ncore-addon:0.5.0
+    image: detarkende/stremio-ncore-addon:0.6.0
     ports:
       - target: 3000
         published: '3000'
@@ -127,7 +136,7 @@ x-casaos:
 
 Click submit, then fill the App settings.
 
-[Install the addon](./assets/casaos-install-addon.webm)
+https://github.com/user-attachments/assets/a5e08881-cb82-4021-bb3d-0d8c3f38c5b9
 
 ## Step 5 - Setup the addon in your local network
 

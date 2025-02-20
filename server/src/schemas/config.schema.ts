@@ -4,11 +4,17 @@ import { z } from 'zod';
 import { createUserSchema } from './user.schema';
 
 export const createConfigSchema = z.object({
-  addonUrl: z
-    .string()
-    .min(1)
-    .url()
-    .refine((v) => !v.endsWith('/'), 'Addon URL must not end with a slash.'),
+  addonUrl: z.union([
+    z.object({
+      local: z.literal(false),
+      url: z
+        .string()
+        .min(1)
+        .url()
+        .refine((v) => !v.endsWith('/'), 'Addon URL must not end with a slash.'),
+    }),
+    z.object({ local: z.literal(true), url: z.literal('') }),
+  ]),
   admin: createUserSchema,
   nonAdminUsers: z.array(createUserSchema),
   deleteAfterHitnrun: z.union([

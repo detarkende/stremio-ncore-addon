@@ -3,6 +3,7 @@ import { z } from 'zod';
 export const envSchema = z
   .object({
     PORT: z.coerce.number().default(3000),
+    HTTPS_PORT: z.coerce.number().default(3443),
     ADDON_DIR: z.string(),
     NCORE_USERNAME: z.string(),
     NCORE_PASSWORD: z.string(),
@@ -18,3 +19,5 @@ export const envSchema = z
       DOWNLOADS_DIR: env.DOWNLOADS_DIR ?? `${env.ADDON_DIR}/downloads`,
     };
   });
+
+export type Env = z.infer<typeof envSchema>;

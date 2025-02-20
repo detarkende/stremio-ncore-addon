@@ -4,7 +4,7 @@
 
 A self-hostable Stremio addon that lets you stream content straight from nCore.
 
-![demo video](./assets/stremio-ncore-addon-demo-video.webp)
+https://github.com/user-attachments/assets/9fa6c837-78de-44fe-b1da-ae63ff44631e
 
 > [!WARNING]
 > This project is very much in its alpha phase. The setup is still a bit rough and even a full rewrite is not out of the picture. It's the early days of the project, so don't expect stability yet, but feel free to experiment with it.
@@ -59,8 +59,6 @@ View answer
   - Needs enough free space where the downloaded files will fit.
   - This computer should ideally always be on (because it needs to seed the files back to nCore)
 - A device that can run Stremio (newer LG/Samsung Smart TVs, an Android TV box, or just a laptop/PC)
-- Your own domain name with HTTPS (tutorials coming soon...)
-  - If you use Stremio on computer or an Android TV box and you don't want to share the addon with your friends and family, then this step can be optional.
 
 </details>
 
@@ -72,6 +70,7 @@ View answer
 - Configurable to delete torrents when you no longer have to seed them. (Hit'n'run checker)
 - Multiple users without having to tell your nCore password to anyone.
 - Recommendations and torrent ordering based on user preferences (Language + Resolution).
+- Automatic HTTPS on LAN.
 
 ## Setup
 
@@ -81,7 +80,11 @@ View answer
 
 ### Beginner guide
 
-[If you're not familiar with selfhosting, follow this guide.](./docs/installation-guides/beginners/beginners.md)
+If you're not familiar with selfhosting, follow one of these guides:
+
+- [Remotely accessible beginner's guide](./docs/installation-guides/beginners/remote-with-domain.md) (Use this if you want to share the addon with friends and family, or you want to use it outside of your own home network. Requires you to buy or have a domain).
+
+- ["Local only" beginner's guide](./docs/installation-guides/beginners/local-only.md) (Use this if you only want to use the addon in your home network. You don't need your own domain for this.)
 
 ### Advanced guide
 
@@ -92,6 +95,6 @@ View answer
 - [x] Admin panel for torrents
 - [x] Sort torrents based on user preferences
 - [x] Add database + install flow in WebUI to replace most environment variables
-- [ ] Integrate with [local-ip.co](http://local-ip.co/) to allow https for local network
+- [x] Integrate with [local-ip.medicmobile.org](https://local-ip.medicmobile.org/) to allow https for local network
 - [ ] Add more unit tests to backend
 - [ ] Add unit tests to frontend

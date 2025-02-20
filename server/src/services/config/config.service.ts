@@ -8,6 +8,9 @@ import { HTTPException } from 'hono/http-exception';
 import { HttpStatusCode } from '@/types/http';
 import { schedule, ScheduledTask } from 'node-cron';
 import { TorrentStoreService } from '../torrent-store';
+import { env } from '@/env';
+import { getLocalNetworkIp } from '@/utils/ip';
+import { getLocalIpUrl } from '@/utils/https';
 
 export class ConfigService {
   constructor(
@@ -41,16 +44,28 @@ export class ConfigService {
     }
   }
 
+  public getAddonUrl(addonUrlFromDb: string, localOnly: boolean): string {
+    if (localOnly) {
+      const localIp = getLocalNetworkIp();
+      return getLocalIpUrl(localIp, env.HTTPS_PORT);
+    }
+    return addonUrlFromDb;
+  }
+
   public getConfig(): Configuration {
     const config = this.db.select().from(configurationTable).limit(1).get();
     if (!config) {
       throw new MissingConfigError('No configuration found in the database.');
     }
-    return config;
+    return { ...config, addonUrl: this.getAddonUrl(config.addonUrl, config.localOnly) };
   }
 
   public getConfigOrNull = (): Configuration | null => {
-    return this.db.select().from(configurationTable).limit(1).get() ?? null;
+    const config = this.db.select().from(configurationTable).limit(1).get();
+    if (!config) {
+      return null;
+    }
+    return { ...config, addonUrl: this.getAddonUrl(config.addonUrl, config.localOnly) };
   };
 
   public async createConfig(data: CreateConfigRequest): Promise<Configuration> {
@@ -59,7 +74,8 @@ export class ConfigService {
       const [config] = await tx
         .insert(configurationTable)
         .values({
-          addonUrl,
+          addonUrl: addonUrl.local ? '' : addonUrl.url,
+          localOnly: addonUrl.local,
           deleteAfterHitnrun: deleteAfterHitnrun.enabled,
           deleteAfterHitnrunCron: deleteAfterHitnrun.cron || undefined,
         })
@@ -76,7 +92,7 @@ export class ConfigService {
       return config;
     });
     this.scheduleDeleteAfterHitnrunCron();
-    return config;
+    return { ...config, addonUrl: this.getAddonUrl(config.addonUrl, config.localOnly) };
   }
 
   public async updateConfig(data: UpdateConfigRequest): Promise<Configuration> {
@@ -87,7 +103,8 @@ export class ConfigService {
       const [newConfig] = await this.db
         .update(configurationTable)
         .set({
-          addonUrl,
+          addonUrl: addonUrl.local ? '' : addonUrl.url,
+          localOnly: addonUrl.local,
           deleteAfterHitnrun: deleteAfterHitnrun.enabled,
           deleteAfterHitnrunCron: deleteAfterHitnrun.cron || undefined,
         })
@@ -98,7 +115,10 @@ export class ConfigService {
       if (deleteAfterHitnrunChanged) {
         this.scheduleDeleteAfterHitnrunCron();
       }
-      return newConfig;
+      return {
+        ...newConfig,
+        addonUrl: this.getAddonUrl(newConfig.addonUrl, newConfig.localOnly),
+      };
     } catch (e) {
       throw new HTTPException(
         HttpStatusCode.INTERNAL_SERVER_ERROR,
