@@ -97,7 +97,6 @@ Go back to the **Cloudflared** tab, paste the command into the **Tunnel Connecto
 
 https://github.com/user-attachments/assets/54c07d0f-063b-41e1-af21-44cfa84da9f7
 
-
 You can close **Cloudflared** now, but don't close **Cloudflare Zero Trust**.
 
 ## Step 4 - Install Stremio nCore addon in CasaOS.

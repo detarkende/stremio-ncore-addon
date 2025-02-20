@@ -103,7 +103,6 @@ Click submit, then fill the App settings.
 
 https://github.com/user-attachments/assets/6a0cedaf-0754-4937-97d9-117a8762cead
 
-
 ## Step 5 - Setup the addon in your local network
 
 Go to the addon to configure the settings.

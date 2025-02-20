@@ -4,7 +4,7 @@
 
 A self-hostable Stremio addon that lets you stream content straight from nCore.
 
-![demo video](./assets/stremio-ncore-addon-demo-video.webp)
+https://github.com/user-attachments/assets/9fa6c837-78de-44fe-b1da-ae63ff44631e
 
 > [!WARNING]
 > This project is very much in its alpha phase. The setup is still a bit rough and even a full rewrite is not out of the picture. It's the early days of the project, so don't expect stability yet, but feel free to experiment with it.
