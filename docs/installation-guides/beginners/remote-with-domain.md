@@ -95,7 +95,8 @@ On the **Configure** page, click on **Windows**, then copy the command.
 
 Go back to the **Cloudflared** tab, paste the command into the **Tunnel Connector Token** textbox. Remove the unnecessary command keywords at the beginning to only leave the token itself. Click on **Save** and **Start**.
 
-<video src="https://raw.githubusercontent.com/detarkende/stremio-ncore-addon/master/docs/installation-guides/beginners/assets/cloudflare-delete-command.mp4" aria-label="Paste command and remove commands to only leave the token in place" />
+https://github.com/user-attachments/assets/54c07d0f-063b-41e1-af21-44cfa84da9f7
+
 
 You can close **Cloudflared** now, but don't close **Cloudflare Zero Trust**.
 
@@ -136,7 +137,7 @@ x-casaos:
 
 Click submit, then fill the App settings.
 
-<video src="https://raw.githubusercontent.com/detarkende/stremio-ncore-addon/master/docs/installation-guides/beginners/assets/casaos-install-addon.mp4" aria-label="Install the addon" />
+https://github.com/user-attachments/assets/a5e08881-cb82-4021-bb3d-0d8c3f38c5b9
 
 ## Step 5 - Setup the addon in your local network
 
