@@ -95,6 +95,6 @@ If you're not familiar with selfhosting, follow one of these guides:
 - [x] Admin panel for torrents
 - [x] Sort torrents based on user preferences
 - [x] Add database + install flow in WebUI to replace most environment variables
-- [ ] Integrate with [local-ip.co](http://local-ip.co/) to allow https for local network
+- [x] Integrate with [local-ip.medicmobile.org](https://local-ip.medicmobile.org/) to allow https for local network
 - [ ] Add more unit tests to backend
 - [ ] Add unit tests to frontend
