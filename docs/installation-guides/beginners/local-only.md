@@ -101,7 +101,8 @@ x-casaos:
 
 Click submit, then fill the App settings.
 
-<video src="https://raw.githubusercontent.com/detarkende/stremio-ncore-addon/master/docs/installation-guides/beginners/assets/local-only-casaos-setup.mp4" aria-label="Install the addon" />
+https://github.com/user-attachments/assets/6a0cedaf-0754-4937-97d9-117a8762cead
+
 
 ## Step 5 - Setup the addon in your local network
 
