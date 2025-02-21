@@ -12,7 +12,7 @@ export type NcoreTorrent = {
   size: `${number}`;
   type: 'movie' | 'show';
   leechers: `${number}`;
-  seeders: `${number}`;
+  seeders: number;
 };
 
 export type NcorePageResponseJson = {
