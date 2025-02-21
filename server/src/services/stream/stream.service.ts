@@ -7,6 +7,7 @@ import { formatBytes } from '@/utils/bytes';
 import { ConfigService } from '../config';
 import { UserService } from '../user';
 import { User } from '@/types/user';
+import { Language } from '@/db/schema/users';
 
 export class StreamService {
   constructor(
@@ -20,12 +21,14 @@ export class StreamService {
     deviceToken,
     season,
     episode,
+    preferredLanguage,
   }: {
     torrent: TorrentDetails;
     isRecommended: boolean;
     deviceToken: string;
     season: number | undefined;
     episode: number | undefined;
+    preferredLanguage: Language;
   }): Stream {
     const config = this.configService.getConfig();
     const torrentFileIndex = torrent.getMediaFileIndex({ season, episode });
@@ -35,10 +38,15 @@ export class StreamService {
     const infoHash = encodeURIComponent(torrent.infoHash);
     const fileIndex = encodeURIComponent(torrentFileIndex);
 
-    const description = this.getStreamDescription(torrent, isRecommended, {
-      season,
-      episode,
-    });
+    const description = this.getStreamDescription(
+      torrent,
+      isRecommended,
+      {
+        season,
+        episode,
+      },
+      preferredLanguage,
+    );
     return {
       url: `${config.addonUrl}/api/auth/${deviceToken}/stream/play/${sourceName}/${sourceId}/${infoHash}/${fileIndex}`,
       description,
@@ -53,21 +61,49 @@ export class StreamService {
     torrent: TorrentDetails,
     isRecommended: boolean,
     { season, episode }: { season: number | undefined; episode: number | undefined },
+    preferredLanguage: Language,
   ): string {
     const languageEmoji = languageEmojiMap[torrent.getLanguage()];
     const fileIndex = torrent.getMediaFileIndex({ season, episode });
     const file = torrent.files[fileIndex] as TorrentFileDetails;
     const fileSizeString = formatBytes(file.length);
 
-    const mediaType = season && episode ? 'show' : 'movie';
+    const isShow = season && episode;
+    let mediaType = '';
+    switch (preferredLanguage) {
+      case Language.HU:
+        mediaType = isShow ? 'sorozat' : 'film';
+        break;
+      default:
+        mediaType = isShow ? 'show' : 'movie';
+    }
 
-    const recommendedLine =
-      isRecommended && !torrent.isSpeculated ? '⭐️ Recommended\n' : '';
-    const warningLine = torrent.isSpeculated
-      ? `⚠️ <strong>Speculated</strong> ⚠️\nThis might be a different ${mediaType}!\n`
-      : '';
+    let recommendedLine = '';
+    if (isRecommended && !torrent.isSpeculated) {
+      switch (preferredLanguage) {
+        case Language.HU:
+          recommendedLine = '⭐️ Ajánlott\n';
+          break;
+        default:
+          recommendedLine = '⭐️ Recommended\n';
+      }
+    }
+
+    let warningLine = '';
+    if (torrent.isSpeculated) {
+      switch (preferredLanguage) {
+        case Language.HU:
+          warningLine = `⚠️ Bizonytalan forrás ⚠️\nEz lehet egy másik ${mediaType}!\n`;
+          break;
+        default:
+          warningLine = `⚠️ Speculated source ⚠️\nThis might be a different ${mediaType}!\n`;
+      }
+    }
+
     const typeLine = `${languageEmoji} | ${torrent.displayResolution(torrent.getResolution(file.name))} | ${fileSizeString}\n`;
-    return warningLine + recommendedLine + typeLine + torrent.getName();
+    const title = isShow ? `${file.name}\n` : `${torrent.getName()}\n`;
+    const seeders = `⬆️ ${torrent.getSeeders()}\n`;
+    return warningLine + recommendedLine + typeLine + title + seeders;
   }
 
   public async orderTorrents({
