@@ -61,17 +61,20 @@ const manifestService = new ManifestService(
 );
 const torrentService = new TorrentService();
 const cinemetaService = new CinemeatService();
-const torrentSource = new TorrentSourceManager([
-  env.NCORE_URL && env.NCORE_USERNAME && env.NCORE_PASSWORD
-    ? new NcoreService(
-        torrentService,
-        cinemetaService,
-        env.NCORE_URL,
-        env.NCORE_USERNAME,
-        env.NCORE_PASSWORD,
-      )
-    : null,
-]);
+const torrentSource = new TorrentSourceManager(
+  [
+    env.NCORE_URL && env.NCORE_USERNAME && env.NCORE_PASSWORD
+      ? new NcoreService(
+          torrentService,
+          cinemetaService,
+          env.NCORE_URL,
+          env.NCORE_USERNAME,
+          env.NCORE_PASSWORD,
+        )
+      : null,
+  ],
+  userService,
+);
 
 const isAuthenticated = createAuthMiddleware(sessionService);
 const isAdmin = createAdminMiddleware(sessionService);
@@ -79,7 +82,7 @@ const isAdminOrSelf = createAdminOrSelfMiddleware(sessionService);
 const isDeviceAuthenticated = createDeviceTokenMiddleware(userService);
 
 const torrentStoreService = new TorrentStoreService(torrentSource);
-const streamService = new StreamService(configService, userService);
+const streamService = new StreamService(configService);
 configService.torrentStoreService = torrentStoreService;
 
 const configController = new ConfigController(configService, torrentSource);
@@ -181,8 +184,21 @@ const app = new Hono<HonoEnv>()
   )
 
   .get('/torrents', isAdmin, (c) => torrentController.getTorrentStats(c))
-  .delete('/torrents/:infoHash', isAdmin, (c) => torrentController.deleteTorrent(c));
+  .delete('/torrents/:infoHash', isAdmin, (c) => torrentController.deleteTorrent(c))
 
+  .get(
+    '/auth/:deviceToken/catalog/:type/ncore.popular/:values',
+    isDeviceAuthenticated,
+    (c) => torrentSource.getRecommended(c),
+  )
+  .get(
+    '/auth/:deviceToken/catalog/:type/ncore.popular.json',
+    isDeviceAuthenticated,
+    (c) => torrentSource.getRecommended(c),
+  )
+  .get('/auth/:deviceToken/meta/:type/:ncoreId', isDeviceAuthenticated, (c) =>
+    torrentSource.getMetadata(c),
+  );
 baseApp.route('/api', app);
 
 // HTTP server

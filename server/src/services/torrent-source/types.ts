@@ -2,6 +2,7 @@ import type { ParsedShow } from '@ctrl/video-filename-parser';
 import { filenameParse, parseResolution } from '@ctrl/video-filename-parser';
 import type { Resolution, Language } from '@/db/schema/users';
 import type { StreamQuery } from '@/schemas/stream.schema';
+import { Metadata, RecommendedContent } from './ncore/types';
 
 export interface TorrentFileDetails {
   name: string;
@@ -96,6 +97,14 @@ export interface TorrentSource {
   getTorrentUrlBySourceId: (sourceId: string) => Promise<string | null>;
   getRemovableInfoHashes: () => Promise<string[]>;
   getConfigIssues: () => Promise<string | null>;
+  getRecommended: (
+    type: string,
+    preferredLanguage: Language,
+    skip: number | undefined,
+    genre: string | undefined,
+    search: string | undefined,
+  ) => Promise<RecommendedContent[]>;
+  getMetadata: (ncoreId: string) => Promise<Metadata>;
 }
 
 export interface TorrentSourceIssue {

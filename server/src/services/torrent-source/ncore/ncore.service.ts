@@ -2,8 +2,11 @@ import cookieParser from 'set-cookie-parser';
 import { JSDOM } from 'jsdom';
 import type { TorrentSource } from '../types';
 import {
+  Metadata,
   NcoreOrderBy,
   NcoreSearchBy,
+  NcoreTorrent,
+  RecommendedContent,
   type NcorePageResponseJson,
   type NcoreQueryParams,
 } from './types';
@@ -11,16 +14,23 @@ import {
   BATCH_DELAY,
   BATCH_SIZE,
   MOVIE_CATEGORY_FILTERS,
+  MovieCategory,
   SERIES_CATEGORY_FILTERS,
+  SeriesCategory,
+  TorrentCategory,
 } from './constants';
 import { NcoreTorrentDetails } from './ncore-torrent-details';
 import type { TorrentService } from '@/services/torrent';
 import type { StreamQuery } from '@/schemas/stream.schema';
 import { StreamType } from '@/schemas/stream.schema';
 import { processInBatches } from '@/utils/process-in-batches';
+import { URLSearchParams } from 'url';
 import { CinemeatService } from '@/services/cinemeta';
 import { isSupportedMedia } from '@/utils/media-file-extensions';
 import { Cached, DEFAULT_MAX, DEFAULT_TTL } from '@/utils/cache';
+import { Language } from '@/db/schema/users';
+import { env } from '@/env';
+import { Genre } from '@/types/genre';
 
 export class NcoreService implements TorrentSource {
   public name = 'ncore';
@@ -71,6 +81,214 @@ export class NcoreService implements TorrentSource {
     }
 
     return fullCookieString;
+  }
+
+  @Cached({
+    max: DEFAULT_MAX,
+    ttl: DEFAULT_TTL,
+    ttlAutopurge: true,
+    generateKey: (ncoreId: string) => ncoreId,
+  })
+  public async getMetadata(ncoreId: string): Promise<Metadata> {
+    try {
+      const cookies = await this.getCookies(this.ncoreUsername, this.ncorePassword);
+      const request = await fetch(
+        `${this.ncoreUrl}/torrents.php?action=details&id=${ncoreId}`,
+        {
+          headers: {
+            cookie: cookies,
+          },
+        },
+      );
+      const htmlContent = await request.text();
+      const dom = new JSDOM(htmlContent);
+      const doc = dom.window.document;
+      const name = doc.querySelector('.infobar_title')?.textContent?.trim() || '';
+      const posterElement = doc.querySelector('.inforbar_img img') as HTMLImageElement;
+      const posterUrl = posterElement?.src || '';
+      const backgroundUrl = posterUrl;
+
+      let type = '';
+      for (const dt of doc.querySelectorAll('.torrent_col1 .dt')) {
+        if (dt.textContent?.trim() === 'Típus:') {
+          const typeElement = dt.nextElementSibling?.querySelector('a');
+          const typeText = typeElement?.textContent?.trim();
+          type = typeText?.includes('Film')
+            ? 'movie'
+            : typeText?.includes('Sorozat')
+              ? 'series'
+              : '';
+        }
+      }
+
+      let seeders = 0;
+      let leechers = 0;
+      let size = 0;
+      const elements = doc.querySelectorAll('.torrent_col2 .dt');
+      elements.forEach((element) => {
+        if (element.textContent?.includes('Méret:')) {
+          const sizeText = element.nextElementSibling?.textContent?.trim() || '';
+          const sizeMatch = sizeText.match(/\((\d+) bájt\)/);
+          if (sizeMatch) {
+            size = parseInt(sizeMatch[1], 10);
+          }
+        }
+        if (element.textContent?.includes('Seederek:')) {
+          const seedersText = element.nextElementSibling?.textContent?.trim();
+          seeders = seedersText ? Number(seedersText) : 0;
+        }
+        if (element.textContent?.includes('Leecherek:')) {
+          const leechersText = element.nextElementSibling?.textContent?.trim();
+          leechers = leechersText ? Number(leechersText) : 0;
+        }
+      });
+      const torrentCategory =
+        (doc
+          .querySelector('.torrent_col1 .dd a[href*="tipus="]')
+          ?.getAttribute('href')
+          ?.match(/tipus=([^&]+)/)?.[1] as TorrentCategory) || '';
+
+      // Helper function to find a td with specific text and get the next td
+      const getTextNextTo = (text: string): string => {
+        const td = Array.from(doc.querySelectorAll('.inforbar_txt td')).find(
+          (el) => el.textContent?.trim() === text,
+        );
+        return td?.nextElementSibling?.textContent?.trim() || 'N/A';
+      };
+      const year = getTextNextTo('Megjelenés éve:');
+      const director = getTextNextTo('Rendező:');
+      const cast = getTextNextTo('Szereplők:');
+      const runtime = getTextNextTo('Hossz:');
+      const description =
+        doc
+          .querySelector('.torrent_leiras.proba42')
+          ?.textContent?.trim()
+          .replace(/\n/g, ' ')
+          .replace(/\s+/g, ' ') || '';
+      const torrentLinkElement = doc.querySelector('.download a') as HTMLAnchorElement;
+      const torrentLink = torrentLinkElement?.href || '';
+
+      return {
+        id: `ncore:${ncoreId}`,
+        name: name,
+        poster: posterUrl,
+        background: backgroundUrl,
+        director: director,
+        cast: cast,
+        runtime: runtime,
+        description: description,
+        year: year,
+        type: type,
+        genre: [],
+        extra: {
+          torrentUrl: `${this.ncoreUrl}/${torrentLink}`,
+          torrentCategory: torrentCategory,
+          detailsUrl: `${this.ncoreUrl}/torrents.php?action=details&id=${ncoreId}`,
+          seeders: seeders,
+          size: size,
+          leechers: leechers,
+        },
+      };
+    } catch (error) {
+      console.error('Error fetching or extracting data:', error);
+      throw new Error('Could not fetch from nCore');
+    }
+  }
+
+  @Cached({
+    max: DEFAULT_MAX,
+    ttl: DEFAULT_TTL,
+    ttlAutopurge: true,
+    generateKey: (
+      type: string,
+      preferredLanguage: Language,
+      skip: number | undefined,
+      genre: string | undefined,
+      search: string | undefined,
+    ) => `${type}-${preferredLanguage}-${skip ?? ''}-${genre ?? ''}-${search ?? ''}`,
+  })
+  public async getRecommended(
+    type: string,
+    preferredLanguage: Language,
+    skip: number | undefined,
+    genre: string | undefined,
+    search: string | undefined,
+  ): Promise<RecommendedContent[]> {
+    if (genre && preferredLanguage === Language.EN) {
+      genre = Genre.convertToHungarian(genre);
+    }
+
+    const queryParams = new URLSearchParams({
+      miszerint: 'seeders',
+      hogyan: 'DESC',
+      tipus: 'kivalasztottak_kozott',
+      jsons: 'true',
+      kivalasztott_tipus:
+        type === 'series'
+          ? `${SeriesCategory.HD_HUN},${SeriesCategory.HD}`
+          : `${MovieCategory.HD_HUN},${MovieCategory.HD}`,
+      miben: 'name',
+      mire: search || '',
+      tags: genre || '',
+    });
+
+    const page = skip ? Math.floor(skip / 25) * 3 + 1 : 1;
+    queryParams.set('oldal', `${page}`);
+    const firstPage = await this.fetchTorrents(queryParams);
+    queryParams.set('oldal', `${page + 1}`);
+    const secondPage = await this.fetchTorrents(queryParams);
+    queryParams.set('oldal', `${page + 2}`);
+    const thirdPage = await this.fetchTorrents(queryParams);
+    const pages = [firstPage, secondPage, thirdPage];
+
+    const allNcoreTorrents = pages.flatMap((page) => page.results);
+
+    const tmdbApiKey = env.TMDB_API_KEY;
+    const userLanguage = preferredLanguage === Language.HU ? 'hu-HU' : 'en-US';
+
+    const tmdbPromises = allNcoreTorrents.map(async (torrent) => {
+      if (!torrent.imdb_id) {
+        return this.getMetadata(torrent.torrent_id);
+      } else {
+        const response = await fetch(
+          `https://api.themoviedb.org/3/find/${torrent.imdb_id}?api_key=${tmdbApiKey}&language=${userLanguage}&external_source=imdb_id`,
+        );
+        if (!response.ok) {
+          return null;
+        }
+        let data;
+        try {
+          data = await response.json();
+        } catch (error) {
+          return null;
+        }
+        const content =
+          (data.movie_results && data.movie_results[0]) ||
+          (data.tv_results && data.tv_results[0]);
+        return content
+          ? {
+              id: torrent.imdb_id,
+              name: content.title || content.name,
+              genre: content.genres
+                ? content.genres.map((genre: { name: string }) => genre.name)
+                : [],
+              poster: `https://image.tmdb.org/t/p/w500${content.poster_path}`,
+              background: `https://image.tmdb.org/t/p/original${content.backdrop_path}`,
+              posterShape: 'regular',
+              imdbRating: content.vote_average.toString(),
+              year: (content.release_date || content.first_air_date || '').split('-')[0],
+              type: content.media_type === 'movie' ? 'movie' : 'series',
+              description: content.overview,
+            }
+          : null;
+      }
+    });
+
+    const tmdbResults = (await Promise.all(tmdbPromises)).filter(
+      (result) => result !== null,
+    );
+
+    return tmdbResults;
   }
 
   public async getConfigIssues(): Promise<string | null> {
@@ -165,37 +383,70 @@ export class NcoreService implements TorrentSource {
   }: Pick<StreamQuery, 'imdbId' | 'type' | 'season' | 'episode'>): Promise<
     NcoreTorrentDetails[]
   > {
-    let torrents = await this.getTorrentsForQuery({
-      mire: imdbId,
-      miben: NcoreSearchBy.IMDB,
-      miszerint: NcoreOrderBy.SEEDERS,
-      kivalasztott_tipus:
-        type === StreamType.MOVIE ? MOVIE_CATEGORY_FILTERS : SERIES_CATEGORY_FILTERS,
-    });
-    torrents = this.filterTorrentsBySeasonAndEpisode(torrents, { season, episode });
+    let torrents: NcoreTorrentDetails[] = [];
 
-    if (torrents.length > 0) {
-      return torrents;
+    if (imdbId.startsWith('ncore:')) {
+      const ncoreId = imdbId.replace('ncore:', '');
+      const metadata = await this.getMetadata(ncoreId);
+      if (!metadata.extra.torrentUrl) {
+        throw new Error('Torrent URL is undefined');
+      }
+      const parsedData = await this.torrentService.downloadAndParseTorrent(
+        metadata.extra.torrentUrl,
+      );
+      const ncoreTorrent: NcoreTorrent = {
+        torrent_id: ncoreId,
+        category: metadata.extra.torrentCategory,
+        release_name: metadata.name,
+        details_url: metadata.extra.detailsUrl,
+        download_url: metadata.extra.torrentUrl,
+        freeleech: true,
+        imdb_id: '',
+        imdb_rating: 0,
+        size: `${metadata.extra.size}`,
+        type: metadata.type === 'movie' ? 'movie' : 'show',
+        leechers: `${metadata.extra.leechers}`,
+        seeders: metadata.extra.seeders,
+      };
+      const torrent = new NcoreTorrentDetails(ncoreTorrent, parsedData);
+      torrents = [torrent];
+    } else if (imdbId) {
+      torrents = await this.getTorrentsForQuery({
+        mire: imdbId as string,
+        miben: NcoreSearchBy.IMDB,
+        miszerint: NcoreOrderBy.SEEDERS,
+        kivalasztott_tipus:
+          type === StreamType.MOVIE ? MOVIE_CATEGORY_FILTERS : SERIES_CATEGORY_FILTERS,
+      });
+
+      if (torrents.length > 0) {
+        return torrents;
+      }
+
+      let name = '';
+      try {
+        const cinemetaData = await this.cinemetaService.getMetadataByImdbId(
+          type,
+          imdbId as string,
+        );
+        name = cinemetaData.meta.name;
+      } catch (error) {
+        console.error('Failed to get metadata from Cinemeta', error);
+        return [];
+      }
+
+      torrents = await this.getTorrentsForQuery({
+        mire: name,
+        miben: NcoreSearchBy.NAME,
+        miszerint: NcoreOrderBy.SEEDERS,
+        kivalasztott_tipus:
+          type === StreamType.MOVIE ? MOVIE_CATEGORY_FILTERS : SERIES_CATEGORY_FILTERS,
+      });
+      torrents.forEach((torrent) => {
+        torrent.isSpeculated = true;
+      });
+      torrents = this.filterTorrentsBySeasonAndEpisode(torrents, { season, episode });
     }
-    let name = '';
-    try {
-      const cinemetaData = await this.cinemetaService.getMetadataByImdbId(type, imdbId);
-      name = cinemetaData.meta.name;
-    } catch (error) {
-      console.error('Failed to get metadata from Cinemeta', error);
-      return [];
-    }
-    torrents = await this.getTorrentsForQuery({
-      mire: name,
-      miben: NcoreSearchBy.NAME,
-      miszerint: NcoreOrderBy.SEEDERS,
-      kivalasztott_tipus:
-        type === StreamType.MOVIE ? MOVIE_CATEGORY_FILTERS : SERIES_CATEGORY_FILTERS,
-    });
-    torrents.forEach((torrent) => {
-      torrent.isSpeculated = true;
-    });
-    torrents = this.filterTorrentsBySeasonAndEpisode(torrents, { season, episode });
 
     return torrents;
   }
