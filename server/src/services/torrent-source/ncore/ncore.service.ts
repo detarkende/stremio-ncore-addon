@@ -3,24 +3,33 @@ import { JSDOM } from 'jsdom';
 import type { TorrentSource } from '../types';
 import {
   NcoreOrderBy,
-  NcoreSearchBy,
   type NcorePageResponseJson,
   type NcoreQueryParams,
+  NcoreSearchBy,
+  TorrentMetadata,
 } from './types';
 import {
   BATCH_DELAY,
   BATCH_SIZE,
   MOVIE_CATEGORY_FILTERS,
+  MovieCategory,
   SERIES_CATEGORY_FILTERS,
+  SeriesCategory,
+  TorrentCategory,
 } from './constants';
 import { NcoreTorrentDetails } from './ncore-torrent-details';
 import type { TorrentService } from '@/services/torrent';
 import type { StreamQuery } from '@/schemas/stream.schema';
 import { StreamType } from '@/schemas/stream.schema';
 import { processInBatches } from '@/utils/process-in-batches';
+import { URLSearchParams } from 'url';
 import { CinemeatService } from '@/services/cinemeta';
 import { isSupportedMedia } from '@/utils/media-file-extensions';
 import { Cached, DEFAULT_MAX, DEFAULT_TTL } from '@/utils/cache';
+import { Language } from '@/db/schema/users';
+import { Genre } from '@/types/genre';
+import { TmdbService } from '@/services/catalog/tmdb.service';
+import { DetailedMetadata, SimpleMetadata } from '@/services/metadata';
 
 export class NcoreService implements TorrentSource {
   public name = 'ncore';
@@ -32,7 +41,9 @@ export class NcoreService implements TorrentSource {
     private ncoreUrl: string,
     private ncoreUsername: string,
     private ncorePassword: string,
+    private tmdbService: TmdbService,
   ) {}
+
   private cookiesCache = {
     pass: null as string | null,
     cookieExpirationDate: 0,
@@ -71,6 +82,205 @@ export class NcoreService implements TorrentSource {
     }
 
     return fullCookieString;
+  }
+
+  @Cached({
+    max: DEFAULT_MAX,
+    ttl: 12 * 60 * 60, // 12 hours
+    ttlAutopurge: true,
+    generateKey: (id: string) => id,
+  })
+  public async getMetadata(id: string): Promise<DetailedMetadata> {
+    try {
+      const cookies = await this.getCookies(this.ncoreUsername, this.ncorePassword);
+      const response = await fetch(
+        `${this.ncoreUrl}/torrents.php?action=details&id=${id}`,
+        {
+          headers: { cookie: cookies },
+        },
+      );
+      const dom = new JSDOM(await response.text());
+      const doc = dom.window.document;
+
+      const getTextContent = (xpath: string) =>
+        this.extractByXPath(dom, doc, xpath) || '';
+      const getNextTextContent = (text: string) =>
+        this.extractByXPath(
+          dom,
+          doc,
+          `//td[text()="${text}"]/following-sibling::td/text()`,
+        ) || 'N/A';
+      const posterUrl =
+        this.extractByXPath(dom, doc, `//td[@class="inforbar_img"]//img/@src`) || '';
+      const type = this.extractByXPath(
+        dom,
+        doc,
+        `//div[@class="torrent_col1"]//div[@class="dt"][text()="Típus:"]/following-sibling::div[@class="dd"]/a[1]/text()`,
+      )?.includes('Film')
+        ? 'movie'
+        : 'series';
+
+      return {
+        id: `ncore:${id}`, // Assuming id is defined earlier
+        name: getTextContent(`//div[@class="infobar_title"]/text()`),
+        poster: posterUrl,
+        background: posterUrl,
+        director: [getNextTextContent('Rendező:')],
+        cast: [getNextTextContent('Szereplők:')],
+        runtime: getNextTextContent('Hossz:'),
+        description: this.extractMultipleByXPath(
+          dom,
+          doc,
+          '//div[@class="torrent_leiras proba42"]//text()',
+        )
+          .join(' ')
+          .replace(/\n/g, ' ')
+          .replace(/\s+/g, ' '),
+        year: getNextTextContent('Megjelenés éve:'),
+        type: type,
+        genre: [],
+        imdbRating: '0',
+      } as DetailedMetadata;
+    } catch (error) {
+      console.error('Error fetching or extracting data:', error);
+      throw new Error('Could not fetch from nCore');
+    }
+  }
+
+  @Cached({
+    max: DEFAULT_MAX,
+    ttl: 12 * 60 * 60, // 12 hours
+    ttlAutopurge: true,
+    generateKey: (id: string) => id,
+  })
+  public async getTorrentMetadata(id: string): Promise<TorrentMetadata> {
+    try {
+      const cookies = await this.getCookies(this.ncoreUsername, this.ncorePassword);
+      const response = await fetch(
+        `${this.ncoreUrl}/torrents.php?action=details&id=${id}`,
+        {
+          headers: { cookie: cookies },
+        },
+      );
+      const dom = new JSDOM(await response.text());
+      const doc = dom.window.document;
+      const extractText = (xpath: string) => this.extractByXPath(dom, doc, xpath);
+
+      const sizeMatch = extractText(
+        `//div[@class="torrent_col2"]/div[@class="dt"][text()="Méret:"]/following-sibling::div[@class="dd"]/text()`,
+      )?.match(/\((\d+)\s*bájt\)/);
+      const size = sizeMatch ? Number(sizeMatch[1]) : 0;
+
+      return {
+        torrentUrl: `${this.ncoreUrl}/${extractText(`//div[@class="download"]/a/@href`)}`,
+        torrentCategory: (extractText(
+          `//div[@class="torrent_col1"]//div[@class="dd"]//a[contains(@href, "tipus=")]/@href`,
+        )?.match(/tipus=([^&]+)/)?.[1] || '') as TorrentCategory,
+        detailsUrl: `${this.ncoreUrl}/torrents.php?action=details&id=${id}`,
+        seeders: Number(
+          extractText(
+            `//div[@class="torrent_col2"]/div[@class="dt"][text()="Seederek:"]/following-sibling::div[@class="dd"]/a/text()`,
+          ),
+        ),
+        size: size,
+        leechers: Number(
+          extractText(
+            `//div[@class="torrent_col2"]/div[@class="dt"][text()="Leecherek:"]/following-sibling::div[@class="dd"]/a/text()`,
+          ),
+        ),
+      };
+    } catch (error) {
+      console.error('Error fetching or extracting data:', error);
+      throw new Error('Could not fetch from nCore');
+    }
+  }
+
+  private extractMultipleByXPath(dom: JSDOM, doc: Document, xpath: string): string[] {
+    const result = doc.evaluate(
+      xpath,
+      doc,
+      null,
+      dom.window.XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+      null,
+    );
+    const nodes = [];
+    for (let i = 0; i < result.snapshotLength; i++) {
+      nodes.push(result.snapshotItem(i)?.textContent?.trim() || '');
+    }
+    return nodes;
+  }
+
+  private extractByXPath(dom: JSDOM, doc: Document, xpath: string): string | null {
+    const result = doc.evaluate(
+      xpath,
+      doc,
+      null,
+      dom.window.XPathResult.STRING_TYPE,
+      null,
+    );
+    return result.stringValue.trim() || null;
+  }
+
+  @Cached({
+    max: DEFAULT_MAX,
+    ttl: 12 * 60 * 60, // 12 hours
+    ttlAutopurge: true,
+    generateKey: (
+      type: string,
+      preferredLanguage: Language,
+      skip: number | undefined,
+      genre: string | undefined,
+      search: string | undefined,
+    ) => `${type}-${preferredLanguage}-${skip ?? ''}-${genre ?? ''}-${search ?? ''}`,
+  })
+  public async getPageableTrendingTorrents(
+    type: string,
+    preferredLanguage: Language,
+    skip: number | undefined,
+    genre: string | undefined,
+    search: string | undefined,
+  ): Promise<SimpleMetadata[]> {
+    if (genre && preferredLanguage === Language.EN) {
+      genre = Genre.convertToHungarian(genre);
+    }
+
+    const queryParams = new URLSearchParams({
+      miszerint: 'seeders',
+      hogyan: 'DESC',
+      tipus: 'kivalasztottak_kozott',
+      jsons: 'true',
+      kivalasztott_tipus:
+        type === 'series'
+          ? `${SeriesCategory.HD_HUN},${SeriesCategory.HD}`
+          : `${MovieCategory.HD_HUN},${MovieCategory.HD}`,
+      miben: 'name',
+      mire: search || '',
+      tags: genre || '',
+    });
+
+    const page = skip ? Math.floor(skip / 25) * 3 + 1 : 1;
+    queryParams.set('oldal', `${page}`);
+    const firstPage = await this.fetchTorrents(queryParams);
+    queryParams.set('oldal', `${page + 1}`);
+    const secondPage = await this.fetchTorrents(queryParams);
+    queryParams.set('oldal', `${page + 2}`);
+    const thirdPage = await this.fetchTorrents(queryParams);
+    const pages = [firstPage, secondPage, thirdPage];
+
+    const allNcoreTorrents = pages.flatMap((page) => page.results);
+
+    const tmdbPromises = allNcoreTorrents.map(async (torrent) => {
+      if (!torrent.imdb_id) {
+        return this.getMetadata(torrent.torrent_id);
+      } else {
+        return await this.tmdbService.findSimpleMetadataByImdbId(
+          torrent.imdb_id,
+          preferredLanguage,
+        );
+      }
+    });
+
+    return (await Promise.all(tmdbPromises)).filter((result) => result !== null);
   }
 
   public async getConfigIssues(): Promise<string | null> {
@@ -165,6 +375,10 @@ export class NcoreService implements TorrentSource {
   }: Pick<StreamQuery, 'imdbId' | 'type' | 'season' | 'episode'>): Promise<
     NcoreTorrentDetails[]
   > {
+    if (imdbId.startsWith('ncore:')) {
+      return this.getTorrentsForNcoreId(imdbId.replace('ncore:', ''));
+    }
+
     let torrents = await this.getTorrentsForQuery({
       mire: imdbId,
       miben: NcoreSearchBy.IMDB,
@@ -173,31 +387,55 @@ export class NcoreService implements TorrentSource {
         type === StreamType.MOVIE ? MOVIE_CATEGORY_FILTERS : SERIES_CATEGORY_FILTERS,
     });
     torrents = this.filterTorrentsBySeasonAndEpisode(torrents, { season, episode });
+    if (torrents.length > 0) return torrents;
 
-    if (torrents.length > 0) {
-      return torrents;
-    }
-    let name = '';
     try {
-      const cinemetaData = await this.cinemetaService.getMetadataByImdbId(type, imdbId);
-      name = cinemetaData.meta.name;
+      const {
+        meta: { name },
+      } = await this.cinemetaService.getMetadataByImdbId(type, imdbId);
+      torrents = await this.getTorrentsForQuery({
+        mire: name,
+        miben: NcoreSearchBy.NAME,
+        miszerint: NcoreOrderBy.SEEDERS,
+        kivalasztott_tipus:
+          type === StreamType.MOVIE ? MOVIE_CATEGORY_FILTERS : SERIES_CATEGORY_FILTERS,
+      });
+      torrents.forEach((torrent) => (torrent.isSpeculated = true));
+      torrents = this.filterTorrentsBySeasonAndEpisode(torrents, { season, episode });
+      return torrents;
     } catch (error) {
       console.error('Failed to get metadata from Cinemeta', error);
       return [];
     }
-    torrents = await this.getTorrentsForQuery({
-      mire: name,
-      miben: NcoreSearchBy.NAME,
-      miszerint: NcoreOrderBy.SEEDERS,
-      kivalasztott_tipus:
-        type === StreamType.MOVIE ? MOVIE_CATEGORY_FILTERS : SERIES_CATEGORY_FILTERS,
-    });
-    torrents.forEach((torrent) => {
-      torrent.isSpeculated = true;
-    });
-    torrents = this.filterTorrentsBySeasonAndEpisode(torrents, { season, episode });
+  }
 
-    return torrents;
+  private async getTorrentsForNcoreId(ncoreId: string): Promise<NcoreTorrentDetails[]> {
+    const metadata = await this.getMetadata(ncoreId);
+    const torrentMetadata = await this.getTorrentMetadata(ncoreId);
+    if (!torrentMetadata.torrentUrl) throw new Error('Torrent URL is undefined');
+
+    const parsedData = await this.torrentService.downloadAndParseTorrent(
+      torrentMetadata.torrentUrl,
+    );
+    return [
+      new NcoreTorrentDetails(
+        {
+          torrent_id: ncoreId,
+          category: torrentMetadata.torrentCategory,
+          release_name: metadata.name,
+          details_url: torrentMetadata.detailsUrl,
+          download_url: torrentMetadata.torrentUrl,
+          freeleech: true,
+          imdb_id: '',
+          imdb_rating: 0,
+          size: `${torrentMetadata.size}`,
+          type: metadata.type === 'movie' ? 'movie' : 'show',
+          leechers: `${torrentMetadata.leechers}`,
+          seeders: torrentMetadata.seeders,
+        },
+        parsedData,
+      ),
+    ];
   }
 
   public async getTorrentUrlBySourceId(ncoreId: string) {

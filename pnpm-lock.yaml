@@ -183,6 +183,9 @@ importers:
       '@oslojs/encoding':
         specifier: ^1.1.0
         version: 1.1.0
+      axios:
+        specifier: ^1.8.1
+        version: 1.8.1
       bcrypt:
         specifier: ^5.1.1
         version: 5.1.1
@@ -207,6 +210,9 @@ importers:
       mime:
         specifier: ^4.0.6
         version: 4.0.6
+      moviedb-promise:
+        specifier: ^4.0.7
+        version: 4.0.7
       node-cron:
         specifier: 3.0.3
         version: 3.0.3
@@ -2441,6 +2447,9 @@ packages:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
 
+  axios@1.8.1:
+    resolution: {integrity: sha512-NN+fvwH/kV01dYUQ3PTOZns4LWtWhOFCAhQ/pHb88WQ1hNe5V/dvFwc4VJcDL11LT9xSX0QtsR8sWUuyOuOq7g==}
+
   b4a@1.6.7:
     resolution: {integrity: sha512-OnAYlL5b7LEkALw87fUVafQw5rVR9RjwGd4KUwNQ6DrrNmaVaUCgLipfVlzrPQ4tWOR9P0IXGNOx50jYCCdSJg==}
 
@@ -3357,6 +3366,15 @@ packages:
   flatted@3.3.2:
     resolution: {integrity: sha512-AiwGJM8YcNOaobumgtng+6NHuOqC3A7MixFeDafM3X9cIUM+xUXoS5Vfgf+OihAYe20fxqNM9yPBXJzRtZ/4eA==}
 
+  follow-redirects@1.15.9:
+    resolution: {integrity: sha512-gew4GsXizNgdoRyqmyfMHyAmXsZDk6mHkSxZFCzW9gwlbtOW44CDtYavM+y+72qD/Vq2l550kMF52DT8fOLJqQ==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+
   for-each@0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
 
@@ -4228,6 +4246,9 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
+  moviedb-promise@4.0.7:
+    resolution: {integrity: sha512-BS5EemEcI9cmAG8vmpbmdhPoIHHDv/Ycjq4dikWmer9/4WvQm45r5UibDNuj8ZdsE9q0CObCPlZXbD7uOBHFOQ==}
+
   ms@2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
 
@@ -4580,6 +4601,9 @@ packages:
   promise-limit@2.7.0:
     resolution: {integrity: sha512-7nJ6v5lnJsXwGprnGXga4wx6d1POjvi5Qmf1ivTRxTjH4Z/9Czja/UCMLVmB9N93GeWOU93XaFaEt6jbuoagNw==}
 
+  promise-throttle@1.1.2:
+    resolution: {integrity: sha512-dij7vjyXNewuuN/gyr+TX2KRjw48mbV5FEtgyXaIoJjGYAKT0au23/voNvy9eS4UNJjx2KUdEcO5Yyfc1h7vWQ==}
+
   prompts@2.4.2:
     resolution: {integrity: sha512-NxNv/kLguCA7p3jE8oL2aEBsrJWgAakBpgmgK6lpPWV+WuOmY6r2/zbAVnP+T8bQlA0nzHXSJSJW0Hq7ylaD2Q==}
     engines: {node: '>= 6'}
@@ -4587,6 +4611,9 @@ packages:
   proxy-addr@2.0.7:
     resolution: {integrity: sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==}
     engines: {node: '>= 0.10'}
+
+  proxy-from-env@1.1.0:
+    resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
 
   pump@3.0.2:
     resolution: {integrity: sha512-tUPXtzlGM8FE3P0ZL6DVs/3P58k9nk8/jZeQCurTJylQA8qFYzHFfhBJkuqyE0FifOsQ0uKWekiZ5g8wtr28cw==}
@@ -7734,6 +7761,14 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.0.0
 
+  axios@1.8.1:
+    dependencies:
+      follow-redirects: 1.15.9
+      form-data: 4.0.1
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+
   b4a@1.6.7: {}
 
   babel-jest@29.7.0(@babel/core@7.26.0):
@@ -8849,6 +8884,8 @@ snapshots:
 
   flatted@3.3.2: {}
 
+  follow-redirects@1.15.9: {}
+
   for-each@0.3.3:
     dependencies:
       is-callable: 1.2.7
@@ -9918,6 +9955,14 @@ snapshots:
 
   mkdirp@1.0.4: {}
 
+  moviedb-promise@4.0.7:
+    dependencies:
+      axios: 1.8.1
+      lodash: 4.17.21
+      promise-throttle: 1.1.2
+    transitivePeerDependencies:
+      - debug
+
   ms@2.0.0: {}
 
   ms@2.1.3: {}
@@ -10240,6 +10285,8 @@ snapshots:
   promise-limit@2.7.0:
     optional: true
 
+  promise-throttle@1.1.2: {}
+
   prompts@2.4.2:
     dependencies:
       kleur: 3.0.3
@@ -10249,6 +10296,8 @@ snapshots:
     dependencies:
       forwarded: 0.2.0
       ipaddr.js: 1.9.1
+
+  proxy-from-env@1.1.0: {}
 
   pump@3.0.2:
     dependencies:

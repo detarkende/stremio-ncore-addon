@@ -49,11 +49,18 @@ import {
   updatePasswordSchema,
 } from './schemas/user.schema';
 import { createServerOptions } from './utils/server-options';
+import { CatalogService } from '@/services/catalog';
+import { CatalogController } from './controllers/catalog.controller';
+import { WatchHistoryService } from '@/services/watch-history';
+import { MetadataService } from '@/services/metadata';
+import { TmdbService } from '@/services/catalog/tmdb.service';
 
 const userService = new UserService(db);
 const configService = new ConfigService(db, userService);
 const sessionService = new SessionService(db);
 const deviceTokenService = new DeviceTokenService(db);
+const watchHistoryService = new WatchHistoryService(db);
+const tmdbService = new TmdbService(env.TMDB_API_KEY ?? '');
 const manifestService = new ManifestService(
   configService,
   userService,
@@ -61,6 +68,7 @@ const manifestService = new ManifestService(
 );
 const torrentService = new TorrentService();
 const cinemetaService = new CinemeatService();
+const catalogService = new CatalogService(tmdbService);
 const torrentSource = new TorrentSourceManager([
   env.NCORE_URL && env.NCORE_USERNAME && env.NCORE_PASSWORD
     ? new NcoreService(
@@ -69,9 +77,27 @@ const torrentSource = new TorrentSourceManager([
         env.NCORE_URL,
         env.NCORE_USERNAME,
         env.NCORE_PASSWORD,
+        tmdbService,
       )
     : null,
 ]);
+const metadataService = new MetadataService(
+  [
+    env.NCORE_URL && env.NCORE_USERNAME && env.NCORE_PASSWORD
+      ? new NcoreService(
+          torrentService,
+          cinemetaService,
+          env.NCORE_URL,
+          env.NCORE_USERNAME,
+          env.NCORE_PASSWORD,
+          tmdbService,
+        )
+      : null,
+  ],
+  userService,
+  watchHistoryService,
+  tmdbService,
+);
 
 const isAuthenticated = createAuthMiddleware(sessionService);
 const isAdmin = createAdminMiddleware(sessionService);
@@ -79,7 +105,7 @@ const isAdminOrSelf = createAdminOrSelfMiddleware(sessionService);
 const isDeviceAuthenticated = createDeviceTokenMiddleware(userService);
 
 const torrentStoreService = new TorrentStoreService(torrentSource);
-const streamService = new StreamService(configService, userService);
+const streamService = new StreamService(configService);
 configService.torrentStoreService = torrentStoreService;
 
 const configController = new ConfigController(configService, torrentSource);
@@ -87,6 +113,23 @@ const manifestController = new ManifestController(manifestService);
 const authController = new AuthController(userService, sessionService);
 const deviceTokenController = new DeviceTokenController(deviceTokenService);
 const userController = new UserController(userService);
+const catalogController = new CatalogController(
+  [
+    env.NCORE_URL && env.NCORE_USERNAME && env.NCORE_PASSWORD
+      ? new NcoreService(
+          torrentService,
+          cinemetaService,
+          env.NCORE_URL,
+          env.NCORE_USERNAME,
+          env.NCORE_PASSWORD,
+          tmdbService,
+        )
+      : null,
+  ],
+  userService,
+  catalogService,
+  watchHistoryService,
+);
 const streamController = new StreamController(
   torrentSource,
   torrentService,
@@ -181,8 +224,37 @@ const app = new Hono<HonoEnv>()
   )
 
   .get('/torrents', isAdmin, (c) => torrentController.getTorrentStats(c))
-  .delete('/torrents/:infoHash', isAdmin, (c) => torrentController.deleteTorrent(c));
+  .delete('/torrents/:infoHash', isAdmin, (c) => torrentController.deleteTorrent(c))
 
+  .get(
+    '/auth/:deviceToken/catalog/:type/torrent.trending/:values',
+    isDeviceAuthenticated,
+    (c) => catalogController.getPageableTrendingTorrents(c),
+  )
+  .get(
+    '/auth/:deviceToken/catalog/:type/torrent.trending.json',
+    isDeviceAuthenticated,
+    (c) => catalogController.getPageableTrendingTorrents(c),
+  )
+  .get(
+    '/auth/:deviceToken/catalog/:type/user.recommendation/:values',
+    isDeviceAuthenticated,
+    (c) => catalogController.getRecommendationsByWatchHistory(c),
+  )
+  .get(
+    '/auth/:deviceToken/catalog/:type/user.recommendation.json',
+    isDeviceAuthenticated,
+    (c) => catalogController.getRecommendationsByWatchHistory(c),
+  )
+  .get('/auth/:deviceToken/catalog/:type/:platform', isDeviceAuthenticated, (c) =>
+    catalogController.getTrendingListByPlatform(c),
+  )
+  .get('/auth/:deviceToken/catalog/:type/:platform/:values', isDeviceAuthenticated, (c) =>
+    catalogController.getTrendingListByPlatform(c),
+  )
+  .get('/auth/:deviceToken/meta/:type/:id', isDeviceAuthenticated, (c) =>
+    metadataService.getMetadata(c),
+  );
 baseApp.route('/api', app);
 
 // HTTP server

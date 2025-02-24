@@ -50,3 +50,12 @@ export type NcoreQueryParams = {
   hogyan?: NcoreOrderDirection;
   kivalasztott_tipus: string;
 };
+
+export type TorrentMetadata = {
+  torrentUrl: string;
+  torrentCategory: TorrentCategory;
+  detailsUrl: string;
+  seeders: number;
+  size: number;
+  leechers: number;
+};

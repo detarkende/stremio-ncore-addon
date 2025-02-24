@@ -15,6 +15,13 @@
       "when": 1739982023562,
       "tag": "0001_make-addon-url-optional",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1740999684700,
+      "tag": "0002_create_watch_history",
+      "breakpoints": true
     }
   ]
 }

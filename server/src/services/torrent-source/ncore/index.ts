@@ -1,4 +1,4 @@
-export type { NcoreTorrent } from './types';
+export type { NcoreTorrent, TorrentMetadata } from './types';
 export { NcoreService } from './ncore.service';
 export {
   MovieCategory,

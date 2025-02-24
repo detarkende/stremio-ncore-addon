@@ -71,6 +71,7 @@ View answer
 - Multiple users without having to tell your nCore password to anyone.
 - Recommendations and torrent ordering based on user preferences (Language + Resolution).
 - Automatic HTTPS on LAN.
+- Optionally available localized catalogues, metadata, search functionality
 
 ## Setup
 
