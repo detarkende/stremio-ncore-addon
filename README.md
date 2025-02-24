@@ -71,6 +71,7 @@ View answer
 - Multiple users without having to tell your nCore password to anyone.
 - Recommendations and torrent ordering based on user preferences (Language + Resolution).
 - Automatic HTTPS on LAN.
+- Catalogues, label catalogues, metadata, search functionality (To provide these features above cinemeta or other catalogues pull nCore to top with this community addon: https://addon-manager.dontwanttos.top/)
 
 ## Setup
 
