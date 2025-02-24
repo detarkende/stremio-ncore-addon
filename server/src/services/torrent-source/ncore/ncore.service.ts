@@ -418,6 +418,7 @@ export class NcoreService implements TorrentSource {
         kivalasztott_tipus:
           type === StreamType.MOVIE ? MOVIE_CATEGORY_FILTERS : SERIES_CATEGORY_FILTERS,
       });
+      torrents = this.filterTorrentsBySeasonAndEpisode(torrents, { season, episode });
 
       if (torrents.length > 0) {
         return torrents;
