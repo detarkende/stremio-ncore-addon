@@ -5,15 +5,12 @@ import { languageEmojiMap } from './constants';
 import { rateList } from '@/utils/rate-list';
 import { formatBytes } from '@/utils/bytes';
 import { ConfigService } from '../config';
-import { UserService } from '../user';
+
 import { User } from '@/types/user';
 import { Language } from '@/db/schema/users';
 
 export class StreamService {
-  constructor(
-    private configService: ConfigService,
-    private userService: UserService,
-  ) {}
+  constructor(private configService: ConfigService) {}
 
   public convertTorrentToStream({
     torrent,

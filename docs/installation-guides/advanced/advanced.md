@@ -9,6 +9,7 @@ services:
     environment:
       - NCORE_PASSWORD=
       - NCORE_USERNAME=
+      - TMDB_API_KEY=
     ports:
       - target: 3000
         published: 3000
@@ -29,10 +30,11 @@ services:
 
 ## Required environment variables
 
-| Variable name    | Description                    |
-| ---------------- | ------------------------------ |
-| `NCORE_USERNAME` | Username to your nCore account |
-| `NCORE_PASSWORD` | Password to your nCore account |
+| Variable name    | Description                                           |
+| ---------------- | ----------------------------------------------------- |
+| `NCORE_USERNAME` | Username to your nCore account                        |
+| `NCORE_PASSWORD` | Password to your nCore account                        |
+| `TMDB_API_KEY`   | To get yours: https://www.themoviedb.org/settings/api |
 
 ## Optional environment variables
 

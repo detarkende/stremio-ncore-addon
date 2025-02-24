@@ -5,7 +5,14 @@ export enum StreamType {
   TV_SHOW = 'series',
 }
 
-const imdbSchema = z.string().startsWith('tt').endsWith('.json');
+const idSchema = z
+  .string()
+  .refine((id) => id.startsWith('tt') || id.startsWith('ncore:'), {
+    message: "ID must start with 'tt' or 'ncore:'",
+  })
+  .refine((id) => id.endsWith('.json'), {
+    message: "ID must end with '.json'",
+  });
 
 export const streamQuerySchema = z
   .object({ deviceToken: z.string() })
@@ -13,19 +20,16 @@ export const streamQuerySchema = z
     z.discriminatedUnion('type', [
       z.object({
         type: z.literal(StreamType.MOVIE),
-        imdbId: imdbSchema,
+        imdbId: idSchema,
       }),
       z.object({
         type: z.literal(StreamType.TV_SHOW),
-        imdbId: imdbSchema.regex(
-          /tt\d+:\d+:\d+/,
-          "IMDB ID doesn't contain season and episode numbers",
-        ),
+        imdbId: idSchema,
       }),
     ]),
   )
   .transform((data) => {
-    if (data.type === StreamType.TV_SHOW) {
+    if (data.imdbId.startsWith('tt') && data.type === StreamType.TV_SHOW) {
       const [imdbId, season, episode] = data.imdbId.split(':') as [
         string,
         string,
