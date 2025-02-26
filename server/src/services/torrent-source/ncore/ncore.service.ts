@@ -197,7 +197,7 @@ export class NcoreService implements TorrentSource {
 
   @Cached({
     max: DEFAULT_MAX,
-    ttl: DEFAULT_TTL,
+    ttl: 12 * 60 * 60, // 12 hours
     ttlAutopurge: true,
     generateKey: (
       type: string,

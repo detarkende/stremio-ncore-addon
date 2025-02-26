@@ -4,6 +4,7 @@ import { DeviceTokenService } from '../device-token';
 import { UserService } from '../user';
 import { Language } from '@/db/schema/users';
 import { Genre } from '@/types/genre';
+import { FlixPatrolPlatform } from '../catalog/constants';
 
 export class ManifestService {
   constructor(
@@ -76,6 +77,66 @@ export class ManifestService {
             { name: 'skip' },
           ],
           extraSupported: ['genre', 'skip', 'search'],
+        },
+        {
+          type: 'movie',
+          id: `${FlixPatrolPlatform.NETFLIX}`,
+          name: 'Netflix - Top 10',
+          extra: [],
+        },
+        {
+          type: 'series',
+          id: `${FlixPatrolPlatform.NETFLIX}`,
+          name: 'Netflix - Top 10',
+          extra: [],
+        },
+        {
+          type: 'movie',
+          id: `${FlixPatrolPlatform.HBO}`,
+          name: 'Max - Top 10',
+          extra: [],
+        },
+        {
+          type: 'series',
+          id: `${FlixPatrolPlatform.HBO}`,
+          name: 'Max - Top 10',
+          extra: [],
+        },
+        {
+          type: 'collections',
+          id: `${FlixPatrolPlatform.DISNEY}`,
+          name: 'Disney - Top 10',
+          extra: [],
+        },
+        {
+          type: 'movie',
+          id: `${FlixPatrolPlatform.AMAZON}`,
+          name: 'Amazon Prime - Top 10',
+          extra: [],
+        },
+        {
+          type: 'series',
+          id: `${FlixPatrolPlatform.AMAZON}`,
+          name: 'Amazon Prime - Top 10',
+          extra: [],
+        },
+        {
+          type: 'movie',
+          id: `${FlixPatrolPlatform.APPLE}`,
+          name: 'Apple TV - Top 10',
+          extra: [],
+        },
+        {
+          type: 'series',
+          id: `${FlixPatrolPlatform.APPLE}`,
+          name: 'Apple TV - Top 10',
+          extra: [],
+        },
+        {
+          type: 'collections',
+          id: `${FlixPatrolPlatform.RTL}`,
+          name: 'RTL+ - Top 10',
+          extra: [],
         },
       ],
     } as const;

@@ -49,6 +49,9 @@ import {
   updatePasswordSchema,
 } from './schemas/user.schema';
 import { createServerOptions } from './utils/server-options';
+import { CatalogService } from './services/catalog/catalog.service';
+import { FlixPatrolPlatform } from './services/catalog/constants';
+import { CatalogController } from './controllers/catalog.controller';
 
 const userService = new UserService(db);
 const configService = new ConfigService(db, userService);
@@ -61,6 +64,7 @@ const manifestService = new ManifestService(
 );
 const torrentService = new TorrentService();
 const cinemetaService = new CinemeatService();
+const catalogService = new CatalogService();
 const torrentSource = new TorrentSourceManager(
   [
     env.NCORE_URL && env.NCORE_USERNAME && env.NCORE_PASSWORD
@@ -90,6 +94,7 @@ const manifestController = new ManifestController(manifestService);
 const authController = new AuthController(userService, sessionService);
 const deviceTokenController = new DeviceTokenController(deviceTokenService);
 const userController = new UserController(userService);
+const catalogController = new CatalogController(userService, catalogService);
 const streamController = new StreamController(
   torrentSource,
   torrentService,
@@ -195,6 +200,9 @@ const app = new Hono<HonoEnv>()
     '/auth/:deviceToken/catalog/:type/ncore.popular.json',
     isDeviceAuthenticated,
     (c) => torrentSource.getRecommended(c),
+  )
+  .get('/auth/:deviceToken/catalog/:type/:platform', isDeviceAuthenticated, (c) =>
+    catalogController.getTop10ByPlatform(c),
   )
   .get('/auth/:deviceToken/meta/:type/:ncoreId', isDeviceAuthenticated, (c) =>
     torrentSource.getMetadata(c),
