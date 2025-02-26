@@ -118,6 +118,6 @@ export class CatalogService {
     const userLanguage = preferredLanguage === Language.HU ? 'hu-HU' : 'en-US';
     const localizedResponse = await fetch(`https://api.themoviedb.org/3/${media_type}/${id}?api_key=${tmdbApiKey}&language=${userLanguage}&append_to_response=external_ids`);
     const localizedData = await localizedResponse.json();
-    return localizedData;
+    return {...localizedData, media_type};
   }
 }
