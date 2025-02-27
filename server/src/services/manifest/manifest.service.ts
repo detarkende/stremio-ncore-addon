@@ -1,10 +1,9 @@
-import { CustomManifest } from './types';
 import { ConfigService } from '../config';
 import { DeviceTokenService } from '../device-token';
 import { UserService } from '../user';
 import { Language } from '@/db/schema/users';
 import { Genre } from '@/types/genre';
-import { FlixPatrolPlatform } from '../catalog/constants';
+import { Platform } from '@/services/catalog';
 
 export class ManifestService {
   constructor(
@@ -58,7 +57,7 @@ export class ManifestService {
           type: 'movie',
           id: 'ncore.popular',
           name: 'nCore',
-          pageSize: 25,
+          pageSize: 75,
           extra: [
             { name: 'search' },
             { name: 'genre', options: Genre.getGenres(preferredLanguage) },
@@ -70,7 +69,7 @@ export class ManifestService {
           type: 'series',
           id: 'ncore.popular',
           name: 'nCore',
-          pageSize: 25,
+          pageSize: 75,
           extra: [
             { name: 'search' },
             { name: 'genre', options: Genre.getGenres(preferredLanguage) },
@@ -80,61 +79,91 @@ export class ManifestService {
         },
         {
           type: 'movie',
-          id: `${FlixPatrolPlatform.NETFLIX}`,
-          name: 'Netflix - Top 10',
-          extra: [],
+          id: `${Platform.NETFLIX}`,
+          name: 'Netflix',
+          pageSize: 10,
+          extra: [{ name: 'skip' }],
         },
         {
           type: 'series',
-          id: `${FlixPatrolPlatform.NETFLIX}`,
-          name: 'Netflix - Top 10',
-          extra: [],
+          id: `${Platform.NETFLIX}`,
+          name: 'Netflix',
+          pageSize: 10,
+          extra: [{ name: 'skip' }],
         },
         {
           type: 'movie',
-          id: `${FlixPatrolPlatform.HBO}`,
-          name: 'Max - Top 10',
-          extra: [],
+          id: `${Platform.HBO}`,
+          name: 'Max',
+          pageSize: 10,
+          extra: [{ name: 'skip' }],
         },
         {
           type: 'series',
-          id: `${FlixPatrolPlatform.HBO}`,
-          name: 'Max - Top 10',
-          extra: [],
+          id: `${Platform.HBO}`,
+          name: 'Max',
+          pageSize: 10,
+          extra: [{ name: 'skip' }],
+        },
+        {
+          type: 'movie',
+          id: `${Platform.DISNEY}`,
+          name: 'Disney+',
+          pageSize: 10,
+          extra: [{ name: 'skip' }],
+        },
+        {
+          type: 'series',
+          id: `${Platform.DISNEY}`,
+          name: 'Disney+',
+          pageSize: 10,
+          extra: [{ name: 'skip' }],
+        },
+        {
+          type: 'movie',
+          id: `${Platform.AMAZONPRIME}`,
+          name: 'Amazon Prime',
+          pageSize: 10,
+          extra: [{ name: 'skip' }],
+        },
+        {
+          type: 'series',
+          id: `${Platform.AMAZONPRIME}`,
+          name: 'Amazon Prime',
+          pageSize: 10,
+          extra: [{ name: 'skip' }],
+        },
+        {
+          type: 'movie',
+          id: `${Platform.APPLETV}`,
+          name: 'Apple TV',
+          pageSize: 10,
+          extra: [{ name: 'skip' }],
+        },
+        {
+          type: 'series',
+          id: `${Platform.APPLETV}`,
+          name: 'Apple TV',
+          pageSize: 10,
+          extra: [{ name: 'skip' }],
+        },
+        {
+          type: 'movie',
+          id: `${Platform.SKYSHOWTIME}`,
+          name: 'SkyShowtime',
+          pageSize: 10,
+          extra: [{ name: 'skip' }],
+        },
+        {
+          type: 'series',
+          id: `${Platform.SKYSHOWTIME}`,
+          name: 'SkyShowtime',
+          pageSize: 10,
+          extra: [{ name: 'skip' }],
         },
         {
           type: 'collections',
-          id: `${FlixPatrolPlatform.DISNEY}`,
-          name: 'Disney - Top 10',
-          extra: [],
-        },
-        {
-          type: 'movie',
-          id: `${FlixPatrolPlatform.AMAZON}`,
-          name: 'Amazon Prime - Top 10',
-          extra: [],
-        },
-        {
-          type: 'series',
-          id: `${FlixPatrolPlatform.AMAZON}`,
-          name: 'Amazon Prime - Top 10',
-          extra: [],
-        },
-        {
-          type: 'movie',
-          id: `${FlixPatrolPlatform.APPLE}`,
-          name: 'Apple TV - Top 10',
-          extra: [],
-        },
-        {
-          type: 'series',
-          id: `${FlixPatrolPlatform.APPLE}`,
-          name: 'Apple TV - Top 10',
-          extra: [],
-        },
-        {
-          type: 'collections',
-          id: `${FlixPatrolPlatform.RTL}`,
+          id: `${Platform.RTL}`,
           name: 'RTL+ - Top 10',
           extra: [],
         },

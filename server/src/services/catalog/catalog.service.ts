@@ -1,10 +1,11 @@
-import { JSDOM } from 'jsdom';
-import { FlixPatrolCategory, categoryMapping, FlixPatrolPlatform } from './constants';
-import { Cached, DEFAULT_MAX, DEFAULT_TTL } from '@/utils/cache';
-import { Language } from '@/db/schema/users';
-import { env } from '@/env';
-import { Genre } from '@/types/genre';
-import { RecommendedContent } from '../torrent-source/ncore/types';
+import axios from 'axios';
+import {JSDOM} from 'jsdom';
+import {FlixPatrolPlatform, JustWatchPlatform, Platform, platformInfo,} from './constants';
+import {Cached, DEFAULT_MAX} from '@/utils/cache';
+import {Language} from '@/db/schema/users';
+import {env} from '@/env';
+import {RecommendedContent} from '../torrent-source/ncore/types';
+import {StreamType} from '@/schemas/stream.schema';
 
 export class CatalogService {
   @Cached({
@@ -13,34 +14,34 @@ export class CatalogService {
     ttlAutopurge: true,
     generateKey: (
       preferredLanguage: Language,
-      date: string,
-      platform: FlixPatrolPlatform,
+      platform: Platform,
       type: string,
-    ) => `${preferredLanguage}-${date}-${platform}-${type}`,
+      skip: number | undefined,
+    ) => `${preferredLanguage}-${platform}-${type}-${skip ?? ''}`,
   })
-  public async getTop10ByPlatform(
+  public async getRecommendedByPlatform(
     preferredLanguage: Language,
-    date: string,
-    platform: FlixPatrolPlatform,
+    platform: Platform,
     type: string,
+    skip: number | undefined,
   ): Promise<RecommendedContent[]> {
-    const category = categoryMapping[`${type}-${platform}`];
+    const jPlatformId = platformInfo.find((p) => p.name === platform)?.justWatchId;
+    const fPlatformId = platformInfo.find((p) => p.name === platform)?.flixPatrolId;
 
-    if (!category) {
-      throw new Error(
-        `No category mapping found for type: ${type} and platform: ${platform}`,
-      );
+    let recommendedTitles: { title: string; imdb_id: string }[] = [];
+    if (jPlatformId) {
+      recommendedTitles = await this.fetchRecommended(jPlatformId, type, skip);
     }
-
-    const top10Titles = await this.fetchFlixPatrolTop10(date, platform, category);
+    if (fPlatformId) {
+      recommendedTitles = await this.fetchTop10(fPlatformId);
+    }
     const results: RecommendedContent[] = [];
-
-    for (const title of top10Titles) {
+    for (const { title, imdb_id } of recommendedTitles) {
       const tmdbData = await this.searchTMDb(title, preferredLanguage);
       if (tmdbData) {
         results.push({
-          id: tmdbData.imdb_id || tmdbData.external_ids.imdb_id,
-          name: tmdbData.title || tmdbData.name,
+          id: tmdbData.imdb_id || tmdbData.external_ids?.imdb_id || imdb_id,
+          name: tmdbData.title || tmdbData.name || title,
           genre: [],
           poster: `https://image.tmdb.org/t/p/w500${tmdbData.poster_path}`,
           background: `https://image.tmdb.org/t/p/original${tmdbData.backdrop_path}`,
@@ -56,15 +57,14 @@ export class CatalogService {
     return results;
   }
 
-  private async fetchFlixPatrolTop10(
-    date: string,
+  private async fetchTop10(
     platform: FlixPatrolPlatform,
-    category: FlixPatrolCategory,
-  ): Promise<string[]> {
-    console.log(
-      `Fetching FlixPatrol Top 10 for date: ${date}, platform: ${platform}, category: ${category}`,
-    );
-    const url = `https://flixpatrol.com/top10/${platform}/hungary/${date}/`;
+  ): Promise<{ title: string; imdb_id: string }[]> {
+    const date = new Date();
+    date.setDate(date.getDate() - 1);
+    const formattedDate = date.toISOString().split('T')[0];
+    console.log(`Fetching Top 10 for date: ${formattedDate}, platform: ${platform}`);
+    const url = `https://flixpatrol.com/top10/${platform}/hungary/${formattedDate}/`;
     const response = await fetch(url, {
       headers: {
         'User-Agent':
@@ -74,8 +74,8 @@ export class CatalogService {
     const html = await response.text();
     const dom = new JSDOM(html);
     const document = dom.window.document;
-
-    const expression = `//div[h3[text() = "TOP 10 ${category}"]]/parent::div/following-sibling::div[1]//a[@class="hover:underline"]/text()`;
+    //Currently works for RTL+ only,if you want to add new platforms add dynamic expression Top 10 Overall, Top 10 TV Shows, Top 10 Movies based on your manifest data
+    const expression = `//div[h3[text() = "TOP 10 Overall"]]/parent::div/following-sibling::div[1]//a[@class="hover:underline"]/text()`;
     const result = document.evaluate(
       expression,
       document,
@@ -84,15 +84,62 @@ export class CatalogService {
       null,
     );
 
-    let titles = [];
+    let titles: { title: string; imdb_id: string }[] = [];
     for (let i = 0; i < result.snapshotLength; i++) {
       const node = result.snapshotItem(i);
       if (node && node.nodeValue) {
-        titles.push(node.nodeValue.trim());
+        titles.push({ title: node.nodeValue.trim(), imdb_id: '' });
       }
     }
-    console.log(`Fetched titles: ${titles}`);
     return titles;
+  }
+
+  private async fetchRecommended(
+    platform: JustWatchPlatform,
+    type: string,
+    skip: number | undefined,
+  ): Promise<{ title: string; imdb_id: string }[]> {
+    console.log(`Fetching JustWatch with: ${platform}, type: ${type}`);
+
+    let res = null;
+    try {
+      res = await axios.post('https://apis.justwatch.com/graphql', {
+        operationName: 'GetPopularTitles',
+        variables: {
+          popularTitlesSortBy: 'TRENDING',
+          first: 25,
+          platform: 'WEB',
+          sortRandomSeed: 0,
+          popularAfterCursor: '',
+          offset: skip ? skip : null,
+          popularTitlesFilter: {
+            ageCertifications: [],
+            excludeGenres: [],
+            excludeProductionCountries: [],
+            genres: [],
+            objectTypes: [type === StreamType.MOVIE ? 'MOVIE' : 'SHOW'],
+            productionCountries: [],
+            packages: [platform],
+            excludeIrrelevantTitles: false,
+            presentationTypes: [],
+            monetizationTypes: [],
+          },
+          language: 'en',
+          country:
+            platform === JustWatchPlatform.APPLE && type === StreamType.TV_SHOW
+              ? 'GB'
+              : 'HU',
+        },
+        query: `query GetPopularTitles($country: Country!, $popularTitlesFilter: TitleFilter, $popularAfterCursor: String, $popularTitlesSortBy: PopularTitlesSorting! = POPULAR, $first: Int!, $language: Language!, $offset: Int = 0, $sortRandomSeed: Int! = 0) { popularTitles(country: $country, filter: $popularTitlesFilter, offset: $offset, after: $popularAfterCursor, sortBy: $popularTitlesSortBy, first: $first, sortRandomSeed: $sortRandomSeed) { edges { node { content(country: $country, language: $language) { externalIds { imdbId } title } } } } }`,
+      });
+    } catch (error) {
+      console.error('Failed to get metadata from JustWatch', error);
+      return [];
+    }
+    return res.data.data.popularTitles.edges.map((edge: any) => ({
+      title: edge.node.content.title,
+      imdb_id: edge.node.content.externalIds.imdb_id,
+    }));
   }
 
   private async searchTMDb(title: string, preferredLanguage: Language) {
@@ -101,23 +148,32 @@ export class CatalogService {
       `https://api.themoviedb.org/3/search/multi?api_key=${tmdbApiKey}&query=${title}`,
     );
     const data = await response.json();
-    const preferredResult = data.results.sort((a: { title?: string, name?: string, popularity: number }, b: { title?: string, name?: string, popularity: number }) => {
-        const aTitle = a.title || a.name;
-        const bTitle = b.title || b.name;
-        if (aTitle === title && bTitle !== title) return -1;
-        if (aTitle !== title && bTitle === title) return 1;
-        if (aTitle === title && bTitle === title) return b.popularity - a.popularity;
-        return b.popularity - a.popularity;
-    })[0];
+    const preferredResult =
+      data.results.sort(
+        (
+          a: { title?: string; name?: string; popularity: number },
+          b: { title?: string; name?: string; popularity: number },
+        ) => {
+          const aTitle = a.title || a.name;
+          const bTitle = b.title || b.name;
+          if (aTitle === title && bTitle !== title) return -1;
+          if (aTitle !== title && bTitle === title) return 1;
+          if (aTitle === title && bTitle === title) return b.popularity - a.popularity;
+          return b.popularity - a.popularity;
+        },
+      )[0] || data.results[0];
 
-    const { id, media_type } = preferredResult  || data.results[0];
-
-    if (!id || !media_type){
-        return response;
+    if (!preferredResult) {
+      return response;
     }
+
+    const { id, media_type } = preferredResult;
+
     const userLanguage = preferredLanguage === Language.HU ? 'hu-HU' : 'en-US';
-    const localizedResponse = await fetch(`https://api.themoviedb.org/3/${media_type}/${id}?api_key=${tmdbApiKey}&language=${userLanguage}&append_to_response=external_ids`);
+    const localizedResponse = await fetch(
+      `https://api.themoviedb.org/3/${media_type}/${id}?api_key=${tmdbApiKey}&language=${userLanguage}&append_to_response=external_ids`,
+    );
     const localizedData = await localizedResponse.json();
-    return {...localizedData, media_type};
+    return { ...localizedData, media_type };
   }
 }

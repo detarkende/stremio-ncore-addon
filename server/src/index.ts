@@ -49,8 +49,7 @@ import {
   updatePasswordSchema,
 } from './schemas/user.schema';
 import { createServerOptions } from './utils/server-options';
-import { CatalogService } from './services/catalog/catalog.service';
-import { FlixPatrolPlatform } from './services/catalog/constants';
+import { CatalogService } from '@/services/catalog';
 import { CatalogController } from './controllers/catalog.controller';
 
 const userService = new UserService(db);
@@ -202,7 +201,10 @@ const app = new Hono<HonoEnv>()
     (c) => torrentSource.getRecommended(c),
   )
   .get('/auth/:deviceToken/catalog/:type/:platform', isDeviceAuthenticated, (c) =>
-    catalogController.getTop10ByPlatform(c),
+    catalogController.getRecommendedByPlatform(c),
+  )
+  .get('/auth/:deviceToken/catalog/:type/:platform/:values', isDeviceAuthenticated, (c) =>
+    catalogController.getRecommendedByPlatform(c),
   )
   .get('/auth/:deviceToken/meta/:type/:ncoreId', isDeviceAuthenticated, (c) =>
     torrentSource.getMetadata(c),

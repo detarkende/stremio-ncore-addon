@@ -4,6 +4,7 @@ import type { UserService } from '@/services/user';
 import { HttpStatusCode } from '@/types/http';
 import { CatalogService } from '@/services/catalog/catalog.service';
 import { platformCatalogQuerySchema } from '@/schemas/catalogs.schema';
+import { StreamType } from '@/schemas/stream.schema';
 
 export class CatalogController {
   constructor(
@@ -11,7 +12,7 @@ export class CatalogController {
     private catalogService: CatalogService,
   ) {}
 
-  public async getTop10ByPlatform(c: Context) {
+  public async getRecommendedByPlatform(c: Context) {
     const params = c.req.param();
     const result = platformCatalogQuerySchema.safeParse(params);
     if (!result.success) {
@@ -19,20 +20,26 @@ export class CatalogController {
         message: result.error.message,
       });
     }
-    const { type, deviceToken, platform } = result.data;
+    const { type, deviceToken, platform, values } = result.data;
+    const parsedParams: Record<string, string> = {};
+
+    if (values) {
+      values.split('&').forEach((pair) => {
+        const [key, value] = pair.split('=');
+        if (key && value) parsedParams[key] = value.replace('.json', '');
+      });
+    }
+
+    const skip = parsedParams['skip'] ? parseInt(parsedParams['skip'], 10) : undefined;
 
     const user = await this.userService.getUserByDeviceTokenOrThrow(deviceToken);
     const { preferredLanguage } = user;
 
-    const date = new Date();
-    date.setDate(date.getDate() - 1);
-    const formattedDate = date.toISOString().split('T')[0];
-
-    const results = await this.catalogService.getTop10ByPlatform(
+    const results = await this.catalogService.getRecommendedByPlatform(
       preferredLanguage,
-      formattedDate,
       platform,
-      type,
+      type as StreamType,
+      skip,
     );
 
     return c.json({ metas: results });

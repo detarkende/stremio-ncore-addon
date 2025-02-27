@@ -1,2 +1,7 @@
 export { CatalogService } from './catalog.service';
-export { FlixPatrolPlatform, FlixPatrolCategory, categoryMapping } from './constants';
+export {
+  JustWatchPlatform,
+  Platform,
+  platformInfo,
+  FlixPatrolPlatform,
+} from './constants';

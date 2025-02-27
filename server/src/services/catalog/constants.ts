@@ -1,27 +1,60 @@
+export enum Platform {
+  RTL = 'RTL+',
+  SKYSHOWTIME = 'SkyShowtime',
+  APPLETV = 'Apple TV',
+  AMAZONPRIME = 'Amazon Prime',
+  DISNEY = 'Disney+',
+  NETFLIX = 'Netflix',
+  HBO = 'HBO',
+}
+
+export enum JustWatchPlatform {
+  HBO = 'mxx',
+  NETFLIX = 'nfx',
+  DISNEY = 'dnp',
+  AMAZON = 'prv',
+  APPLE = 'itu',
+  SKYSHOWTIME = 'sst',
+}
+
 export enum FlixPatrolPlatform {
   RTL = 'rtl-plus',
-  HBO = 'hbo',
-  NETFLIX = 'netflix',
-  DISNEY = 'disney',
-  AMAZON = 'amazon-prime',
-  APPLE = 'apple-tv',
 }
 
-export enum FlixPatrolCategory {
-  Overall = 'Overall',
-  Shows = 'TV Shows',
-  Movies = 'Movies',
-}
-
-export const categoryMapping: Record<string, FlixPatrolCategory> = {
-  [`movie-${FlixPatrolPlatform.NETFLIX}`]: FlixPatrolCategory.Movies,
-  [`series-${FlixPatrolPlatform.NETFLIX}`]: FlixPatrolCategory.Shows,
-  [`movie-${FlixPatrolPlatform.HBO}`]: FlixPatrolCategory.Movies,
-  [`series-${FlixPatrolPlatform.HBO}`]: FlixPatrolCategory.Shows,
-  [`collections-${FlixPatrolPlatform.DISNEY}`]: FlixPatrolCategory.Overall,
-  [`movie-${FlixPatrolPlatform.AMAZON}`]: FlixPatrolCategory.Movies,
-  [`series-${FlixPatrolPlatform.AMAZON}`]: FlixPatrolCategory.Shows,
-  [`movie-${FlixPatrolPlatform.APPLE}`]: FlixPatrolCategory.Movies,
-  [`series-${FlixPatrolPlatform.APPLE}`]: FlixPatrolCategory.Shows,
-  [`collections-${FlixPatrolPlatform.RTL}`]: FlixPatrolCategory.Overall,
-};
+export const platformInfo = [
+  {
+    name: Platform.HBO,
+    justWatchId: JustWatchPlatform.HBO,
+    flixPatrolId: null,
+  },
+  {
+    name: Platform.NETFLIX,
+    justWatchId: JustWatchPlatform.NETFLIX,
+    flixPatrolId: null,
+  },
+  {
+    name: Platform.DISNEY,
+    justWatchId: JustWatchPlatform.DISNEY,
+    flixPatrolId: null,
+  },
+  {
+    name: Platform.AMAZONPRIME,
+    justWatchId: JustWatchPlatform.AMAZON,
+    flixPatrolId: null,
+  },
+  {
+    name: Platform.APPLETV,
+    justWatchId: JustWatchPlatform.APPLE,
+    flixPatrolId: null,
+  },
+  {
+    name: Platform.SKYSHOWTIME,
+    justWatchId: JustWatchPlatform.SKYSHOWTIME,
+    flixPatrolId: null,
+  },
+  {
+    name: Platform.RTL,
+    justWatchId: null,
+    flixPatrolId: FlixPatrolPlatform.RTL,
+  },
+];
