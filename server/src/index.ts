@@ -79,6 +79,7 @@ const isAdminOrSelf = createAdminOrSelfMiddleware(sessionService);
 const isDeviceAuthenticated = createDeviceTokenMiddleware(userService);
 
 const torrentStoreService = new TorrentStoreService(torrentSource);
+await torrentStoreService.startServer();
 const streamService = new StreamService(configService, userService);
 configService.torrentStoreService = torrentStoreService;
 
