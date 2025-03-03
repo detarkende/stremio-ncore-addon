@@ -80,7 +80,6 @@ services:
       - NCORE_PASSWORD=
       - NCORE_USERNAME=
       - HTTPS_PORT=443
-      - TMDB_API_KEY=
     image: detarkende/stremio-ncore-addon:0.6.0
     ports:
       - target: 443 # Make sure that these match the `HTTPS_PORT` env var

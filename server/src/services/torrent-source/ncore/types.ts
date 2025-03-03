@@ -51,19 +51,6 @@ export type NcoreQueryParams = {
   kivalasztott_tipus: string;
 };
 
-export type RecommendedContent = {
-  id: string;
-  name: string;
-  genre: string[];
-  poster?: string;
-  background?: string;
-  posterShape?: string;
-  imdbRating?: string;
-  year?: string;
-  type: string;
-  description?: string;
-};
-
 export type Metadata = {
   id: string;
   name: string;
@@ -75,11 +62,12 @@ export type Metadata = {
   director: string;
   cast: string;
   runtime: string;
-  genre: any;
-  extra: MetadataExtra;
+  genre: string[];
+  imdbRating: string;
+  posterShape: string;
 };
 
-export type MetadataExtra = {
+export type TorrentMetadata = {
   torrentUrl: string;
   torrentCategory: TorrentCategory;
   detailsUrl: string;

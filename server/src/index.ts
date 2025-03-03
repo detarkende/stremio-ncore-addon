@@ -51,11 +51,15 @@ import {
 import { createServerOptions } from './utils/server-options';
 import { CatalogService } from '@/services/catalog';
 import { CatalogController } from './controllers/catalog.controller';
+import { WatchHistoryService } from '@/services/watch-history';
+import { MetadataService } from '@/services/metadata';
 
 const userService = new UserService(db);
 const configService = new ConfigService(db, userService);
 const sessionService = new SessionService(db);
 const deviceTokenService = new DeviceTokenService(db);
+const watchHistoryService = new WatchHistoryService(db);
+
 const manifestService = new ManifestService(
   configService,
   userService,
@@ -64,7 +68,18 @@ const manifestService = new ManifestService(
 const torrentService = new TorrentService();
 const cinemetaService = new CinemeatService();
 const catalogService = new CatalogService();
-const torrentSource = new TorrentSourceManager(
+const torrentSource = new TorrentSourceManager([
+  env.NCORE_URL && env.NCORE_USERNAME && env.NCORE_PASSWORD
+    ? new NcoreService(
+        torrentService,
+        cinemetaService,
+        env.NCORE_URL,
+        env.NCORE_USERNAME,
+        env.NCORE_PASSWORD,
+      )
+    : null,
+]);
+const metadataService = new MetadataService(
   [
     env.NCORE_URL && env.NCORE_USERNAME && env.NCORE_PASSWORD
       ? new NcoreService(
@@ -77,6 +92,7 @@ const torrentSource = new TorrentSourceManager(
       : null,
   ],
   userService,
+  watchHistoryService,
 );
 
 const isAuthenticated = createAuthMiddleware(sessionService);
@@ -93,7 +109,22 @@ const manifestController = new ManifestController(manifestService);
 const authController = new AuthController(userService, sessionService);
 const deviceTokenController = new DeviceTokenController(deviceTokenService);
 const userController = new UserController(userService);
-const catalogController = new CatalogController(userService, catalogService);
+const catalogController = new CatalogController(
+  [
+    env.NCORE_URL && env.NCORE_USERNAME && env.NCORE_PASSWORD
+      ? new NcoreService(
+          torrentService,
+          cinemetaService,
+          env.NCORE_URL,
+          env.NCORE_USERNAME,
+          env.NCORE_PASSWORD,
+        )
+      : null,
+  ],
+  userService,
+  catalogService,
+  watchHistoryService,
+);
 const streamController = new StreamController(
   torrentSource,
   torrentService,
@@ -191,23 +222,33 @@ const app = new Hono<HonoEnv>()
   .delete('/torrents/:infoHash', isAdmin, (c) => torrentController.deleteTorrent(c))
 
   .get(
-    '/auth/:deviceToken/catalog/:type/ncore.popular/:values',
+    '/auth/:deviceToken/catalog/:type/torrent.trending/:values',
     isDeviceAuthenticated,
-    (c) => torrentSource.getRecommended(c),
+    (c) => catalogController.getPageableTrendingTorrents(c),
   )
   .get(
-    '/auth/:deviceToken/catalog/:type/ncore.popular.json',
+    '/auth/:deviceToken/catalog/:type/torrent.trending.json',
     isDeviceAuthenticated,
-    (c) => torrentSource.getRecommended(c),
+    (c) => catalogController.getPageableTrendingTorrents(c),
+  )
+  .get(
+    '/auth/:deviceToken/catalog/:type/user.recommendation/:values',
+    isDeviceAuthenticated,
+    (c) => catalogController.getRecommendationsByWatchHistory(c),
+  )
+  .get(
+    '/auth/:deviceToken/catalog/:type/user.recommendation.json',
+    isDeviceAuthenticated,
+    (c) => catalogController.getRecommendationsByWatchHistory(c),
   )
   .get('/auth/:deviceToken/catalog/:type/:platform', isDeviceAuthenticated, (c) =>
-    catalogController.getRecommendedByPlatform(c),
+    catalogController.getTrendingListByPlatform(c),
   )
   .get('/auth/:deviceToken/catalog/:type/:platform/:values', isDeviceAuthenticated, (c) =>
-    catalogController.getRecommendedByPlatform(c),
+    catalogController.getTrendingListByPlatform(c),
   )
-  .get('/auth/:deviceToken/meta/:type/:ncoreId', isDeviceAuthenticated, (c) =>
-    torrentSource.getMetadata(c),
+  .get('/auth/:deviceToken/meta/:type/:id', isDeviceAuthenticated, (c) =>
+    metadataService.getMetadata(c),
   );
 baseApp.route('/api', app);
 

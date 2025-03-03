@@ -1,10 +1,8 @@
 import { z } from 'zod';
 
-const ncoreSchema = z.string().startsWith('ncore:').endsWith('.json');
-
 export const metadataQuerySchema = z.object({
   deviceToken: z.string(),
-  ncoreId: ncoreSchema,
+  id: z.string(),
   type: z.string(),
 });
 

@@ -1,33 +1,11 @@
 import { isNotNull } from '@/utils/type-guards';
 import type { TorrentDetails, TorrentSource, TorrentSourceIssue } from './types';
 import type { StreamQuery } from '@/schemas/stream.schema';
-import { UserService } from '../user/user.service';
-import type { Context } from 'hono';
-import { HTTPException } from 'hono/http-exception';
-import { catalogQuerySchema } from '@/schemas/catalogs.schema';
-import { HttpStatusCode } from '@/types/http';
-import { metadataQuerySchema } from '@/schemas/metadata.schema';
-
-async function awaitAllReachablePromises<T>(promises: Promise<T>[]): Promise<T[]> {
-  const awaitedResults: PromiseSettledResult<T>[] = await Promise.allSettled(promises);
-  const successfulResults: PromiseFulfilledResult<T>[] = awaitedResults.filter(
-    (promise): promise is PromiseFulfilledResult<T> => promise.status === 'fulfilled',
-  );
-  const failedResults: PromiseRejectedResult[] = awaitedResults.filter(
-    (promise): promise is PromiseRejectedResult => promise.status === 'rejected',
-  );
-  failedResults.forEach(({ reason }) =>
-    console.error(reason ?? 'Unknown error occurred.'),
-  );
-  return successfulResults.map(({ value }) => value);
-}
+import { awaitAllReachablePromises } from '@/utils/promise-utils';
 
 export class TorrentSourceManager {
   private sources: TorrentSource[];
-  constructor(
-    sources: (TorrentSource | null)[],
-    private userService: UserService,
-  ) {
+  constructor(sources: (TorrentSource | null)[]) {
     this.sources = sources.filter((source): source is TorrentSource => source !== null);
   }
 
@@ -35,57 +13,6 @@ export class TorrentSourceManager {
     const promises = this.sources.map(async (source) => source.getRemovableInfoHashes());
     const results = (await awaitAllReachablePromises(promises)).flat();
     return results;
-  }
-
-  public async getRecommended(c: Context) {
-    const params = c.req.param();
-    const result = catalogQuerySchema.safeParse(params);
-    if (!result.success) {
-      throw new HTTPException(HttpStatusCode.BAD_REQUEST, {
-        message: result.error.message,
-      });
-    }
-    const { deviceToken, type, values } = result.data;
-
-    const parsedParams: Record<string, string> = {};
-    if (values) {
-      values.split('&').forEach((pair) => {
-        const [key, value] = pair.split('=');
-        if (key && value) parsedParams[key] = value.replace('.json', '');
-      });
-    }
-
-    const genre = parsedParams['genre'] ? parsedParams['genre'] : undefined;
-    const skip = parsedParams['skip'] ? parseInt(parsedParams['skip'], 10) : undefined;
-    const search = parsedParams['search'] ? parsedParams['search'] : undefined;
-
-    const user = await this.userService.getUserByDeviceTokenOrThrow(deviceToken);
-
-    const { preferredLanguage } = user;
-    const promises = this.sources.map(async (source) =>
-      source.getRecommended(type, preferredLanguage, skip, genre, search),
-    );
-    const results = (await awaitAllReachablePromises(promises)).flat();
-    return c.json({ metas: results });
-  }
-
-  public async getMetadata(c: Context) {
-    const params = c.req.param();
-    const result = metadataQuerySchema.safeParse(params);
-    if (!result.success) {
-      throw new HTTPException(HttpStatusCode.BAD_REQUEST, {
-        message: result.error.message,
-      });
-    }
-    const { deviceToken, ncoreId } = result.data;
-
-    await this.userService.getUserByDeviceTokenOrThrow(deviceToken);
-
-    const promises = this.sources.map(async (source) =>
-      source.getMetadata(ncoreId.replace('ncore:', '').replace('.json', '')),
-    );
-    const results = (await awaitAllReachablePromises(promises))[0];
-    return c.json({ meta: results });
   }
 
   public async getTorrentUrlBySourceId({

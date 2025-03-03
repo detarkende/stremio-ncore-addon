@@ -1,11 +1,16 @@
 import axios from 'axios';
-import {JSDOM} from 'jsdom';
-import {FlixPatrolPlatform, JustWatchPlatform, Platform, platformInfo,} from './constants';
-import {Cached, DEFAULT_MAX} from '@/utils/cache';
-import {Language} from '@/db/schema/users';
-import {env} from '@/env';
-import {RecommendedContent} from '../torrent-source/ncore/types';
-import {StreamType} from '@/schemas/stream.schema';
+import { JSDOM } from 'jsdom';
+import {
+  FlixPatrolPlatform,
+  JustWatchPlatform,
+  Platform,
+  platformInfo,
+} from './constants';
+import { Cached, DEFAULT_MAX, DEFAULT_TTL } from '@/utils/cache';
+import { Language } from '@/db/schema/users';
+import { env } from '@/env';
+import { Metadata } from '../torrent-source/ncore/types';
+import { StreamType } from '@/schemas/stream.schema';
 
 export class CatalogService {
   @Cached({
@@ -19,12 +24,12 @@ export class CatalogService {
       skip: number | undefined,
     ) => `${preferredLanguage}-${platform}-${type}-${skip ?? ''}`,
   })
-  public async getRecommendedByPlatform(
+  public async getTrendingListByPlatform(
     preferredLanguage: Language,
     platform: Platform,
     type: string,
     skip: number | undefined,
-  ): Promise<RecommendedContent[]> {
+  ): Promise<Metadata[]> {
     const jPlatformId = platformInfo.find((p) => p.name === platform)?.justWatchId;
     const fPlatformId = platformInfo.find((p) => p.name === platform)?.flixPatrolId;
 
@@ -35,7 +40,7 @@ export class CatalogService {
     if (fPlatformId) {
       recommendedTitles = await this.fetchTop10(fPlatformId);
     }
-    const results: RecommendedContent[] = [];
+    const results: Metadata[] = [];
     for (const { title, imdb_id } of recommendedTitles) {
       const tmdbData = await this.searchTMDb(title, preferredLanguage);
       if (tmdbData) {
@@ -50,7 +55,84 @@ export class CatalogService {
           year: (tmdbData.release_date || tmdbData.first_air_date || '').split('-')[0],
           type: tmdbData.media_type === 'movie' ? 'movie' : 'series',
           description: tmdbData.overview,
+          director: '',
+          cast: '',
+          runtime: '',
         });
+      }
+    }
+
+    return results;
+  }
+
+  @Cached({
+    max: DEFAULT_MAX,
+    ttl: DEFAULT_TTL,
+    ttlAutopurge: true,
+    generateKey: (preferredLanguage: Language, watchedImdbIds: string[], type: string) =>
+      `${preferredLanguage}-${watchedImdbIds}-${type}`,
+  })
+  public async getRecommendationsByWatchHistory(
+    preferredLanguage: Language,
+    watchedImdbIds: string[],
+    type: string,
+  ): Promise<Metadata[]> {
+    const tmdbApiKey = env.TMDB_API_KEY;
+    const userLanguage = preferredLanguage === Language.HU ? 'hu-HU' : 'en-US';
+
+    const results: Metadata[] = [];
+
+    for (const imdb_id of watchedImdbIds) {
+      const response = await fetch(
+        `https://api.themoviedb.org/3/find/${imdb_id}?api_key=${tmdbApiKey}&language=${userLanguage}&external_source=imdb_id`,
+      );
+      const data = await response.json();
+      const tmdbData = data.movie_results[0] || data.tv_results[0];
+      if (!tmdbData || !tmdbData.id) continue;
+
+      const recommendationsList = await fetch(
+        `https://api.themoviedb.org/3/${tmdbData.media_type}/${tmdbData.id}/recommendations?api_key=${tmdbApiKey}&language=${userLanguage}`,
+      );
+      const recommendationsListData = await recommendationsList.json();
+
+      const tmdbRecommendedList = recommendationsListData.results
+        .filter(
+          (item: any) =>
+            item.overview &&
+            item.overview !== '' &&
+            (preferredLanguage !== Language.HU ||
+              /[áéíóöőúüűÁÉÍÓÖŐÚÜŰ]/.test(item.overview)),
+        )
+        .slice(0, 5);
+
+      for (const item of tmdbRecommendedList) {
+        if (!item || !item.id || !item.media_type) continue;
+        const localizedResponse = await fetch(
+          `https://api.themoviedb.org/3/${item.media_type}/${item.id}?api_key=${tmdbApiKey}&language=${userLanguage}&append_to_response=external_ids`,
+        );
+        const localizedData = await localizedResponse.json();
+
+        if (localizedData) {
+          results.push({
+            id: localizedData.external_ids.imdb_id,
+            name: localizedData.title || localizedData.name,
+            genre: [],
+            poster: `https://image.tmdb.org/t/p/w500${localizedData.poster_path}`,
+            background: `https://image.tmdb.org/t/p/original${localizedData.backdrop_path}`,
+            imdbRating: localizedData.vote_average,
+            posterShape: 'regular',
+            year: (
+              localizedData.release_date ||
+              localizedData.first_air_date ||
+              ''
+            ).split('-')[0],
+            type: type === 'movie' ? 'movie' : 'series',
+            description: localizedData.overview,
+            director: '',
+            cast: '',
+            runtime: '',
+          });
+        }
       }
     }
 

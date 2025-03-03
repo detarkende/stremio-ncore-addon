@@ -2,8 +2,8 @@ import { ConfigService } from '../config';
 import { DeviceTokenService } from '../device-token';
 import { UserService } from '../user';
 import { Language } from '@/db/schema/users';
-import { Genre } from '@/types/genre';
-import { Platform } from '@/services/catalog';
+import { env } from '@/env';
+import { getPlatforms } from '@/services/manifest/constants';
 
 export class ManifestService {
   constructor(
@@ -26,9 +26,9 @@ export class ManifestService {
       name: 'nCore',
       description: 'Provides streams from a personal nCore account.',
       catalogs: [],
-      resources: ['stream', 'catalog', 'meta'],
+      resources: ['stream'],
       types: ['movie', 'series'],
-      idPrefixes: ['tt', 'ncore:'],
+      idPrefixes: ['tt'],
       logo: `${config.addonUrl}/stremio-ncore-addon-logo-rounded.png`,
     } as const;
   }
@@ -41,6 +41,27 @@ export class ManifestService {
     const { preferredLanguage } = user;
 
     const baseManifest = this.getBaseManifest();
+    const catalogs: any[] = [];
+    const platforms = getPlatforms(preferredLanguage);
+    let resources = ['stream'];
+    let idPrefixes = ['tt'];
+    if (env.TMDB_API_KEY) {
+      platforms.forEach((platform) => {
+        platform.type.forEach((type) => {
+          catalogs.push({
+            type,
+            id: platform.id,
+            name: platform.name,
+            pageSize: platform.pageSize,
+            extra: platform.extra,
+            extraSupported: platform.extraSupported,
+          });
+        });
+      });
+      resources = ['stream', 'catalog', 'meta'];
+      idPrefixes = ['tt', 'ncore:'];
+    }
+
     return {
       ...baseManifest,
       description:
@@ -52,122 +73,9 @@ export class ManifestService {
         configurationRequired: false,
         configurable: false,
       },
-      catalogs: [
-        {
-          type: 'movie',
-          id: 'ncore.popular',
-          name: 'nCore',
-          pageSize: 75,
-          extra: [
-            { name: 'search' },
-            { name: 'genre', options: Genre.getGenres(preferredLanguage) },
-            { name: 'skip' },
-          ],
-          extraSupported: ['genre', 'skip', 'search'],
-        },
-        {
-          type: 'series',
-          id: 'ncore.popular',
-          name: 'nCore',
-          pageSize: 75,
-          extra: [
-            { name: 'search' },
-            { name: 'genre', options: Genre.getGenres(preferredLanguage) },
-            { name: 'skip' },
-          ],
-          extraSupported: ['genre', 'skip', 'search'],
-        },
-        {
-          type: 'movie',
-          id: `${Platform.NETFLIX}`,
-          name: 'Netflix',
-          pageSize: 10,
-          extra: [{ name: 'skip' }],
-        },
-        {
-          type: 'series',
-          id: `${Platform.NETFLIX}`,
-          name: 'Netflix',
-          pageSize: 10,
-          extra: [{ name: 'skip' }],
-        },
-        {
-          type: 'movie',
-          id: `${Platform.HBO}`,
-          name: 'Max',
-          pageSize: 10,
-          extra: [{ name: 'skip' }],
-        },
-        {
-          type: 'series',
-          id: `${Platform.HBO}`,
-          name: 'Max',
-          pageSize: 10,
-          extra: [{ name: 'skip' }],
-        },
-        {
-          type: 'movie',
-          id: `${Platform.DISNEY}`,
-          name: 'Disney+',
-          pageSize: 10,
-          extra: [{ name: 'skip' }],
-        },
-        {
-          type: 'series',
-          id: `${Platform.DISNEY}`,
-          name: 'Disney+',
-          pageSize: 10,
-          extra: [{ name: 'skip' }],
-        },
-        {
-          type: 'movie',
-          id: `${Platform.AMAZONPRIME}`,
-          name: 'Amazon Prime',
-          pageSize: 10,
-          extra: [{ name: 'skip' }],
-        },
-        {
-          type: 'series',
-          id: `${Platform.AMAZONPRIME}`,
-          name: 'Amazon Prime',
-          pageSize: 10,
-          extra: [{ name: 'skip' }],
-        },
-        {
-          type: 'movie',
-          id: `${Platform.APPLETV}`,
-          name: 'Apple TV',
-          pageSize: 10,
-          extra: [{ name: 'skip' }],
-        },
-        {
-          type: 'series',
-          id: `${Platform.APPLETV}`,
-          name: 'Apple TV',
-          pageSize: 10,
-          extra: [{ name: 'skip' }],
-        },
-        {
-          type: 'movie',
-          id: `${Platform.SKYSHOWTIME}`,
-          name: 'SkyShowtime',
-          pageSize: 10,
-          extra: [{ name: 'skip' }],
-        },
-        {
-          type: 'series',
-          id: `${Platform.SKYSHOWTIME}`,
-          name: 'SkyShowtime',
-          pageSize: 10,
-          extra: [{ name: 'skip' }],
-        },
-        {
-          type: 'collections',
-          id: `${Platform.RTL}`,
-          name: 'RTL+ - Top 10',
-          extra: [],
-        },
-      ],
+      resources: resources,
+      catalogs: catalogs,
+      idPrefixes: idPrefixes,
     } as const;
   }
 }

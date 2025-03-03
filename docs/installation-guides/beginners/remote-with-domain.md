@@ -115,7 +115,6 @@ services:
     environment:
       - NCORE_PASSWORD=
       - NCORE_USERNAME=
-      - TMDB_API_KEY=
     image: detarkende/stremio-ncore-addon:0.6.0
     ports:
       - target: 3000
