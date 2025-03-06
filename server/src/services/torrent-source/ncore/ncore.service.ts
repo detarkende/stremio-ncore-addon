@@ -128,7 +128,12 @@ export class NcoreService implements TorrentSource {
         director: [getNextTextContent('Rendező:')],
         cast: [getNextTextContent('Szereplők:')],
         runtime: getNextTextContent('Hossz:'),
-        description: getTextContent('//div[@class="torrent_leiras proba42"]//text()')
+        description: this.extractMultipleByXPath(
+          dom,
+          doc,
+          '//div[@class="torrent_leiras proba42"]//text()',
+        )
+          .join(' ')
           .replace(/\n/g, ' ')
           .replace(/\s+/g, ' '),
         year: getNextTextContent('Megjelenés éve:'),
@@ -188,6 +193,21 @@ export class NcoreService implements TorrentSource {
       console.error('Error fetching or extracting data:', error);
       throw new Error('Could not fetch from nCore');
     }
+  }
+
+  private extractMultipleByXPath(dom: JSDOM, doc: Document, xpath: string): string[] {
+    const result = doc.evaluate(
+      xpath,
+      doc,
+      null,
+      dom.window.XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+      null,
+    );
+    const nodes = [];
+    for (let i = 0; i < result.snapshotLength; i++) {
+      nodes.push(result.snapshotItem(i)?.textContent?.trim() || '');
+    }
+    return nodes;
   }
 
   private extractByXPath(dom: JSDOM, doc: Document, xpath: string): string | null {
