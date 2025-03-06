@@ -99,35 +99,36 @@ export class NcoreService implements TorrentSource {
           headers: { cookie: cookies },
         },
       );
-      const doc = new JSDOM(await response.text()).window.document;
+      const dom = new JSDOM(await response.text());
+      const doc = dom.window.document;
 
-      const getTextContent = (selector: string) =>
-        doc.querySelector(selector)?.textContent?.trim() || '';
+      const getTextContent = (xpath: string) =>
+        this.extractByXPath(dom, doc, xpath) || '';
       const getNextTextContent = (text: string) =>
-        Array.from(doc.querySelectorAll('.inforbar_txt td'))
-          .find((el) => el.textContent?.trim() === text)
-          ?.nextElementSibling?.textContent?.trim() || 'N/A';
-
+        this.extractByXPath(
+          dom,
+          doc,
+          `//td[text()="${text}"]/following-sibling::td/text()`,
+        ) || 'N/A';
       const posterUrl =
-        (doc.querySelector('.inforbar_img img') as HTMLImageElement)?.src || '';
-
-      const type = Array.from(doc.querySelectorAll('.torrent_col1 .dt'))
-        .find((dt) => dt.textContent?.trim() === 'Típus:')
-        ?.nextElementSibling?.querySelector('a')
-        ?.textContent?.trim()
-        ?.includes('Film')
+        this.extractByXPath(dom, doc, `//td[@class="inforbar_img"]//img/@src`) || '';
+      const type = this.extractByXPath(
+        dom,
+        doc,
+        `//div[@class="torrent_col1"]//div[@class="dt"][text()="Típus:"]/following-sibling::div[@class="dd"]/a[1]/text()`,
+      )?.includes('Film')
         ? 'movie'
         : 'series';
 
       return {
-        id: `ncore:${id}`,
-        name: getTextContent('.infobar_title'),
+        id: `ncore:${id}`, // Assuming id is defined earlier
+        name: getTextContent(`//div[@class="infobar_title"]/text()`),
         poster: posterUrl,
         background: posterUrl,
         director: [getNextTextContent('Rendező:')],
         cast: [getNextTextContent('Szereplők:')],
         runtime: getNextTextContent('Hossz:'),
-        description: getTextContent('.torrent_leiras.proba42')
+        description: getTextContent('//div[@class="torrent_leiras proba42"]//text()')
           .replace(/\n/g, ' ')
           .replace(/\s+/g, ' '),
         year: getNextTextContent('Megjelenés éve:'),
@@ -156,37 +157,48 @@ export class NcoreService implements TorrentSource {
           headers: { cookie: cookies },
         },
       );
-      const doc = new JSDOM(await response.text()).window.document;
+      const dom = new JSDOM(await response.text());
+      const doc = dom.window.document;
+      const extractText = (xpath: string) => this.extractByXPath(dom, doc, xpath);
 
-      const getTextContent = (selector: string) =>
-        doc.querySelector(selector)?.textContent?.trim() || '';
-
-      const torrentLink =
-        (doc.querySelector('.download a') as HTMLAnchorElement)?.href || '';
-
-      const size = parseInt(
-        getTextContent('.torrent_col2 .dt:contains("Méret:")')?.match(
-          /\((\d+) bájt\)/,
-        )?.[1] || '0',
-        10,
-      );
-      const torrentCategory = (doc
-        .querySelector('.torrent_col1 .dd a[href*="tipus="]')
-        ?.getAttribute('href')
-        ?.match(/tipus=([^&]+)/)?.[1] || '') as TorrentCategory;
+      const sizeMatch = extractText(
+        `//div[@class="torrent_col2"]/div[@class="dt"][text()="Méret:"]/following-sibling::div[@class="dd"]/text()`,
+      )?.match(/\((\d+)\s*bájt\)/);
+      const size = sizeMatch ? Number(sizeMatch[1]) : 0;
 
       return {
-        torrentUrl: `${this.ncoreUrl}/${torrentLink}`,
-        torrentCategory: torrentCategory,
+        torrentUrl: `${this.ncoreUrl}/${extractText(`//div[@class="download"]/a/@href`)}`,
+        torrentCategory: (extractText(
+          `//div[@class="torrent_col1"]//div[@class="dd"]//a[contains(@href, "tipus=")]/@href`,
+        )?.match(/tipus=([^&]+)/)?.[1] || '') as TorrentCategory,
         detailsUrl: `${this.ncoreUrl}/torrents.php?action=details&id=${id}`,
-        seeders: Number(getTextContent('.torrent_col2 .dt:contains("Seederek:")')),
+        seeders: Number(
+          extractText(
+            `//div[@class="torrent_col2"]/div[@class="dt"][text()="Seederek:"]/following-sibling::div[@class="dd"]/a/text()`,
+          ),
+        ),
         size: size,
-        leechers: Number(getTextContent('.torrent_col2 .dt:contains("Leecherek:")')),
+        leechers: Number(
+          extractText(
+            `//div[@class="torrent_col2"]/div[@class="dt"][text()="Leecherek:"]/following-sibling::div[@class="dd"]/a/text()`,
+          ),
+        ),
       };
     } catch (error) {
       console.error('Error fetching or extracting data:', error);
       throw new Error('Could not fetch from nCore');
     }
+  }
+
+  private extractByXPath(dom: JSDOM, doc: Document, xpath: string): string | null {
+    const result = doc.evaluate(
+      xpath,
+      doc,
+      null,
+      dom.window.XPathResult.STRING_TYPE,
+      null,
+    );
+    return result.stringValue.trim() || null;
   }
 
   @Cached({
