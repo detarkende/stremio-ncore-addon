@@ -53,13 +53,14 @@ import { CatalogService } from '@/services/catalog';
 import { CatalogController } from './controllers/catalog.controller';
 import { WatchHistoryService } from '@/services/watch-history';
 import { MetadataService } from '@/services/metadata';
+import { TmdbService } from '@/services/catalog/tmdb.service';
 
 const userService = new UserService(db);
 const configService = new ConfigService(db, userService);
 const sessionService = new SessionService(db);
 const deviceTokenService = new DeviceTokenService(db);
 const watchHistoryService = new WatchHistoryService(db);
-
+const tmdbService = new TmdbService(env.TMDB_API_KEY ?? '');
 const manifestService = new ManifestService(
   configService,
   userService,
@@ -67,7 +68,7 @@ const manifestService = new ManifestService(
 );
 const torrentService = new TorrentService();
 const cinemetaService = new CinemeatService();
-const catalogService = new CatalogService();
+const catalogService = new CatalogService(tmdbService);
 const torrentSource = new TorrentSourceManager([
   env.NCORE_URL && env.NCORE_USERNAME && env.NCORE_PASSWORD
     ? new NcoreService(
@@ -76,6 +77,7 @@ const torrentSource = new TorrentSourceManager([
         env.NCORE_URL,
         env.NCORE_USERNAME,
         env.NCORE_PASSWORD,
+        tmdbService,
       )
     : null,
 ]);
@@ -88,11 +90,13 @@ const metadataService = new MetadataService(
           env.NCORE_URL,
           env.NCORE_USERNAME,
           env.NCORE_PASSWORD,
+          tmdbService,
         )
       : null,
   ],
   userService,
   watchHistoryService,
+  tmdbService,
 );
 
 const isAuthenticated = createAuthMiddleware(sessionService);
@@ -118,6 +122,7 @@ const catalogController = new CatalogController(
           env.NCORE_URL,
           env.NCORE_USERNAME,
           env.NCORE_PASSWORD,
+          tmdbService,
         )
       : null,
   ],

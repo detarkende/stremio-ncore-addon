@@ -51,22 +51,6 @@ export type NcoreQueryParams = {
   kivalasztott_tipus: string;
 };
 
-export type Metadata = {
-  id: string;
-  name: string;
-  poster: string;
-  background: string;
-  year: string;
-  type: string;
-  description: string;
-  director: string;
-  cast: string;
-  runtime: string;
-  genre: string[];
-  imdbRating: string;
-  posterShape: string;
-};
-
 export type TorrentMetadata = {
   torrentUrl: string;
   torrentCategory: TorrentCategory;

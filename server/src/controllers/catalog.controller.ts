@@ -85,7 +85,6 @@ export class CatalogController {
     const results = await this.catalogService.getRecommendationsByWatchHistory(
       preferredLanguage,
       watchedImdbIds,
-      type as StreamType,
     );
 
     return c.json({ metas: results });

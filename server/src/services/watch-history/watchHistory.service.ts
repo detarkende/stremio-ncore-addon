@@ -19,7 +19,7 @@ export class WatchHistoryService {
       .from(watchHistoryTable)
       .where(and(eq(watchHistoryTable.userId, userId), eq(watchHistoryTable.type, type)))
       .orderBy(desc(watchHistoryTable.watchedAt))
-      .limit(3)
+      .limit(5)
       .all();
     return records.map((record: { imdbId: string }) => record.imdbId);
   }

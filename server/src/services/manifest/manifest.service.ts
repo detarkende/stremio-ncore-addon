@@ -4,6 +4,7 @@ import { UserService } from '../user';
 import { Language } from '@/db/schema/users';
 import { env } from '@/env';
 import { getPlatforms } from '@/services/manifest/constants';
+import { PlatformCatalog } from '@/services/catalog/types';
 
 export class ManifestService {
   constructor(
@@ -41,7 +42,7 @@ export class ManifestService {
     const { preferredLanguage } = user;
 
     const baseManifest = this.getBaseManifest();
-    const catalogs: any[] = [];
+    const catalogs: PlatformCatalog[] = [];
     const platforms = getPlatforms(preferredLanguage);
     let resources = ['stream'];
     let idPrefixes = ['tt'];

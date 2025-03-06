@@ -2,7 +2,8 @@ import type { ParsedShow } from '@ctrl/video-filename-parser';
 import { filenameParse, parseResolution } from '@ctrl/video-filename-parser';
 import type { Resolution, Language } from '@/db/schema/users';
 import type { StreamQuery } from '@/schemas/stream.schema';
-import { Metadata, TorrentMetadata } from './ncore/types';
+import { TorrentMetadata } from './ncore/types';
+import { DetailedMetadata, SimpleMetadata } from '@/services/metadata';
 
 export interface TorrentFileDetails {
   name: string;
@@ -103,8 +104,8 @@ export interface TorrentSource {
     skip: number | undefined,
     genre: string | undefined,
     search: string | undefined,
-  ) => Promise<Metadata[]>;
-  getMetadata: (id: string) => Promise<Metadata>;
+  ) => Promise<SimpleMetadata[]>;
+  getMetadata: (id: string) => Promise<DetailedMetadata>;
   getTorrentMetadata: (id: string) => Promise<TorrentMetadata>;
 }
 

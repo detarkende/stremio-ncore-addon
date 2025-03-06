@@ -25,6 +25,7 @@
     "jsdom": "^25.0.1",
     "lru-cache": "^11.0.2",
     "mime": "^4.0.6",
+    "moviedb-promise": "^4.0.7",
     "node-cron": "3.0.3",
     "parse-torrent": "^11.0.17",
     "set-cookie-parser": "^2.7.1",

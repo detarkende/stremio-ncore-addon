@@ -2,7 +2,6 @@ import cookieParser from 'set-cookie-parser';
 import { JSDOM } from 'jsdom';
 import type { TorrentSource } from '../types';
 import {
-  Metadata,
   NcoreOrderBy,
   type NcorePageResponseJson,
   type NcoreQueryParams,
@@ -28,8 +27,9 @@ import { CinemeatService } from '@/services/cinemeta';
 import { isSupportedMedia } from '@/utils/media-file-extensions';
 import { Cached, DEFAULT_MAX, DEFAULT_TTL } from '@/utils/cache';
 import { Language } from '@/db/schema/users';
-import { env } from '@/env';
 import { Genre } from '@/types/genre';
+import { TmdbService } from '@/services/catalog/tmdb.service';
+import { DetailedMetadata, SimpleMetadata } from '@/services/metadata';
 
 export class NcoreService implements TorrentSource {
   public name = 'ncore';
@@ -41,6 +41,7 @@ export class NcoreService implements TorrentSource {
     private ncoreUrl: string,
     private ncoreUsername: string,
     private ncorePassword: string,
+    private tmdbService: TmdbService,
   ) {}
 
   private cookiesCache = {
@@ -89,7 +90,7 @@ export class NcoreService implements TorrentSource {
     ttlAutopurge: true,
     generateKey: (id: string) => id,
   })
-  public async getMetadata(id: string): Promise<Metadata> {
+  public async getMetadata(id: string): Promise<DetailedMetadata> {
     try {
       const cookies = await this.getCookies(this.ncoreUsername, this.ncorePassword);
       const response = await fetch(
@@ -123,8 +124,8 @@ export class NcoreService implements TorrentSource {
         name: getTextContent('.infobar_title'),
         poster: posterUrl,
         background: posterUrl,
-        director: getNextTextContent('Rendező:'),
-        cast: getNextTextContent('Szereplők:'),
+        director: [getNextTextContent('Rendező:')],
+        cast: [getNextTextContent('Szereplők:')],
         runtime: getNextTextContent('Hossz:'),
         description: getTextContent('.torrent_leiras.proba42')
           .replace(/\n/g, ' ')
@@ -133,8 +134,7 @@ export class NcoreService implements TorrentSource {
         type: type,
         genre: [],
         imdbRating: '0',
-        posterShape: 'regular',
-      };
+      } as DetailedMetadata;
     } catch (error) {
       console.error('Error fetching or extracting data:', error);
       throw new Error('Could not fetch from nCore');
@@ -207,7 +207,7 @@ export class NcoreService implements TorrentSource {
     skip: number | undefined,
     genre: string | undefined,
     search: string | undefined,
-  ): Promise<Metadata[]> {
+  ): Promise<SimpleMetadata[]> {
     if (genre && preferredLanguage === Language.EN) {
       genre = Genre.convertToHungarian(genre);
     }
@@ -237,39 +237,14 @@ export class NcoreService implements TorrentSource {
 
     const allNcoreTorrents = pages.flatMap((page) => page.results);
 
-    const tmdbApiKey = env.TMDB_API_KEY;
-    const userLanguage = preferredLanguage === Language.HU ? 'hu-HU' : 'en-US';
-
     const tmdbPromises = allNcoreTorrents.map(async (torrent) => {
       if (!torrent.imdb_id) {
         return this.getMetadata(torrent.torrent_id);
       } else {
-        const response = await fetch(
-          `https://api.themoviedb.org/3/find/${torrent.imdb_id}?api_key=${tmdbApiKey}&language=${userLanguage}&external_source=imdb_id`,
+        return await this.tmdbService.findSimpleMetadataByImdbId(
+          torrent.imdb_id,
+          preferredLanguage,
         );
-        const data = await response.json();
-        const content =
-          (data.movie_results && data.movie_results[0]) ||
-          (data.tv_results && data.tv_results[0]) ||
-          {};
-        return content
-          ? ({
-              id: torrent.imdb_id,
-              name: content.title || content.name,
-              genre: content.genres
-                ? content.genres.map((genre: { name: string }) => genre.name)
-                : [],
-              poster: `https://image.tmdb.org/t/p/w500${content.poster_path}`,
-              background: `https://image.tmdb.org/t/p/original${content.backdrop_path}`,
-              posterShape: 'regular',
-              imdbRating: content.vote_average,
-              year: (content.release_date || content.first_air_date || '').split('-')[0],
-              type: content.media_type === 'movie' ? 'movie' : 'series',
-              description: content.overview,
-              cast: '',
-              director: '',
-            } as Metadata)
-          : null;
       }
     });
 

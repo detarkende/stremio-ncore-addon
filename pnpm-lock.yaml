@@ -210,6 +210,9 @@ importers:
       mime:
         specifier: ^4.0.6
         version: 4.0.6
+      moviedb-promise:
+        specifier: ^4.0.7
+        version: 4.0.7
       node-cron:
         specifier: 3.0.3
         version: 3.0.3
@@ -4243,6 +4246,9 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
+  moviedb-promise@4.0.7:
+    resolution: {integrity: sha512-BS5EemEcI9cmAG8vmpbmdhPoIHHDv/Ycjq4dikWmer9/4WvQm45r5UibDNuj8ZdsE9q0CObCPlZXbD7uOBHFOQ==}
+
   ms@2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
 
@@ -4594,6 +4600,9 @@ packages:
 
   promise-limit@2.7.0:
     resolution: {integrity: sha512-7nJ6v5lnJsXwGprnGXga4wx6d1POjvi5Qmf1ivTRxTjH4Z/9Czja/UCMLVmB9N93GeWOU93XaFaEt6jbuoagNw==}
+
+  promise-throttle@1.1.2:
+    resolution: {integrity: sha512-dij7vjyXNewuuN/gyr+TX2KRjw48mbV5FEtgyXaIoJjGYAKT0au23/voNvy9eS4UNJjx2KUdEcO5Yyfc1h7vWQ==}
 
   prompts@2.4.2:
     resolution: {integrity: sha512-NxNv/kLguCA7p3jE8oL2aEBsrJWgAakBpgmgK6lpPWV+WuOmY6r2/zbAVnP+T8bQlA0nzHXSJSJW0Hq7ylaD2Q==}
@@ -9946,6 +9955,14 @@ snapshots:
 
   mkdirp@1.0.4: {}
 
+  moviedb-promise@4.0.7:
+    dependencies:
+      axios: 1.8.1
+      lodash: 4.17.21
+      promise-throttle: 1.1.2
+    transitivePeerDependencies:
+      - debug
+
   ms@2.0.0: {}
 
   ms@2.1.3: {}
@@ -10267,6 +10284,8 @@ snapshots:
 
   promise-limit@2.7.0:
     optional: true
+
+  promise-throttle@1.1.2: {}
 
   prompts@2.4.2:
     dependencies:
