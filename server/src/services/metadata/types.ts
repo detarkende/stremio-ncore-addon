@@ -5,6 +5,7 @@ import {
   SimpleSeason,
   TvSeasonResponse,
   VideosResponse,
+  SimpleEpisode,
 } from 'moviedb-promise';
 import {
   MovieExternalIdsResponse,
@@ -37,7 +38,7 @@ export interface DetailedMetadata extends SimpleMetadata {
   releaseInfo?: string;
   links?: { name: string; category: string; url: string }[];
   behaviorHints?: { defaultVideoId: string | null; hasScheduledVideos: boolean };
-  videos?: { id: string; title: string; released: string }[] | EpisodeMetadata[];
+  videos?: EpisodeMetadata[];
   director?: string[];
 }
 
@@ -51,6 +52,7 @@ export interface EpisodeMetadata {
   description: string;
   rating: string;
   released: Date;
+  thumbnail: string;
 }
 
 export type ExtendedMovieResponse = MovieResponse & {
@@ -63,4 +65,9 @@ export type ExtendedShowResponse = ShowResponse & {
   credits: CreditsResponse;
   videos: VideosResponse;
   seasons: SimpleSeason[] | TvSeasonResponse;
+  last_episode_to_air: DetailedEpisode;
+  next_episode_to_air: DetailedEpisode;
 };
+export interface DetailedEpisode extends SimpleEpisode {
+  runtime?: string;
+}

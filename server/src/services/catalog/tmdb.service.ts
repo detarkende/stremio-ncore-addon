@@ -255,7 +255,7 @@ export class TmdbService {
       id: imdbId,
       description: response.overview ?? '',
       genre: response.genres?.map((item) => item.name!) || [''],
-      imdbRating: `${response.vote_average}`,
+      imdbRating: response.vote_average?.toString() ?? '',
       background: `https://image.tmdb.org/t/p/original${response.backdrop_path}`,
       poster: `https://image.tmdb.org/t/p/w500${response.poster_path}`,
       type: '',
@@ -294,11 +294,11 @@ export class TmdbService {
         director: movieResponse
           .credits!.crew?.filter((item) => item.job === 'Director')
           .map((item) => item.name),
-        runtime: movieResponse.runtime,
+        runtime: `${movieResponse.runtime ? movieResponse.runtime + 'm' : '-'}`,
         releaseInfo: movieResponse.release_date?.substring(0, 4),
         links: [
           {
-            name: movieResponse.vote_average,
+            name: movieResponse.vote_average?.toString() ?? '',
             category: 'imdb',
             url: `https://imdb.com/title/${imdbId}`,
           },
@@ -308,42 +308,39 @@ export class TmdbService {
             url: `https://www.strem.io/s/movie/${movieResponse.title!.toLowerCase().replace(/ /g, '-')}-${imdbId?.replace('tt', '')}`,
           },
           ...(movieResponse.credits!.cast?.slice(0, 4).map((actor) => ({
-            name: actor,
+            name: actor.name!,
             category: 'Cast',
-            url: `stremio:///search?search=${encodeURIComponent(actor.toString())}`,
+            url: `stremio:///search?search=${encodeURIComponent(actor.name!)}`,
           })) ?? ''),
           ...(movieResponse
             .credits!.crew?.filter((item) => item.job === 'Director')
             .map((director) => ({
-              name: director,
+              name: director.name!,
               category: 'Directors',
-              url: `stremio:///search?search=${encodeURIComponent(director.toString())}`,
+              url: `stremio:///search?search=${encodeURIComponent(director.name!)}`,
             })) ?? ''),
           ...(movieResponse
             .credits!.crew?.filter((item) => item.job === 'Writer')
             .map((writer) => ({
-              name: writer,
+              name: writer.name!,
               category: 'Writers',
-              url: `stremio:///search?search=${encodeURIComponent(writer.toString())}`,
+              url: `stremio:///search?search=${encodeURIComponent(writer.name!)}`,
             })) ?? ''),
         ],
         behaviorHints: {
           defaultVideoId: imdbId,
-          hasScheduledVideos: true,
+          hasScheduledVideos: false,
         },
-        videos: [
-          {
-            id: imdbId,
-            title: '',
-            released: movieResponse.release_date
-              ? new Date(movieResponse.release_date).toISOString()
-              : '',
-          },
-        ],
+        videos: [],
       } as DetailedMetadata;
     } else {
       const tvResponse: ExtendedShowResponse = response as ExtendedShowResponse;
 
+      const runtime: number | string | null =
+        tvResponse.episode_run_time?.[0] ??
+        tvResponse.last_episode_to_air?.runtime ??
+        tvResponse.next_episode_to_air?.runtime ??
+        null;
       const showMetadata = {
         ...commonMetadata,
         imdb_id: imdbId,
@@ -366,7 +363,7 @@ export class TmdbService {
           tvResponse.status === 'Ended'
             ? `${tvResponse.first_air_date?.substring(0, 4)}-${tvResponse.last_air_date?.substring(0, 4)}`
             : `${tvResponse.first_air_date?.substring(0, 4)}-`,
-        runtime: `${tvResponse.episode_run_time ? tvResponse.episode_run_time[0] : ''}`,
+        runtime: `${runtime + 'm'}`,
         releaseInfo:
           tvResponse.status === 'Ended'
             ? `${tvResponse.first_air_date?.substring(0, 4)}-${tvResponse.last_air_date?.substring(0, 4)}`
@@ -379,7 +376,7 @@ export class TmdbService {
             .map((item) => ({ title: item.name, ytId: item.key })) ?? '',
         links: [
           {
-            name: tvResponse.vote_average,
+            name: tvResponse.vote_average?.toString() ?? '',
             category: 'imdb',
             url: `https://imdb.com/title/${imdbId}`,
           },
@@ -389,57 +386,45 @@ export class TmdbService {
             url: `https://www.strem.io/s/series/${tvResponse.name!.toLowerCase().replace(/ /g, '-')}-${imdbId?.replace('tt', '')}`,
           },
           ...(tvResponse.credits!.cast?.slice(0, 4).map((actor) => ({
-            name: actor,
+            name: actor.name!,
             category: 'Cast',
-            url: `stremio:///search?search=${encodeURIComponent(actor.toString())}`,
+            url: `stremio:///search?search=${encodeURIComponent(actor.name!)}`,
           })) ?? ''),
           ...(tvResponse
             .credits!.crew?.filter((item) => item.job === 'Director')
             .map((director) => ({
-              name: director,
+              name: director.name!,
               category: 'Directors',
-              url: `stremio:///search?search=${encodeURIComponent(director.toString())}`,
+              url: `stremio:///search?search=${encodeURIComponent(director.name!)}`,
             })) ?? ''),
           ...(tvResponse
             .credits!.crew?.filter((item) => item.job === 'Writer')
             .map((writer) => ({
-              name: writer,
+              name: writer.name!,
               category: 'Writers',
-              url: `stremio:///search?search=${encodeURIComponent(writer.toString())}`,
+              url: `stremio:///search?search=${encodeURIComponent(writer.name!)}`,
             })) ?? ''),
         ],
         behaviorHints: {
           defaultVideoId: null,
           hasScheduledVideos: true,
         },
-        videos: [
-          {
-            id: imdbId,
-            title: '',
-            released: tvResponse.first_air_date
-              ? new Date(tvResponse.first_air_date).toISOString()
-              : '',
-          },
-        ],
+        videos: [],
       } as DetailedMetadata;
 
-      const seasons = this.generateSeasonsString(tvResponse.seasons!);
-      const responseWithEpisodes: ExtendedShowResponse = (await this.tmdb.tvInfo({
-        id: tmdbId,
-        language,
-        append_to_response: seasons.join(','),
-      })) as ExtendedShowResponse;
-
+      const seasonsChunks = this.generateSeasonsString(tvResponse.seasons!);
       const episodes: EpisodeMetadata[] = [];
 
-      for (const seasonString of this.generateSeasonsString(
-        responseWithEpisodes.seasons ?? [],
-      )) {
-        const splitSeasons = seasonString.split(',');
+      for (const chunk of seasonsChunks) {
+        const responseWithEpisodes: ExtendedShowResponse = (await this.tmdb.tvInfo({
+          id: tmdbId,
+          language,
+          append_to_response: chunk,
+        })) as ExtendedShowResponse;
 
-        for (const season of splitSeasons) {
+        for (const seasonString of chunk.split(',')) {
           const seasonData = responseWithEpisodes[
-            season as keyof ExtendedShowResponse
+            seasonString as keyof ExtendedShowResponse
           ] as TvSeasonResponse;
           if (seasonData) {
             for (const [index, episode] of seasonData.episodes!.entries()) {
@@ -455,6 +440,7 @@ export class TmdbService {
                 released: new Date(
                   Date.parse(episode.air_date!) + episode.season_number!,
                 ),
+                thumbnail: `https://episodes.metahub.space/${tvResponse.external_ids!.imdb_id!}/${episode.season_number!}/${index + 1}/w780.jpg`,
               });
             }
           }
@@ -469,16 +455,11 @@ export class TmdbService {
 
   private generateSeasonsString(seasons: SimpleSeason[]) {
     const chunkSize = 20;
-    const chunks = [];
-
-    for (let i = 0; i < seasons.length; i += chunkSize) {
-      const chunk = seasons
-        .slice(i, i + chunkSize)
-        .map((season) => `season/${season.season_number}`)
-        .join(',');
-      chunks.push(chunk);
-    }
-
-    return chunks;
+    const chunks = Array.from({ length: Math.ceil(seasons.length / chunkSize) }, (_, i) =>
+      seasons.slice(i * chunkSize, i * chunkSize + chunkSize),
+    );
+    return chunks.map((chunk) =>
+      chunk.map((season) => `season/${season.season_number}`).join(','),
+    );
   }
 }
