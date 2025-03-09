@@ -113,7 +113,7 @@ export class TorrentStoreService {
     console.log('Torrent files loaded and verified.');
   }
 
-  public async deleteUnnecessaryTorrents() {
+  public deleteUnnecessaryTorrents = async () => {
     this.checkServer();
     console.log('Gathering unnecessary torrents...');
     const deletableInfoHashes = await this.torrentSource.getRemovableInfoHashes();
@@ -125,5 +125,5 @@ export class TorrentStoreService {
         console.log(`Successfully deleted ${torrent.name} - ${torrent.infoHash}.`);
       }
     });
-  }
+  };
 }
