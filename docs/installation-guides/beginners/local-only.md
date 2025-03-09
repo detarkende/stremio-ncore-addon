@@ -81,10 +81,7 @@ services:
       - NCORE_USERNAME=
       - HTTPS_PORT=443
     image: detarkende/stremio-ncore-addon:0.6.0
-    ports:
-      - target: 443 # Make sure that these match the `HTTPS_PORT` env var
-        published: '443' # Make sure that these match the `HTTPS_PORT` env var
-        protocol: tcp
+    network_mode: host
     restart: unless-stopped
     volumes:
       - type: bind
