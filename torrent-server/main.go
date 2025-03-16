@@ -166,36 +166,25 @@ func main() {
 		}
 
 		// Set headers
+		c.Status(http.StatusPartialContent)
 		c.Header("Content-Range", fmt.Sprintf("bytes %d-%d/%d", start, end, fileSize))
 		c.Header("Accept-Ranges", "bytes")
 		c.Header("Content-Length", fmt.Sprintf("%d", end-start+1))
 		c.Header("Content-Type", getContentType(filepath))
-		c.Status(http.StatusPartialContent)
 
 		// Create reader for the specific range
 		reader := targetFile.NewReader()
-		reader.SetReadahead(1024 * 1024) // 1MB readahead
-		reader.Seek(start, io.SeekStart)
-
-		// Stream the range
-		remaining := end - start + 1
-		buf := make([]byte, 32*1024) // 32KB buffer
-		for remaining > 0 {
-			readSize := min(remaining, int64(len(buf)))
-			bytes, err := reader.Read(buf[:readSize])
-			if err != nil && err != io.EOF {
-				log.Printf("Error reading file: %v", err)
-				return
-			}
-			if bytes > 0 {
-				c.Writer.Write(buf[:bytes])
-				remaining -= int64(bytes)
-			}
-			if err == io.EOF {
-				break
-			}
+		defer reader.Close()
+		_, err = reader.Seek(start, io.SeekStart)
+		if err != nil {
+			c.String(http.StatusInternalServerError, "Failed to seek to position: %v", err)
+			return
 		}
 
+		// Stream the range
+		// Create a limited reader to read only the requested range
+		limitedReader := io.LimitReader(reader, end-start+1)
+		c.DataFromReader(http.StatusPartialContent, end-start+1, getContentType(filepath), limitedReader, nil)
 	})
 
 	r.Run(":" + strconv.Itoa(port))

@@ -1,7 +1,7 @@
 {
   "name": "torrent-server",
   "scripts": {
-    "dev": "source ../.env && nodemon --watch ./ --exec \"go run main.go -p 8080 -d $ADDON_DIR/downloads\"",
+    "dev": "source ../.env && ADDON_DIR=$ADDON_DIR nodemon --watch ./ --exec \"go run main.go -p 8080 -d $ADDON_DIR/downloads\"",
     "build": "go build -o ../dist/torrent-server/torrent-server ./main.go"
   },
   "devDependencies": {
