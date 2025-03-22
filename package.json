@@ -1,5 +1,6 @@
 {
   "name": "stremio-ncore-addon",
+  "version": "0.8.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -16,7 +17,8 @@
     "check-formatting": "prettier --check .",
     "format": "prettier --write .",
     "lint": "eslint .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "release": ""
   },
   "dependencies": {
     "hono": "4.7.2",

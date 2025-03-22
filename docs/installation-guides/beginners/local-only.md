@@ -80,7 +80,7 @@ services:
       - NCORE_PASSWORD=
       - NCORE_USERNAME=
       - HTTPS_PORT=443
-    image: detarkende/stremio-ncore-addon:0.6.0
+    image: detarkende/stremio-ncore-addon:0.8.0
     network_mode: host
     restart: unless-stopped
     volumes:
