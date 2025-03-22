@@ -30,13 +30,6 @@ export const SettingsPage = () => {
       return response.json();
     },
   });
-  const { data: localUrl } = useQuery({
-    queryKey: [QueryKeys.LOCAL_URL],
-    queryFn: async () => {
-      const req = await api.config['local-url'].$get();
-      return (await req.json()).localUrl;
-    },
-  });
 
   if (me && me.role !== UserRole.ADMIN) {
     return <Redirect to="/account" />;
@@ -83,7 +76,7 @@ export const SettingsPage = () => {
           Addon settings
         </h2>
         <div className="space-y-12">
-          <UpdateAddonSettingsForm config={config} localUrl={localUrl} />
+          <UpdateAddonSettingsForm config={config} />
         </div>
       </section>
     </div>

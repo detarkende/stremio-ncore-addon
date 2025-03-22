@@ -15,12 +15,14 @@ const localIpResponseSchema = z.object({
 type LocalIpResponse = z.infer<typeof localIpResponseSchema>;
 
 const fetchLocalIpKeys = async () => {
+  console.log('Fetching local-ip keys');
   const req = await fetch(LOCAL_IP_KEYS_URL);
   const json = await req.json();
   const parseResult = localIpResponseSchema.safeParse(json);
   if (!parseResult.success) {
     throw new Error(`Failed to parse local IP keys: ${parseResult.error}`);
   }
+  console.log('Found local-ip keys');
   return parseResult.data;
 };
 
@@ -39,8 +41,7 @@ export const createServerOptions = async (): Promise<ServerOptions> => {
       if (serverName.includes(LOCAL_IP_HOSTNAME)) {
         const ctx = createSecureContext({
           key: localIpDetails.privkey,
-          cert: localIpDetails.cert,
-          ca: localIpDetails.chain,
+          cert: `${localIpDetails.cert}\n${localIpDetails.chain}`,
         });
         cb(null, ctx);
       }

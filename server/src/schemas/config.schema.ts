@@ -4,16 +4,22 @@ import { z } from 'zod';
 import { createUserSchema } from './user.schema';
 
 export const createConfigSchema = z.object({
-  addonUrl: z.union([
+  addonLocation: z.union([
     z.object({
       local: z.literal(false),
-      url: z
+      location: z
         .string()
-        .min(1)
+        .min(1, 'Addon URL must not be empty.')
         .url()
         .refine((v) => !v.endsWith('/'), 'Addon URL must not end with a slash.'),
     }),
-    z.object({ local: z.literal(true), url: z.literal('') }),
+    z.object({
+      local: z.literal(true),
+      location: z
+        .string()
+        .min(1, 'Local network IP must not be empty')
+        .ip({ version: 'v4' }),
+    }),
   ]),
   admin: createUserSchema,
   nonAdminUsers: z.array(createUserSchema),

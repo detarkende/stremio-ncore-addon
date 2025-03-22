@@ -14,32 +14,31 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '../ui/separator';
 
-export const SettingsFormFields = ({ localUrl }: { localUrl: string | undefined }) => {
+export const SettingsFormFields = () => {
   const { control, watch, setValue, trigger } = useFormContext<
     UpdateConfigRequest | CreateConfigRequest
   >();
-  const { addonUrl } = watch();
+  const { addonLocation } = watch();
   return (
     <>
       <div className="space-y-6">
         <FormField
           control={control}
-          name="addonUrl.local"
+          name="addonLocation.local"
           render={({ field }) => (
             <RadioGroup
               value={field.value.toString()}
               onValueChange={async (value) => {
                 const isLocal = value === 'true';
-                setValue(
-                  'addonUrl',
-                  isLocal ? { local: true, url: '' } : { local: false, url: '' },
-                );
+                setValue('addonLocation', { local: isLocal, location: '' });
                 await trigger();
               }}
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="false" id="remotely-accessible" />
-                <Label htmlFor="remotely-accessible">Remotely accessible</Label>
+                <Label htmlFor="remotely-accessible">
+                  Remotely accessible with custom domain
+                </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="true" id="locally-accessible" />
@@ -53,20 +52,25 @@ export const SettingsFormFields = ({ localUrl }: { localUrl: string | undefined 
         <div className="space-y-4">
           <FormField
             control={control}
-            name="addonUrl.url"
-            disabled={addonUrl.local}
+            name="addonLocation.location"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Addon URL</FormLabel>
+                <FormLabel>
+                  {addonLocation.local ? 'Local network IP' : 'Addon URL'}
+                </FormLabel>
                 <FormControl>
                   <Input
-                    placeholder={addonUrl.local ? localUrl : 'https://your-addon-url.com'}
+                    placeholder={
+                      addonLocation.local ? '192.168.x.x' : 'https://your-addon-url.com'
+                    }
                     {...field}
                   />
                 </FormControl>
                 <FormMessage />
                 <FormDescription>
-                  Which URL is your addon reachable through from the outside internet?
+                  {addonLocation.local
+                    ? 'The local IP of the host machine where the addon is running. Must be static.'
+                    : 'The URL where the addon is hosted. Must not end with a slash.'}
                 </FormDescription>
               </FormItem>
             )}

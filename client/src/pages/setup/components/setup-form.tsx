@@ -25,7 +25,7 @@ import { handleError, HttpError } from '@/lib/errors';
 import { CreateConfigRequest, createConfigSchema } from '@server/schemas/config.schema';
 import { SettingsFormFields } from '@/components/settings/settings-form-fields';
 
-export const SetupForm = ({ localUrl }: { localUrl: string | undefined }) => {
+export const SetupForm = () => {
   const queryClient = useQueryClient();
   const { mutateAsync } = useMutation({
     mutationFn: async (data: CreateConfigRequest) => {
@@ -63,7 +63,7 @@ export const SetupForm = ({ localUrl }: { localUrl: string | undefined }) => {
             <CardDescription>Configure your addon installation</CardDescription>
           </CardHeader>
           <CardContent className="space-y-12">
-            <SettingsFormFields localUrl={localUrl} />
+            <SettingsFormFields />
             <Separator />
 
             <div className="space-y-4">

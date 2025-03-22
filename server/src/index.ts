@@ -128,7 +128,6 @@ const app = new Hono<HonoEnv>()
   .get('/config/torrent-sources/issues', (c) =>
     configController.getTorrentSourceConfigIssues(c),
   )
-  .get('/config/local-url', (c) => configController.getLocalUrl(c))
   .get('/config', isAdmin, (c) => configController.getConfig(c))
   .post('/config', zValidator('json', createConfigSchema), (c) =>
     configController.createConfig(c),

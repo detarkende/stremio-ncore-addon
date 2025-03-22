@@ -1,0 +1,1 @@
+ALTER TABLE `configuration` RENAME COLUMN "addon_url" TO "addon_location";

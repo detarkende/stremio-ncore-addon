@@ -4,9 +4,9 @@ import { Language, languageValues } from '@server/db/schema/users';
 export type SetupFormValues = CreateConfigRequest;
 
 export const defaultSetupFormValues: SetupFormValues = {
-  addonUrl: {
-    url: '',
+  addonLocation: {
     local: false,
+    location: '',
   },
   admin: {
     username: '',
