@@ -77,8 +77,8 @@ name: stremio-ncore-addon
 services:
   stremio-ncore-addon:
     environment:
-      - NCORE_PASSWORD=
       - NCORE_USERNAME=
+      - NCORE_PASSWORD=
       - HTTPS_PORT=443
     image: detarkende/stremio-ncore-addon:0.6.0
     ports:

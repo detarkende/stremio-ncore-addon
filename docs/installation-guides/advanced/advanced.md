@@ -7,8 +7,8 @@ services:
   stremio-ncore-addon:
     image: detarkende/stremio-ncore-addon:0.6.0
     environment:
-      - NCORE_PASSWORD=
       - NCORE_USERNAME=
+      - NCORE_PASSWORD=
     ports:
       - target: 3000
         published: 3000
