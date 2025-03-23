@@ -113,7 +113,6 @@ name: stremio-ncore-addon
 services:
   stremio-ncore-addon:
     environment:
-      - NCORE_PASSWORD=
       - NCORE_USERNAME=
     image: detarkende/stremio-ncore-addon:0.8.0
     ports:
