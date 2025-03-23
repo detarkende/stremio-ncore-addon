@@ -26,7 +26,8 @@ RUN pnpm install
 
 FROM build-deps AS build
 COPY . .
-RUN pnpm run build
+RUN pnpm run build:server
+RUN pnpm run build:client
 
 FROM node-base AS runtime
 COPY --from=prod-deps /app/node_modules ./node_modules
