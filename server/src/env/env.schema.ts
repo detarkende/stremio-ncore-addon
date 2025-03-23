@@ -4,6 +4,7 @@ export const envSchema = z
   .object({
     PORT: z.coerce.number().default(3000),
     HTTPS_PORT: z.coerce.number().default(3443),
+    TORRENT_SERVER_PORT: z.coerce.number().default(8080),
     ADDON_DIR: z.string(),
     NCORE_USERNAME: z.string(),
     NCORE_PASSWORD: z.string(),

@@ -114,12 +114,13 @@ services:
   stremio-ncore-addon:
     environment:
       - NCORE_USERNAME=
-      - NCORE_PASSWORD=
-    image: detarkende/stremio-ncore-addon:0.6.0
+    image: detarkende/stremio-ncore-addon:0.8.0
     ports:
       - target: 3000
-        published: '3000'
+        published: 3000
         protocol: tcp
+      - target: 42069
+        published: 42069
     restart: unless-stopped
     volumes:
       - type: bind

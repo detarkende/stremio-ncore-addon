@@ -5,14 +5,19 @@
 ```yaml
 services:
   stremio-ncore-addon:
-    image: detarkende/stremio-ncore-addon:0.6.0
+    image: detarkende/stremio-ncore-addon:0.8.0
     environment:
       - NCORE_USERNAME=
       - NCORE_PASSWORD=
     ports:
-      - target: 3000
+      - target: 3000 # Port for HTTP
         published: 3000
         protocol: tcp
+      - target: 3443 # Port for HTTPS (if you handle HTTPS yourself, you don't need this exposed)
+        published: 3443
+        protocol: tcp
+      - target: 42069 # Port for torrent seeding
+        published: 42069
     volumes:
       - type: bind
         source: /media/share
@@ -58,12 +63,13 @@ To add the addon to Stremio follow the [Client Setup Guide](../../client-setup.m
 
 ## "Local only" setup
 
-The addon automatically listens on two ports:
+The addon automatically listens on three ports:
 
 - an HTTP server (port defined by the `PORT` env var - default is 3000)
 - an HTTPS server (port defined by the `HTTPS_PORT` env var - default is 3443). If the incoming request is for `https://x-x-x-x.local-ip.medicmobile.org`, then the server provides the SSL certificate, which is fetched from `https://local-ip.medicmobile.org/keys` every hour.
+- the torrent server uses port 42069, don't forget to expose this to seed torrents.
 
-Both of these ports spin up automatically, but it's up to you to expose them from the docker container.
-If you put the addon behind a reverse proxy, then it's enough to only expose one port and handle https yourself.
+All of these ports spin up automatically, but it's up to you to expose them from the docker container.
+If you put the addon behind a reverse proxy, then You don't need to expose the `HTTPS_PORT`.
 
 However, if you want to use the local-only mode, then you need to expose the HTTPS port (you can expose both ports, but you will likely only need the HTTPS port).

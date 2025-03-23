@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/collapsible';
 import { DeviceToken } from '@server/db/schema/device-tokens';
 import { useConfig } from '@/hooks/use-config';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 export const DeviceTokenItem = ({
   deviceToken,
@@ -23,13 +24,17 @@ export const DeviceTokenItem = ({
   const manifestUrl = api.auth[':deviceToken']['manifest.json'].$url({
     param: { deviceToken: deviceToken.token },
   });
+
+  if (!config) {
+    return <LoadingSpinner />;
+  }
+
   const addonManifestUrl = manifestUrl
     .toString()
-    .replace(manifestUrl.origin, config?.addonUrl ?? '');
+    .replace(manifestUrl.origin, config.addonUrl);
   const stremioUrl = addonManifestUrl.replace(/https?/, 'stremio');
 
   const addOnWebUrl = `${STREMIO_WEB_URL}/#/addons?addon=${encodeURIComponent(addonManifestUrl)}`;
-
   return (
     <div className="space-y-8">
       <div className="flex gap-x-4 gap-y-2 justify-center items-center flex-wrap">

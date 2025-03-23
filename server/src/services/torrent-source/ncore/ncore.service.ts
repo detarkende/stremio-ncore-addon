@@ -1,6 +1,6 @@
 import cookieParser from 'set-cookie-parser';
 import { JSDOM } from 'jsdom';
-import type { TorrentSource } from '../types';
+import type { ParsedTorrentDetails, TorrentSource } from '../types';
 import {
   NcoreOrderBy,
   NcoreSearchBy,
@@ -232,24 +232,29 @@ export class NcoreService implements TorrentSource {
       (row) => row.querySelector('.hnr_ttimespent')?.textContent === '-',
     );
 
-    const deletableInfoHashPromises: Promise<string>[] = deletableRows.map(
-      async (row) => {
-        const detailsUrl = row.querySelector('.hnr_tname a')?.getAttribute('href') ?? '';
-        const searchParams = new URLSearchParams(detailsUrl.split('?')[1] ?? '');
-        const ncoreId = searchParams.get('id') ?? '';
-        const downloadUrl = await this.getTorrentUrlBySourceId(ncoreId);
-        const { infoHash } =
-          await this.torrentService.downloadAndParseTorrent(downloadUrl);
-        return infoHash;
-      },
-    );
+    const deletableNcoreIds = deletableRows.map((row) => {
+      const detailsUrl = row.querySelector('.hnr_tname a')?.getAttribute('href') ?? '';
+      const searchParams = new URLSearchParams(detailsUrl.split('?')[1] ?? '');
+      const ncoreId = searchParams.get('id') ?? '';
+      return ncoreId;
+    });
 
-    const deletableInfoHashes = (await Promise.allSettled(deletableInfoHashPromises))
+    const deletableTorrentPromises = deletableNcoreIds.map(async (ncoreId) => {
+      const downloadUrl = await this.getTorrentUrlBySourceId(ncoreId);
+      const torrent = await this.torrentService.downloadAndParseTorrent(downloadUrl);
+      return torrent;
+    });
+
+    const deletableTorrents = (await Promise.allSettled(deletableTorrentPromises))
       .filter(
-        (result): result is PromiseFulfilledResult<string> =>
+        (result): result is PromiseFulfilledResult<ParsedTorrentDetails> =>
           result.status === 'fulfilled',
       )
       .map((result) => result.value);
-    return deletableInfoHashes;
+
+    deletableTorrents.map((torrent) => {
+      console.log(`Torrent "${torrent.infoHash}" can be deleted.`);
+    });
+    return deletableTorrents.map(({ infoHash }) => infoHash);
   }
 }

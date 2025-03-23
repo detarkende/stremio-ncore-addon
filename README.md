@@ -1,4 +1,4 @@
-![banner](./assets/stremio-ncore-addon-banner.png)
+![banner](./docs/stremio-ncore-addon-banner.png)
 
 # nCore addon
 

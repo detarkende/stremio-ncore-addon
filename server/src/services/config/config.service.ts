@@ -1,5 +1,5 @@
 import { Database } from '@/db';
-import { Configuration, configurationTable } from '@/db/schema/configuration';
+import { ConfigurationResponse, configurationTable } from '@/db/schema/configuration';
 import { MissingConfigError } from './config.error';
 import { CreateConfigRequest, UpdateConfigRequest } from '@/schemas/config.schema';
 import { UserService } from '../user';
@@ -9,7 +9,6 @@ import { HttpStatusCode } from '@/types/http';
 import { schedule, ScheduledTask } from 'node-cron';
 import { TorrentStoreService } from '../torrent-store';
 import { env } from '@/env';
-import { getLocalNetworkIp } from '@/utils/ip';
 import { getLocalIpUrl } from '@/utils/https';
 
 export class ConfigService {
@@ -44,38 +43,43 @@ export class ConfigService {
     }
   }
 
-  public getAddonUrl(addonUrlFromDb: string, localOnly: boolean): string {
+  public getAddonUrl(addonLocation: string, localOnly: boolean): string {
     if (localOnly) {
-      const localIp = getLocalNetworkIp();
-      return getLocalIpUrl(localIp, env.HTTPS_PORT);
+      return getLocalIpUrl(addonLocation, env.HTTPS_PORT);
     }
-    return addonUrlFromDb;
+    return addonLocation;
   }
 
-  public getConfig(): Configuration {
+  public getConfig(): ConfigurationResponse {
     const config = this.db.select().from(configurationTable).limit(1).get();
     if (!config) {
       throw new MissingConfigError('No configuration found in the database.');
     }
-    return { ...config, addonUrl: this.getAddonUrl(config.addonUrl, config.localOnly) };
+    return {
+      ...config,
+      addonUrl: this.getAddonUrl(config.addonLocation, config.localOnly),
+    };
   }
 
-  public getConfigOrNull = (): Configuration | null => {
+  public getConfigOrNull = (): ConfigurationResponse | null => {
     const config = this.db.select().from(configurationTable).limit(1).get();
     if (!config) {
       return null;
     }
-    return { ...config, addonUrl: this.getAddonUrl(config.addonUrl, config.localOnly) };
+    return {
+      ...config,
+      addonUrl: this.getAddonUrl(config.addonLocation, config.localOnly),
+    };
   };
 
-  public async createConfig(data: CreateConfigRequest): Promise<Configuration> {
-    const { addonUrl, deleteAfterHitnrun, admin, nonAdminUsers } = data;
+  public async createConfig(data: CreateConfigRequest): Promise<ConfigurationResponse> {
+    const { addonLocation, deleteAfterHitnrun, admin, nonAdminUsers } = data;
     const config = await this.db.transaction(async (tx) => {
       const [config] = await tx
         .insert(configurationTable)
         .values({
-          addonUrl: addonUrl.local ? '' : addonUrl.url,
-          localOnly: addonUrl.local,
+          addonLocation: addonLocation.local ? '' : addonLocation.location,
+          localOnly: addonLocation.local,
           deleteAfterHitnrun: deleteAfterHitnrun.enabled,
           deleteAfterHitnrunCron: deleteAfterHitnrun.cron || undefined,
         })
@@ -92,19 +96,22 @@ export class ConfigService {
       return config;
     });
     this.scheduleDeleteAfterHitnrunCron();
-    return { ...config, addonUrl: this.getAddonUrl(config.addonUrl, config.localOnly) };
+    return {
+      ...config,
+      addonUrl: this.getAddonUrl(config.addonLocation, config.localOnly),
+    };
   }
 
-  public async updateConfig(data: UpdateConfigRequest): Promise<Configuration> {
-    const { addonUrl, deleteAfterHitnrun } = data;
+  public async updateConfig(data: UpdateConfigRequest): Promise<ConfigurationResponse> {
+    const { addonLocation, deleteAfterHitnrun } = data;
     console.log('Updating configuration:', data);
     try {
       const oldConfig = this.getConfig();
       const [newConfig] = await this.db
         .update(configurationTable)
         .set({
-          addonUrl: addonUrl.local ? '' : addonUrl.url,
-          localOnly: addonUrl.local,
+          addonLocation: addonLocation.location,
+          localOnly: addonLocation.local,
           deleteAfterHitnrun: deleteAfterHitnrun.enabled,
           deleteAfterHitnrunCron: deleteAfterHitnrun.cron || undefined,
         })
@@ -117,7 +124,7 @@ export class ConfigService {
       }
       return {
         ...newConfig,
-        addonUrl: this.getAddonUrl(newConfig.addonUrl, newConfig.localOnly),
+        addonUrl: this.getAddonUrl(newConfig.addonLocation, newConfig.localOnly),
       };
     } catch (e) {
       throw new HTTPException(

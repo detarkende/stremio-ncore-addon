@@ -5,15 +5,10 @@ export const getUpdateAddonSettingsDefaultValues = (
   config: Configuration,
 ): UpdateConfigRequest => {
   return {
-    addonUrl: config.localOnly
-      ? {
-          url: '',
-          local: true,
-        }
-      : {
-          url: config.addonUrl,
-          local: false,
-        },
+    addonLocation: {
+      local: config.localOnly,
+      location: config.addonLocation,
+    },
     deleteAfterHitnrun: config.deleteAfterHitnrun
       ? {
           enabled: true,

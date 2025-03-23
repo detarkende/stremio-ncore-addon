@@ -14,7 +14,7 @@ In the dialog type in your **Addon URL** + `/manifest.json`.
 
 _If you configured your own URL, then this will look something like `https://stremio-ncore-addon.mydomain.com/manifest.json`._
 
-_If you chose the "Local only" configuration, then this will look something like `https://192-168-0-114.local-ip.medicmobile.org`._
+_If you chose the "Local only" configuration, then this will look something like `https://192-168-0-114.local-ip.medicmobile.org:3443`._
 
 ![Add addon dialog](assets/add-addon-dialog.png)
 

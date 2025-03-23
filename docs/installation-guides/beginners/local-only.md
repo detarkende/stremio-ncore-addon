@@ -79,12 +79,16 @@ services:
     environment:
       - NCORE_USERNAME=
       - NCORE_PASSWORD=
-      - HTTPS_PORT=443
-    image: detarkende/stremio-ncore-addon:0.6.0
+    image: detarkende/stremio-ncore-addon:0.8.0
     ports:
-      - target: 443 # Make sure that these match the `HTTPS_PORT` env var
-        published: '443' # Make sure that these match the `HTTPS_PORT` env var
+      - target: 3000
+        published: 3000
         protocol: tcp
+      - target: 3443
+        published: 3443
+        protocol: tcp
+      - target: 42069
+        published: 42069
     restart: unless-stopped
     volumes:
       - type: bind
@@ -107,7 +111,7 @@ https://github.com/user-attachments/assets/6a0cedaf-0754-4937-97d9-117a8762cead
 
 Go to the addon to configure the settings.
 
-Now you need the IP address that you wrote down in Step 3. You have to replace the dots with dashes and append `.local-ip.medicmobile.org` like so: `192.168.0.114` ➡️ `https://192-168-0-114.local-ip.medicmobile.org` and go to this URL.
+Now you need the IP address that you wrote down in Step 3. You have to replace the dots with dashes and append `.local-ip.medicmobile.org:3443` like so: `192.168.0.114` ➡️ `https://192-168-0-114.local-ip.medicmobile.org:3443` and go to this URL.
 
 You should see the installation wizard here.
 

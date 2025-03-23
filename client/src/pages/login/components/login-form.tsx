@@ -34,8 +34,7 @@ export const LoginForm = () => {
   const { mutateAsync: login } = useMutation({
     mutationFn: async (credentials: LoginFormValues) => {
       const req = await api.login.$post({ json: credentials });
-      const res = await req.json();
-      if (!res.success) {
+      if (!req.ok) {
         throw new HttpError(req);
       }
     },

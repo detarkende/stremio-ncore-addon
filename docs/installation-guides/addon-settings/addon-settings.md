@@ -8,13 +8,25 @@ The first time you start your addon, you will see this settings screen.
 
 This guide shows you how to set things up.
 
-### Addon URL
+### Setup mode and Addon URL
+
+Here, you have to pick whether you want to setup the addon with your own addon URL (remotely accessible), or in a "local-only" mode. Don't worry, you can change this later.
+
+#### Remotely accessible with custom domain
 
 The addon URL is an URL where your addon is reachable by Stremio clients. If you followed the beginner's guide, this should be `https://stremio-ncore-addon.<your-domain.name>`.
 
 > [!IMPORTANT]
 > The Addon URL's protocol should be https, because some Stremio clients (LG TV app, Samsung TV app, Web Client, etc.) can not reach http URLs.
 > If you can't add your URL to Stremio, this is the most likely cause of that.
+
+#### "Local-only" mode
+
+If you select the "Only accessible on local network" button, then the input field below will change to an IP address input.
+
+Here, you will have to input the IP address of the host machine. This IP address should be static. Please follow the ["local-only" guide](../beginners/local-only.md) to set this up. Your IP address will most likely look something like _`192.168.1.202`_.
+
+Later, when adding the addon to Stremio, the addon will generate your "Addon URL" based on this IP address. You can always change this on the "Settings" page.
 
 ### Delete after hit'n'run
 

@@ -79,6 +79,7 @@ const isAdminOrSelf = createAdminOrSelfMiddleware(sessionService);
 const isDeviceAuthenticated = createDeviceTokenMiddleware(userService);
 
 const torrentStoreService = new TorrentStoreService(torrentSource);
+await torrentStoreService.startServer();
 const streamService = new StreamService(configService, userService);
 configService.torrentStoreService = torrentStoreService;
 
@@ -127,7 +128,6 @@ const app = new Hono<HonoEnv>()
   .get('/config/torrent-sources/issues', (c) =>
     configController.getTorrentSourceConfigIssues(c),
   )
-  .get('/config/local-url', (c) => configController.getLocalUrl(c))
   .get('/config', isAdmin, (c) => configController.getConfig(c))
   .post('/config', zValidator('json', createConfigSchema), (c) =>
     configController.createConfig(c),

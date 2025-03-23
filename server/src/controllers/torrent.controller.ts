@@ -5,8 +5,9 @@ import { HttpStatusCode } from '@/types/http';
 
 export class TorrentController {
   constructor(private torrentStoreService: TorrentStoreService) {}
-  public getTorrentStats(c: Context) {
-    return c.json(this.torrentStoreService.getStoreStats());
+  public async getTorrentStats(c: Context) {
+    const stats = await this.torrentStoreService.getStoreStats();
+    return c.json(stats);
   }
 
   public async deleteTorrent(c: Context) {
