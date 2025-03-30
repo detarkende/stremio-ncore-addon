@@ -12,6 +12,8 @@ export const envSchema = z
     DOWNLOADS_DIR: z.string().optional(),
     NCORE_URL: z.string().url().default('https://ncore.pro'),
     CINEMETA_URL: z.string().url().default('https://v3-cinemeta.strem.io'),
+    LOCAL_IP_HOSTNAME: z.string().default('local-ip.medicmobile.org'),
+    LOCAL_IP_KEYS_URL: z.string().url().default('https://local-ip.medicmobile.org/keys'),
   })
   .transform((env) => {
     return {

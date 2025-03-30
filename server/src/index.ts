@@ -48,7 +48,7 @@ import {
   editUserSchema,
   updatePasswordSchema,
 } from './schemas/user.schema';
-import { createServerOptions } from './utils/server-options';
+import { HttpsService } from './services/https';
 
 const userService = new UserService(db);
 const configService = new ConfigService(db, userService);
@@ -82,6 +82,7 @@ const torrentStoreService = new TorrentStoreService(torrentSource);
 await torrentStoreService.startServer();
 const streamService = new StreamService(configService, userService);
 configService.torrentStoreService = torrentStoreService;
+const httpsService = new HttpsService();
 
 const configController = new ConfigController(configService, torrentSource);
 const manifestController = new ManifestController(manifestService);
@@ -197,7 +198,7 @@ serve({
   fetch: baseApp.fetch,
   port: env.HTTPS_PORT,
   createServer,
-  serverOptions: await createServerOptions(),
+  serverOptions: httpsService.createServerOptions(),
 });
 console.log(`HTTPS server started on port ${env.HTTPS_PORT}!`);
 
