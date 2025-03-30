@@ -37,7 +37,7 @@ export class TorrentStoreService {
           retryCount++;
           console.log(`Looking for torrent server. Try #${retryCount}`);
           await sleep(1000);
-          await fetch(this.torrentServerUrl);
+          await fetch(this.torrentServerSdk.getHealthCheckUrl());
           isServerUp = true;
           console.log('Found torrent server.');
         } catch {

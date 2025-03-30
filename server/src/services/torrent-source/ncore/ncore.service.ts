@@ -21,6 +21,7 @@ import { processInBatches } from '@/utils/process-in-batches';
 import { CinemeatService } from '@/services/cinemeta';
 import { isSupportedMedia } from '@/utils/media-file-extensions';
 import { Cached, DEFAULT_MAX, DEFAULT_TTL } from '@/utils/cache';
+import { throwServerError } from '@/utils/errors';
 
 export class NcoreService implements TorrentSource {
   public name = 'ncore';
@@ -39,38 +40,42 @@ export class NcoreService implements TorrentSource {
   };
 
   public async getCookies(username: string, password: string): Promise<string> {
-    if (
-      this.cookiesCache.pass &&
-      this.cookiesCache.cookieExpirationDate > Date.now() + 1000
-    ) {
-      return this.cookiesCache.pass;
-    }
-    const form = new FormData();
-    form.append('set_lang', 'hu');
-    form.append('submitted', '1');
-    form.append('nev', username);
-    form.append('pass', password);
-    form.append('ne_leptessen_ki', '1');
-    const resp = await fetch(`${this.ncoreUrl}/login.php`, {
-      method: 'POST',
-      body: form,
-      redirect: 'manual',
-    });
-    const allCookies = cookieParser.parse(resp.headers.getSetCookie());
-    const passCookie = allCookies.find(({ name }) => name === 'pass');
+    try {
+      if (
+        this.cookiesCache.pass &&
+        this.cookiesCache.cookieExpirationDate > Date.now() + 1000
+      ) {
+        return this.cookiesCache.pass;
+      }
+      const form = new FormData();
+      form.append('set_lang', 'hu');
+      form.append('submitted', '1');
+      form.append('nev', username);
+      form.append('pass', password);
+      form.append('ne_leptessen_ki', '1');
+      const resp = await fetch(`${this.ncoreUrl}/login.php`, {
+        method: 'POST',
+        body: form,
+        redirect: 'manual',
+      });
+      const allCookies = cookieParser.parse(resp.headers.getSetCookie());
+      const passCookie = allCookies.find(({ name }) => name === 'pass');
 
-    if (!passCookie || passCookie.value === 'deleted') {
-      throw new Error('Failed to log in to nCore. No pass cookie found');
-    }
-    const fullCookieString = allCookies
-      .map(({ name, value }) => `${name}=${value}`)
-      .join('; ');
-    this.cookiesCache.pass = fullCookieString;
-    if (passCookie.expires) {
-      this.cookiesCache.cookieExpirationDate = passCookie.expires.getTime();
-    }
+      if (!passCookie || passCookie.value === 'deleted') {
+        throw new Error('Failed to log in to nCore. No pass cookie found');
+      }
+      const fullCookieString = allCookies
+        .map(({ name, value }) => `${name}=${value}`)
+        .join('; ');
+      this.cookiesCache.pass = fullCookieString;
+      if (passCookie.expires) {
+        this.cookiesCache.cookieExpirationDate = passCookie.expires.getTime();
+      }
 
-    return fullCookieString;
+      return fullCookieString;
+    } catch (error) {
+      throw throwServerError(error, 'Failed to get cookies from nCore');
+    }
   }
 
   public async getConfigIssues(): Promise<string | null> {
@@ -85,21 +90,25 @@ export class NcoreService implements TorrentSource {
 
   private async fetchTorrents(query: URLSearchParams): Promise<NcorePageResponseJson> {
     const cookies = await this.getCookies(this.ncoreUsername, this.ncorePassword);
-    const request = await fetch(`${this.ncoreUrl}/torrents.php?${query.toString()}`, {
-      headers: {
-        cookie: cookies,
-      },
-    });
-    if (request.headers.get('content-type')?.includes('application/json')) {
-      return (await request.json()) as NcorePageResponseJson;
+    try {
+      const request = await fetch(`${this.ncoreUrl}/torrents.php?${query.toString()}`, {
+        headers: {
+          cookie: cookies,
+        },
+      });
+      if (request.headers.get('content-type')?.includes('application/json')) {
+        return (await request.json()) as NcorePageResponseJson;
+      }
+      // the API returns HTML if there are no results
+      return {
+        results: [],
+        total_results: '0',
+        onpage: 0,
+        perpage: '0',
+      } satisfies NcorePageResponseJson;
+    } catch (error) {
+      throw throwServerError(error, 'Failed to fetch torrents from nCore');
     }
-    // the API returns HTML if there are no results
-    return {
-      results: [],
-      total_results: '0',
-      onpage: 0,
-      perpage: '0',
-    } satisfies NcorePageResponseJson;
   }
 
   @Cached({
@@ -202,59 +211,68 @@ export class NcoreService implements TorrentSource {
 
   public async getTorrentUrlBySourceId(ncoreId: string) {
     const cookies = await this.getCookies(this.ncoreUsername, this.ncorePassword);
-    const response = await fetch(
-      `${this.ncoreUrl}/torrents.php?action=details&id=${ncoreId}`,
-      {
-        headers: {
-          cookie: cookies,
+    try {
+      const response = await fetch(
+        `${this.ncoreUrl}/torrents.php?action=details&id=${ncoreId}`,
+        {
+          headers: {
+            cookie: cookies,
+          },
         },
-      },
-    );
+      );
 
-    const html = await response.text();
-    const { document } = new JSDOM(html).window;
-    const downloadLink = `${this.ncoreUrl}/${document
-      .querySelector('.download > a')
-      ?.getAttribute('href')}`;
-    return downloadLink;
+      const html = await response.text();
+      const { document } = new JSDOM(html).window;
+      const downloadLink = `${this.ncoreUrl}/${document
+        .querySelector('.download > a')
+        ?.getAttribute('href')}`;
+      return downloadLink;
+    } catch (error) {
+      throw throwServerError(error, 'Failed to get torrent URL from nCore');
+    }
   }
 
   public async getRemovableInfoHashes(): Promise<string[]> {
     const cookie = await this.getCookies(this.ncoreUsername, this.ncorePassword);
-    const request = await fetch(`${this.ncoreUrl}/hitnrun.php?showall=true`, {
-      headers: { cookie },
-    });
-    const html = await request.text();
-    const { document } = new JSDOM(html).window;
+    try {
+      const request = await fetch(`${this.ncoreUrl}/hitnrun.php?showall=true`, {
+        headers: { cookie },
+      });
+      const html = await request.text();
+      const { document } = new JSDOM(html).window;
 
-    const rows = Array.from(document.querySelectorAll('.hnr_all, .hnr_all2'));
-    const deletableRows = rows.filter(
-      (row) => row.querySelector('.hnr_ttimespent')?.textContent === '-',
-    );
+      const rows = Array.from(document.querySelectorAll('.hnr_all, .hnr_all2'));
+      const deletableRows = rows.filter(
+        (row) => row.querySelector('.hnr_ttimespent')?.textContent === '-',
+      );
 
-    const deletableNcoreIds = deletableRows.map((row) => {
-      const detailsUrl = row.querySelector('.hnr_tname a')?.getAttribute('href') ?? '';
-      const searchParams = new URLSearchParams(detailsUrl.split('?')[1] ?? '');
-      const ncoreId = searchParams.get('id') ?? '';
-      return ncoreId;
-    });
+      const deletableNcoreIds = deletableRows.map((row) => {
+        const detailsUrl = row.querySelector('.hnr_tname a')?.getAttribute('href') ?? '';
+        const searchParams = new URLSearchParams(detailsUrl.split('?')[1] ?? '');
+        const ncoreId = searchParams.get('id') ?? '';
+        return ncoreId;
+      });
 
-    const deletableTorrentPromises = deletableNcoreIds.map(async (ncoreId) => {
-      const downloadUrl = await this.getTorrentUrlBySourceId(ncoreId);
-      const torrent = await this.torrentService.downloadAndParseTorrent(downloadUrl);
-      return torrent;
-    });
+      const deletableTorrentPromises = deletableNcoreIds.map(async (ncoreId) => {
+        const downloadUrl = await this.getTorrentUrlBySourceId(ncoreId);
+        const torrent = await this.torrentService.downloadAndParseTorrent(downloadUrl);
+        return torrent;
+      });
 
-    const deletableTorrents = (await Promise.allSettled(deletableTorrentPromises))
-      .filter(
-        (result): result is PromiseFulfilledResult<ParsedTorrentDetails> =>
-          result.status === 'fulfilled',
-      )
-      .map((result) => result.value);
+      const deletableTorrents = (await Promise.allSettled(deletableTorrentPromises))
+        .filter(
+          (result): result is PromiseFulfilledResult<ParsedTorrentDetails> =>
+            result.status === 'fulfilled',
+        )
+        .map((result) => result.value);
 
-    deletableTorrents.map((torrent) => {
-      console.log(`Torrent "${torrent.infoHash}" can be deleted.`);
-    });
-    return deletableTorrents.map(({ infoHash }) => infoHash);
+      deletableTorrents.map((torrent) => {
+        console.log(`Torrent "${torrent.infoHash}" can be deleted.`);
+      });
+      return deletableTorrents.map(({ infoHash }) => infoHash);
+    } catch (error) {
+      console.error('Failed to get removable torrents from nCore', error);
+      throw new Error('Failed to get removable torrents from nCore', { cause: error });
+    }
   }
 }

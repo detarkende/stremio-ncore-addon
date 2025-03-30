@@ -35,7 +35,6 @@ export class HttpsService {
         this.localIpDetailsFetchedAt &&
         Date.now() - this.localIpDetailsFetchedAt < ONE_HOUR
       ) {
-        console.log('Using cached local-ip keys');
         return this.localIpDetails;
       }
       this.localIpDetailsFetchedAt = Date.now();

@@ -1,6 +1,6 @@
-import { LOCAL_IP_HOSTNAME } from '@/constants/local-ip';
+import { env } from '@/env';
 
 export const getLocalIpUrl = (ip: string, port: number) => {
   const ipSubdomain = ip.replace(/\./g, '-');
-  return `https://${ipSubdomain}.${LOCAL_IP_HOSTNAME}${port === 443 ? '' : `:${port}`}`;
+  return `https://${ipSubdomain}.${env.LOCAL_IP_HOSTNAME}${port === 443 ? '' : `:${port}`}`;
 };
