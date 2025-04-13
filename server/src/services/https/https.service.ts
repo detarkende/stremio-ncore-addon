@@ -2,6 +2,7 @@ import { env } from '@/env';
 import { LocalIpResponse, localIpResponseSchema, ONE_HOUR } from './constants';
 import { createSecureContext } from 'node:tls';
 import { ServerOptions } from 'node:https';
+import { logger } from '@/logger';
 
 export class HttpsService {
   constructor() {}
@@ -15,7 +16,7 @@ export class HttpsService {
         if (serverName.includes(env.LOCAL_IP_HOSTNAME)) {
           const localIpDetails = await this.fetchLocalIpKeys();
           if (!localIpDetails) {
-            console.error('Local IP keys not available');
+            logger.error('Local IP keys not available');
             return cb(Error('Local IP keys not available'));
           }
           const ctx = createSecureContext({
@@ -38,19 +39,19 @@ export class HttpsService {
         return this.localIpDetails;
       }
       this.localIpDetailsFetchedAt = Date.now();
-      console.log('Fetching local-ip keys');
+      logger.info('Fetching local-ip keys');
       const req = await fetch(env.LOCAL_IP_KEYS_URL);
       const json = await req.json();
       const parseResult = localIpResponseSchema.safeParse(json);
       if (!parseResult.success) {
-        console.error(`Failed to parse local IP keys: ${parseResult.error}`);
+        logger.error(`Failed to parse local IP keys: ${parseResult.error}`);
         return null;
       }
-      console.log('Found local-ip keys');
+      logger.info('Found local-ip keys');
       this.localIpDetails = parseResult.data;
       return parseResult.data;
     } catch (error) {
-      console.error('Failed to fetch local IP keys:', this.formatError(error));
+      logger.error('Failed to fetch local IP keys:', this.formatError(error));
     }
     return null;
   }

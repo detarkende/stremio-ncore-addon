@@ -21,6 +21,7 @@ enum OpenedModal {
 interface UserActionsProps {
   user: User;
   isDeleteEnabled?: boolean;
+  isMe?: boolean;
 }
 
 export const UserActions = ({ user, isDeleteEnabled = true }: UserActionsProps) => {

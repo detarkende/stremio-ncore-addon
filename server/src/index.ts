@@ -2,7 +2,6 @@ import { Hono } from 'hono';
 import { contextStorage } from 'hono/context-storage';
 import { serve } from '@hono/node-server';
 import { cors } from 'hono/cors';
-import { logger } from 'hono/logger';
 import { createServer } from 'node:https';
 
 import { UserService } from '@/services/user';
@@ -49,6 +48,7 @@ import {
   updatePasswordSchema,
 } from './schemas/user.schema';
 import { HttpsService } from './services/https';
+import { logger, requestLogger } from './logger';
 
 const userService = new UserService(db);
 const configService = new ConfigService(db, userService);
@@ -107,13 +107,13 @@ baseApp.use(cors());
 
 baseApp.get('/manifest.json', (c) => manifestController.getBaseManifest(c));
 
-if (process.env.NODE_ENV === 'production') {
+if (env.NODE_ENV === 'production') {
   applyServeStatic(baseApp);
-  baseApp.use(logger());
 }
 
 const app = new Hono<HonoEnv>()
   .use(contextStorage())
+  .use(requestLogger)
   .use(async (c, next) => {
     const resp = await next();
     if (c.error && c.error instanceof MissingConfigError) {
@@ -129,7 +129,7 @@ const app = new Hono<HonoEnv>()
   .get('/config/torrent-sources/issues', (c) =>
     configController.getTorrentSourceConfigIssues(c),
   )
-  .get('/config', isAdmin, (c) => configController.getConfig(c))
+  .get('/config', isAuthenticated, (c) => configController.getConfig(c))
   .post('/config', zValidator('json', createConfigSchema), (c) =>
     configController.createConfig(c),
   )
@@ -191,7 +191,7 @@ serve({
   fetch: baseApp.fetch,
   port: env.PORT,
 });
-console.log(`HTTP server started on port ${env.PORT}!`);
+logger.info(`HTTP server started on port ${env.PORT}!`);
 
 // HTTPS server
 serve({
@@ -200,6 +200,8 @@ serve({
   createServer,
   serverOptions: httpsService.createServerOptions(),
 });
-console.log(`HTTPS server started on port ${env.HTTPS_PORT}!`);
+logger.info(`HTTPS server started on port ${env.HTTPS_PORT}!`);
+
+logger.debug(`Server running in ${env.NODE_ENV} environment`);
 
 export type ApiRoutes = typeof app;

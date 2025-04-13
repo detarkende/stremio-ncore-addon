@@ -3,7 +3,7 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "dev": "NODE_ENV=development tsx --tsconfig tsconfig.json --env-file ../.env --watch src/index.ts",
+    "dev": "tsx watch --env-file=../.env src/index.ts",
     "start": "node --env-file ../.env ../dist/server/index.js",
     "build": "rm -rf ../dist/server && tsc && tsc-alias && cp -r src/db/migrations ../dist/server/db/migrations",
     "typecheck": "tsc --noemit",
@@ -25,6 +25,7 @@
     "lru-cache": "^11.0.2",
     "node-cron": "3.0.3",
     "parse-torrent": "^11.0.17",
+    "pino": "^9.6.0",
     "set-cookie-parser": "^2.7.1",
     "vitest": "^2.1.8"
   },

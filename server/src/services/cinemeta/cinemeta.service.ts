@@ -2,6 +2,7 @@ import { StreamType } from '@/schemas/stream.schema';
 import { CinemetaResponse } from './types';
 import { env } from '@/env';
 import { throwServerError } from '@/utils/errors';
+import { logger } from '@/logger';
 
 export class CinemetaService {
   public async getMetadataByImdbId(
@@ -12,7 +13,7 @@ export class CinemetaService {
       const cinemetaUrl = `${env.CINEMETA_URL}/meta/${type}/${imdbId}.json`;
       const response = await fetch(cinemetaUrl);
       if (!response.ok) {
-        console.error(
+        logger.error(
           `Failed to fetch metadata from Cinemeta at URL: ${cinemetaUrl}`,
           response.statusText,
           await response.text(),

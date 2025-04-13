@@ -1,6 +1,7 @@
 import { isNotNull } from '@/utils/type-guards';
 import type { TorrentDetails, TorrentSource, TorrentSourceIssue } from './types';
 import type { StreamQuery } from '@/schemas/stream.schema';
+import { logger } from '@/logger';
 
 async function awaitAllReachablePromises<T>(promises: Promise<T>[]): Promise<T[]> {
   const awaitedResults: PromiseSettledResult<T>[] = await Promise.allSettled(promises);
@@ -11,7 +12,7 @@ async function awaitAllReachablePromises<T>(promises: Promise<T>[]): Promise<T[]
     (promise): promise is PromiseRejectedResult => promise.status === 'rejected',
   );
   failedResults.forEach(({ reason }) =>
-    console.error(reason ?? 'Unknown error occurred.'),
+    logger.error(reason ?? 'Unknown error occurred.'),
   );
   return successfulResults.map(({ value }) => value);
 }
@@ -37,7 +38,7 @@ export class TorrentSourceManager {
   }): Promise<string | null> {
     const source = this.sources.find((source) => source.name === sourceName);
     if (!source) {
-      console.error(`Source ${sourceName} not found or not enabled.`);
+      logger.error(`Source ${sourceName} not found or not enabled.`);
       return null;
     }
     return source.getTorrentUrlBySourceId(sourceId);

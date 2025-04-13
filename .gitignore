@@ -13,3 +13,4 @@ dist
 
 docker-compose.yaml
 downloads
+addon_dir

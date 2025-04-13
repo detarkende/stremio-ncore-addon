@@ -1,2 +1,1 @@
-export { env } from './env';
-export { type Env } from './env.schema';
+export { env, type Env } from './env';

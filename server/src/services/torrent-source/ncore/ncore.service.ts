@@ -22,6 +22,7 @@ import { CinemeatService } from '@/services/cinemeta';
 import { isSupportedMedia } from '@/utils/media-file-extensions';
 import { Cached, DEFAULT_MAX, DEFAULT_TTL } from '@/utils/cache';
 import { throwServerError } from '@/utils/errors';
+import { logger } from '@/logger';
 
 export class NcoreService implements TorrentSource {
   public name = 'ncore';
@@ -83,7 +84,7 @@ export class NcoreService implements TorrentSource {
       await this.getCookies(this.ncoreUsername, this.ncorePassword);
       return null;
     } catch {
-      console.error('Failed to log in to nCore while checking nCore config');
+      logger.error('Failed to log in to nCore while checking nCore config');
       return 'Failed to log in to nCore. Check your credentials in the environment variables.';
     }
   }
@@ -191,7 +192,7 @@ export class NcoreService implements TorrentSource {
       const cinemetaData = await this.cinemetaService.getMetadataByImdbId(type, imdbId);
       name = cinemetaData.meta.name;
     } catch (error) {
-      console.error('Failed to get metadata from Cinemeta', error);
+      logger.error('Failed to get metadata from Cinemeta', error);
       return [];
     }
     torrents = await this.getTorrentsForQuery({
@@ -267,11 +268,11 @@ export class NcoreService implements TorrentSource {
         .map((result) => result.value);
 
       deletableTorrents.map((torrent) => {
-        console.log(`Torrent "${torrent.infoHash}" can be deleted.`);
+        logger.info(`Torrent "${torrent.infoHash}" can be deleted.`);
       });
       return deletableTorrents.map(({ infoHash }) => infoHash);
     } catch (error) {
-      console.error('Failed to get removable torrents from nCore', error);
+      logger.error('Failed to get removable torrents from nCore', error);
       throw new Error('Failed to get removable torrents from nCore', { cause: error });
     }
   }

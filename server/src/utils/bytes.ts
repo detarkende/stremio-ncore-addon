@@ -1,3 +1,5 @@
+import { logger } from '@/logger';
+
 // copied from https://gist.github.com/zentala/1e6f72438796d74531803cc3833c039c
 export function formatBytes(bytes: number, decimals = 2) {
   if (bytes == 0) return '0 Bytes';
@@ -12,7 +14,7 @@ export function formatBytes(bytes: number, decimals = 2) {
 export function parseBytes(bytes: string) {
   const [value, unit] = bytes.trim().split(' ');
   if (!value || !unit) {
-    console.error(`Invalid bytes format: ${bytes}`);
+    logger.error(`Invalid bytes format: ${bytes}`);
     return NaN;
   }
   const oneKilobyte = 1024;

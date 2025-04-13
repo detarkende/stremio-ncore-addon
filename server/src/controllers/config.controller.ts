@@ -1,4 +1,5 @@
 import { UserRole } from '@/db/schema/users';
+import { logger } from '@/logger';
 import { CreateConfigRequest, UpdateConfigRequest } from '@/schemas/config.schema';
 import { ConfigService } from '@/services/config';
 import { TorrentSourceManager } from '@/services/torrent-source';
@@ -48,10 +49,10 @@ export class ConfigController {
       }
 
       await this.configService.createConfig(data);
-      console.log('Configuration created successfully.');
+      logger.info('Configuration created successfully.');
       return c.json({ message: 'Configuration created successfully.' });
     } catch (e) {
-      console.error('Error creating configuration:', e);
+      logger.error('Error creating configuration:', e);
       return c.json(
         { message: 'Unknown error occurred while creating configuration.' },
         HttpStatusCode.INTERNAL_SERVER_ERROR,

@@ -11,6 +11,7 @@ import { api } from '@/api';
 import { toast } from 'sonner';
 import { QueryKeys } from '@/constants/query-keys';
 import { handleError, HttpError } from '@/lib/errors';
+import { useMe } from '@/hooks/use-me';
 
 const editUserFormSchema = z.object({
   user: editUserSchema,
@@ -25,6 +26,10 @@ export const EditUserForm = ({
   user: User;
   closeModal: () => void;
 }) => {
+  const { data: me } = useMe();
+
+  const isMe = me?.id === user.id;
+
   const queryClient = useQueryClient();
   const form = useForm<EditUserFormValues>({
     resolver: zodResolver(editUserFormSchema),
@@ -47,7 +52,9 @@ export const EditUserForm = ({
     },
     onError: (e) => handleError(e, 'Failed to update user'),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QueryKeys.USERS] });
+      queryClient.invalidateQueries({
+        queryKey: [isMe ? QueryKeys.ME : QueryKeys.USERS],
+      });
       toast.success('User updated successfully');
     },
   });

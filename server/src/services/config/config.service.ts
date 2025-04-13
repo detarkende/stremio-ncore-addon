@@ -10,6 +10,7 @@ import { schedule, ScheduledTask } from 'node-cron';
 import { TorrentStoreService } from '../torrent-store';
 import { env } from '@/env';
 import { getLocalIpUrl } from '@/utils/https';
+import { logger } from '@/logger';
 
 export class ConfigService {
   constructor(
@@ -24,7 +25,7 @@ export class ConfigService {
   public scheduleDeleteAfterHitnrunCron() {
     const config = this.getConfigOrNull();
     if (!config) {
-      console.log(
+      logger.info(
         'Missing config in config service. Cannot schedule deleteAfterHitnrun cron.',
       );
       return;
@@ -32,7 +33,7 @@ export class ConfigService {
     this.deleteAfterHitnrunCronTask?.stop();
     this.deleteAfterHitnrunCronTask = null;
     if (!this.torrentStoreService) {
-      console.log('Missing torrent store service in config service.');
+      logger.info('Missing torrent store service in config service.');
       return;
     }
     if (config.deleteAfterHitnrun) {
@@ -85,14 +86,14 @@ export class ConfigService {
         })
         .returning();
 
-      console.log('Creating admin user...');
+      logger.info('Creating admin user...');
       await this.userService.createUser(admin, tx, UserRole.ADMIN);
-      console.log('Creating non-admin users...');
+      logger.info('Creating non-admin users...');
       const nonAdminUsersPromises = nonAdminUsers.map((u) =>
         this.userService.createUser(u, tx, UserRole.USER),
       );
       await Promise.all(nonAdminUsersPromises);
-      console.log('finished creating users');
+      logger.info('finished creating users');
       return config;
     });
     this.scheduleDeleteAfterHitnrunCron();
@@ -104,7 +105,7 @@ export class ConfigService {
 
   public async updateConfig(data: UpdateConfigRequest): Promise<ConfigurationResponse> {
     const { addonLocation, deleteAfterHitnrun } = data;
-    console.log('Updating configuration:', data);
+    logger.info('Updating configuration:', data);
     try {
       const oldConfig = this.getConfig();
       const [newConfig] = await this.db

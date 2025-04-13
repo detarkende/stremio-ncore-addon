@@ -20,6 +20,7 @@ export const DeviceTokenItem = ({
   deviceToken: DeviceToken;
   onDelete: (token: DeviceToken) => void;
 }) => {
+  console.log(deviceToken);
   const { config } = useConfig();
   const manifestUrl = api.auth[':deviceToken']['manifest.json'].$url({
     param: { deviceToken: deviceToken.token },
@@ -32,6 +33,7 @@ export const DeviceTokenItem = ({
   const addonManifestUrl = manifestUrl
     .toString()
     .replace(manifestUrl.origin, config.addonUrl);
+  console.log(config.addonUrl);
   const stremioUrl = addonManifestUrl.replace(/https?/, 'stremio');
 
   const addOnWebUrl = `${STREMIO_WEB_URL}/#/addons?addon=${encodeURIComponent(addonManifestUrl)}`;

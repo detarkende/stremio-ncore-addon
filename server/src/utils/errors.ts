@@ -1,3 +1,4 @@
+import { logger } from '@/logger';
 import { HttpStatusCode } from '@/types/http';
 import { HTTPException } from 'hono/http-exception';
 
@@ -10,7 +11,7 @@ export const throwServerError = (error: unknown, message: string): HTTPException
       cause = error;
     }
   }
-  console.error(`${message}:`, error);
+  logger.error(`${message}:`, error);
   return new HTTPException(HttpStatusCode.INTERNAL_SERVER_ERROR, {
     message: `${message}. Error: ${error}`,
     cause,
