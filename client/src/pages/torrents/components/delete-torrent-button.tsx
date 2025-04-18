@@ -1,8 +1,8 @@
-import { api } from '@/api';
-import { Button } from '@/components/ui/button';
 import { TorrentStoreStats } from '@server/services/torrent-store';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TORRENTS_QUERY_KEY } from '../constants';
+import { Button } from '@/components/ui/button';
+import { api } from '@/api';
 import { FullScreenLoader } from '@/components/ui/full-screen-loader';
 
 export const DeleteTorrentButton = ({ torrent }: { torrent: TorrentStoreStats }) => {

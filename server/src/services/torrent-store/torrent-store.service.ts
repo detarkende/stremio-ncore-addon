@@ -1,11 +1,12 @@
-import { ChildProcessWithoutNullStreams, spawn } from 'node:child_process';
-import { TorrentSourceManager } from '../torrent-source';
-import { TorrentResponse, TorrentStoreStats } from './types';
-import { env } from '@/env';
+import type { ChildProcessWithoutNullStreams } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import { resolve } from 'node:path';
-import { formatBytes } from '@/utils/bytes';
 import { globSync } from 'glob';
+import type { TorrentSourceManager } from '../torrent-source';
+import type { TorrentResponse, TorrentStoreStats } from './types';
 import { TorrentServerSdk } from './torrent-server.sdk';
+import { env } from '@/env';
+import { formatBytes } from '@/utils/bytes';
 import { sleep } from '@/utils/sleep';
 import { logger } from '@/logger';
 
@@ -46,7 +47,10 @@ export class TorrentStoreService {
             logger.error(
               'Torrent server is not running. Please start the torrent server first.',
             );
-            process.exit(1);
+            throw new Error(
+              'Torrent server is not running. Please start the torrent server first.',
+            );
+            // process.exit(1);
           } else {
             logger.info(`Server is not up yet. Retrying in 1 second`);
           }

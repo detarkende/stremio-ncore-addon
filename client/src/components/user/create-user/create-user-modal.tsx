@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
+import { DialogTitle } from '@radix-ui/react-dialog';
+import { CreateUserForm } from './create-user-form';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { DialogTitle } from '@radix-ui/react-dialog';
-import { CreateUserForm } from './create-user-form';
 
 interface EditUserModalProps {
   trigger: React.ReactNode;

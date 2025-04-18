@@ -1,3 +1,10 @@
+import { useFormContext } from 'react-hook-form';
+import {
+  languageValues as languageOptions,
+  resolutionValues as resolutionOptions,
+} from '@server/db/schema/users';
+import { CreateUserRequest } from '@server/types/user';
+import { languageLabelLookup } from '../constants';
 import {
   FormControl,
   FormField,
@@ -7,13 +14,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
-import { useFormContext } from 'react-hook-form';
-import { languageLabelLookup } from '../constants';
-import {
-  languageValues as languageOptions,
-  resolutionValues as resolutionOptions,
-} from '@server/db/schema/users';
-import { CreateUserRequest } from '@server/types/user';
 
 type UserFieldsProps = {
   baseName: 'admin' | `nonAdminUsers.${number}` | 'user';

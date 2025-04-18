@@ -1,17 +1,17 @@
-import { Alert } from '@/components/ui/alert';
-import { PageLoader } from '@/components/ui/page-loader';
-import { QueryKeys } from '@/constants/query-keys';
-import { useMe } from '@/hooks/use-me';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { UserRole } from '@server/db/schema/users';
 import { useQuery } from '@tanstack/react-query';
 import { Redirect } from 'wouter';
+import { PlusIcon } from 'lucide-react';
 import { UserCard } from './components/user-card';
+import { UpdateAddonSettingsForm } from './components/update-addon-settings-form';
+import { Alert } from '@/components/ui/alert';
+import { PageLoader } from '@/components/ui/page-loader';
+import { QueryKeys } from '@/constants/query-keys';
+import { useMe } from '@/hooks/use-me';
 import { api } from '@/api';
 import { CreateUserModal } from '@/components/user/create-user/create-user-modal';
 import { Button } from '@/components/ui/button';
-import { PlusIcon } from 'lucide-react';
-import { UpdateAddonSettingsForm } from './components/update-addon-settings-form';
 import { useConfig } from '@/hooks/use-config';
 
 export const SettingsPage = () => {

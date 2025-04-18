@@ -1,6 +1,6 @@
 import type { Context } from 'hono';
 import type { ManifestService } from '@/services/manifest';
-import { HonoEnv } from '@/types/hono-env';
+import type { HonoEnv } from '@/types/hono-env';
 
 export class ManifestController {
   constructor(private manifestService: ManifestService) {}

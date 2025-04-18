@@ -1,6 +1,6 @@
+import { HTTPException } from 'hono/http-exception';
 import { logger } from '@/logger';
 import { HttpStatusCode } from '@/types/http';
-import { HTTPException } from 'hono/http-exception';
 
 export const throwServerError = (error: unknown, message: string): HTTPException => {
   let cause = undefined;

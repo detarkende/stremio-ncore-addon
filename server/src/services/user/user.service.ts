@@ -1,14 +1,15 @@
-import type { LoginCredentials } from '@/schemas/login.schema';
-import { Database } from '@/db';
-import { UserRole, usersTable } from '@/db/schema/users';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
-import { PASSWORD_SALT_ROUNDS } from './constants';
 import { HTTPException } from 'hono/http-exception';
+import { PASSWORD_SALT_ROUNDS } from './constants';
+import type { LoginCredentials } from '@/schemas/login.schema';
+import type { Database } from '@/db';
+import { UserRole, usersTable } from '@/db/schema/users';
 import { HttpStatusCode } from '@/types/http';
 import { deviceTokensTable } from '@/db/schema/device-tokens';
-import { Transaction } from '@/db/client';
-import { CreateUserRequest, EditUserRequest, User } from '@/types/user';
+import type { Transaction } from '@/db/client';
+import type { CreateUserRequest, EditUserRequest } from '@/types/user';
+import { User } from '@/types/user';
 
 export class UserService {
   constructor(private db: Database) {}

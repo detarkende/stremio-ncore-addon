@@ -1,11 +1,11 @@
-import { ROUTES } from '@/constants/routes';
-import { useMe } from '@/hooks/use-me';
 import { Link } from 'wouter';
-import styles from './navbar.module.scss';
-import { cn } from '@/lib/utils';
 import { useEffect, useRef, useState } from 'react';
 import { MenuIcon, XIcon } from 'lucide-react';
 import { UserRole } from '@server/db/schema/users';
+import styles from './navbar.module.scss';
+import { cn } from '@/lib/utils';
+import { useMe } from '@/hooks/use-me';
+import { ROUTES } from '@/constants/routes';
 
 export const Navbar = () => {
   const navSidebarRef = useRef<HTMLDivElement>(null);

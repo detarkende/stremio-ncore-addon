@@ -1,7 +1,13 @@
+import { useAutoAnimate } from '@formkit/auto-animate/react';
+import { useQuery } from '@tanstack/react-query';
+import { PropsWithChildren } from 'react';
+import { Redirect } from 'wouter';
+import { UserRole } from '@server/db/schema/users';
+import { DeleteTorrentButton } from './components/delete-torrent-button';
+import { TORRENTS_QUERY_KEY } from './constants';
 import { api } from '@/api';
 import { Alert } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useAutoAnimate } from '@formkit/auto-animate/react';
 import {
   Table,
   TableBody,
@@ -12,12 +18,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useMe } from '@/hooks/use-me';
-import { useQuery } from '@tanstack/react-query';
-import { PropsWithChildren } from 'react';
-import { Redirect } from 'wouter';
-import { DeleteTorrentButton } from './components/delete-torrent-button';
-import { TORRENTS_QUERY_KEY } from './constants';
-import { UserRole } from '@server/db/schema/users';
 
 const Container = ({ children }: PropsWithChildren) => (
   <div className="h-full pt-6 pb-24 flex flex-col space-y-8">

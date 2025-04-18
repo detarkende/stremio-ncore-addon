@@ -1,6 +1,6 @@
+import { useQuery } from '@tanstack/react-query';
 import { api } from '@/api';
 import { QueryKeys } from '@/constants/query-keys';
-import { useQuery } from '@tanstack/react-query';
 
 export const useIsConfigured = () => {
   const query = useQuery({

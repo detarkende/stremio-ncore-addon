@@ -1,7 +1,7 @@
-import { CustomManifest } from './types';
-import { ConfigService } from '../config';
-import { DeviceTokenService } from '../device-token';
-import { UserService } from '../user';
+import type { ConfigService } from '../config';
+import type { DeviceTokenService } from '../device-token';
+import type { UserService } from '../user';
+import type { CustomManifest } from './types';
 
 export class ManifestService {
   constructor(

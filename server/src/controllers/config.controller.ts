@@ -1,12 +1,12 @@
+import type { Context } from 'hono';
+import { HTTPException } from 'hono/http-exception';
 import { UserRole } from '@/db/schema/users';
 import { logger } from '@/logger';
-import { CreateConfigRequest, UpdateConfigRequest } from '@/schemas/config.schema';
-import { ConfigService } from '@/services/config';
-import { TorrentSourceManager } from '@/services/torrent-source';
-import { HonoEnv } from '@/types/hono-env';
+import type { CreateConfigRequest, UpdateConfigRequest } from '@/schemas/config.schema';
+import type { ConfigService } from '@/services/config';
+import type { TorrentSourceManager } from '@/services/torrent-source';
+import type { HonoEnv } from '@/types/hono-env';
 import { HttpStatusCode } from '@/types/http';
-import { Context } from 'hono';
-import { HTTPException } from 'hono/http-exception';
 
 export class ConfigController {
   constructor(

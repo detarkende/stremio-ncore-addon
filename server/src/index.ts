@@ -1,35 +1,12 @@
+import { createServer } from 'node:https';
 import { Hono } from 'hono';
 import { contextStorage } from 'hono/context-storage';
 import { serve } from '@hono/node-server';
 import { cors } from 'hono/cors';
-import { createServer } from 'node:https';
 
-import { UserService } from '@/services/user';
-import { ManifestService } from '@/services/manifest';
-import { TorrentStoreService } from '@/services/torrent-store';
-import { TorrentService } from '@/services/torrent';
-import { StreamService } from '@/services/stream';
-
-import { ManifestController } from '@/controllers/manifest.controller';
-import { AuthController } from '@/controllers/auth.controller';
-import { StreamController } from '@/controllers/stream.controller';
-import { TorrentController } from '@/controllers/torrent.controller';
-
-import { NcoreService } from '@/services/torrent-source/ncore';
-import { TorrentSourceManager } from '@/services/torrent-source';
 import { zValidator } from '@hono/zod-validator';
-import { loginSchema } from '@/schemas/login.schema';
-import {
-  applyServeStatic,
-  createAdminMiddleware,
-  createAuthMiddleware,
-  createAdminOrSelfMiddleware,
-  createDeviceTokenMiddleware,
-} from '@/middlewares';
-import { UserController } from '@/controllers/user.controller';
 import { CinemeatService } from './services/cinemeta';
-import { db } from '@/db';
-import { HonoEnv } from './types/hono-env';
+import type { HonoEnv } from './types/hono-env';
 import { ConfigController } from './controllers/config.controller';
 import { ConfigService } from './services/config';
 import { env } from './env';
@@ -49,6 +26,29 @@ import {
 } from './schemas/user.schema';
 import { HttpsService } from './services/https';
 import { logger, requestLogger } from './logger';
+import { UserService } from '@/services/user';
+import { ManifestService } from '@/services/manifest';
+import { TorrentStoreService } from '@/services/torrent-store';
+import { TorrentService } from '@/services/torrent';
+import { StreamService } from '@/services/stream';
+
+import { ManifestController } from '@/controllers/manifest.controller';
+import { AuthController } from '@/controllers/auth.controller';
+import { StreamController } from '@/controllers/stream.controller';
+import { TorrentController } from '@/controllers/torrent.controller';
+
+import { NcoreService } from '@/services/torrent-source/ncore';
+import { TorrentSourceManager } from '@/services/torrent-source';
+import { loginSchema } from '@/schemas/login.schema';
+import {
+  applyServeStatic,
+  createAdminMiddleware,
+  createAuthMiddleware,
+  createAdminOrSelfMiddleware,
+  createDeviceTokenMiddleware,
+} from '@/middlewares';
+import { UserController } from '@/controllers/user.controller';
+import { db } from '@/db';
 
 const userService = new UserService(db);
 const configService = new ConfigService(db, userService);

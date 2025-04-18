@@ -1,3 +1,7 @@
+import { useFormContext } from 'react-hook-form';
+import { CreateConfigRequest, UpdateConfigRequest } from '@server/schemas/config.schema';
+import { Separator } from '../ui/separator';
+import { DeleteAfterHitnrun } from './delete-after-hitnrun';
 import {
   FormControl,
   FormDescription,
@@ -7,12 +11,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { DeleteAfterHitnrun } from './delete-after-hitnrun';
-import { useFormContext } from 'react-hook-form';
-import { CreateConfigRequest, UpdateConfigRequest } from '@server/schemas/config.schema';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Separator } from '../ui/separator';
 
 export const SettingsFormFields = () => {
   const { control, watch, setValue, trigger } = useFormContext<
@@ -80,7 +80,7 @@ export const SettingsFormFields = () => {
         <Separator />
 
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Delete after hit'n'run</h3>
+          <h3 className="text-lg font-semibold">Delete after hit&apos;n&apos;run</h3>
           <DeleteAfterHitnrun />
         </div>
       </div>

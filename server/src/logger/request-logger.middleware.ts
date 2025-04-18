@@ -1,6 +1,6 @@
-import { HonoEnv } from '@/types/hono-env';
-import { MiddlewareHandler } from 'hono';
+import type { MiddlewareHandler } from 'hono';
 import { logger } from './logger';
+import type { HonoEnv } from '@/types/hono-env';
 
 export const requestLogger: MiddlewareHandler<HonoEnv> = async (c, next) => {
   const start = Date.now();
@@ -11,11 +11,14 @@ export const requestLogger: MiddlewareHandler<HonoEnv> = async (c, next) => {
   const status = c.res.status;
   const user = c.get('user');
 
-  logger.debug('API request', {
-    method,
-    path,
-    userId: user?.id ?? 'Unknown',
-    duration,
-    status,
-  });
+  logger.info(
+    {
+      method,
+      path,
+      userId: user?.id ?? 'Unknown',
+      duration,
+      status,
+    },
+    'Request completed',
+  );
 };

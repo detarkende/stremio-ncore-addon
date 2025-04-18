@@ -1,8 +1,8 @@
-import { Database } from '@/db';
-import { deviceTokensTable } from '@/db/schema/device-tokens';
-import { User } from '@/types/user';
 import { encodeBase32LowerCaseNoPadding } from '@oslojs/encoding';
 import { and, eq } from 'drizzle-orm';
+import type { Database } from '@/db';
+import { deviceTokensTable } from '@/db/schema/device-tokens';
+import type { User } from '@/types/user';
 
 export class DeviceTokenService {
   constructor(private db: Database) {}

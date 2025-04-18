@@ -1,15 +1,15 @@
-import { api } from '@/api';
+import { CircleHelpIcon, ExternalLink, TrashIcon } from 'lucide-react';
+import { DeviceToken } from '@server/db/schema/device-tokens';
 import { STREMIO_WEB_URL } from '../constants';
+import { api } from '@/api';
 import { Button } from '@/components/ui/button';
 import { TruncatedText } from '@/components/ui/truncated-text';
 import { CopyToClipboardButton } from '@/components/ui/copy-to-clipboard-button';
-import { CircleHelpIcon, ExternalLink, TrashIcon } from 'lucide-react';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { DeviceToken } from '@server/db/schema/device-tokens';
 import { useConfig } from '@/hooks/use-config';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
@@ -20,7 +20,6 @@ export const DeviceTokenItem = ({
   deviceToken: DeviceToken;
   onDelete: (token: DeviceToken) => void;
 }) => {
-  console.log(deviceToken);
   const { config } = useConfig();
   const manifestUrl = api.auth[':deviceToken']['manifest.json'].$url({
     param: { deviceToken: deviceToken.token },
@@ -33,7 +32,6 @@ export const DeviceTokenItem = ({
   const addonManifestUrl = manifestUrl
     .toString()
     .replace(manifestUrl.origin, config.addonUrl);
-  console.log(config.addonUrl);
   const stremioUrl = addonManifestUrl.replace(/https?/, 'stremio');
 
   const addOnWebUrl = `${STREMIO_WEB_URL}/#/addons?addon=${encodeURIComponent(addonManifestUrl)}`;

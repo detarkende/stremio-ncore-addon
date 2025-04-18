@@ -1,3 +1,5 @@
+import { User } from '@server/types/user';
+import { UpdatePasswordForm } from './update-password-form';
 import {
   Dialog,
   DialogContent,
@@ -5,8 +7,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { UpdatePasswordForm } from './update-password-form';
-import { User } from '@server/types/user';
 
 interface UpdatePasswordModalProps {
   user: User;

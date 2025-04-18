@@ -17,7 +17,9 @@
     "ci": "pnpm check-formatting && pnpm lint && pnpm test",
     "check-formatting": "prettier --check .",
     "format": "prettier --write .",
-    "lint": "eslint .",
+    "lint": "pnpm lint:server && pnpm lint:client",
+    "lint:server": "pnpm --filter server lint",
+    "lint:client": "pnpm --filter client lint",
     "test": "vitest run",
     "release": ""
   },
@@ -26,16 +28,10 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.17.0",
-    "eslint": "^9.17.0",
-    "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-react-hooks": "^5.1.0",
-    "eslint-plugin-react-refresh": "^0.4.16",
     "prettier": "^3.4.2",
     "typescript": "^5.7.2",
-    "typescript-eslint": "^8.18.2",
     "vite": "^6.0.6",
-    "vitest": "^2.1.8"
+    "vitest": "^3.1.1"
   },
   "pnpm": {
     "allowNonAppliedPatches": true,

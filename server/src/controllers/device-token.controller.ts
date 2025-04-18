@@ -1,12 +1,12 @@
-import {
+import type { Context } from 'hono';
+import { HTTPException } from 'hono/http-exception';
+import type {
   CreateDeviceTokenInput,
   DeleteDeviceTokenInput,
 } from '@/schemas/device-token.schema';
-import { DeviceTokenService } from '@/services/device-token';
-import { HonoEnv } from '@/types/hono-env';
+import type { DeviceTokenService } from '@/services/device-token';
+import type { HonoEnv } from '@/types/hono-env';
 import { HttpStatusCode } from '@/types/http';
-import { Context } from 'hono';
-import { HTTPException } from 'hono/http-exception';
 
 export class DeviceTokenController {
   constructor(private deviceTokenService: DeviceTokenService) {}

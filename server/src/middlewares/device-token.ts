@@ -1,8 +1,8 @@
-import { UserService } from '@/services/user';
-import { HonoEnv } from '@/types/hono-env';
-import { HttpStatusCode } from '@/types/http';
-import { MiddlewareHandler } from 'hono';
+import type { MiddlewareHandler } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+import type { UserService } from '@/services/user';
+import type { HonoEnv } from '@/types/hono-env';
+import { HttpStatusCode } from '@/types/http';
 
 export const createDeviceTokenMiddleware =
   (

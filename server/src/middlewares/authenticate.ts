@@ -1,12 +1,12 @@
-import { SESSION_COOKIE_NAME } from '@/constants/auth';
-import { UserRole } from '@/db/schema/users';
-import { SessionService } from '@/services/session';
-import { HonoEnv } from '@/types/hono-env';
-import { HttpStatusCode } from '@/types/http';
-import { isInteger } from '@/utils/numbers';
-import { MiddlewareHandler } from 'hono';
+import type { MiddlewareHandler } from 'hono';
 import { getCookie } from 'hono/cookie';
 import { HTTPException } from 'hono/http-exception';
+import { SESSION_COOKIE_NAME } from '@/constants/auth';
+import { UserRole } from '@/db/schema/users';
+import type { SessionService } from '@/services/session';
+import type { HonoEnv } from '@/types/hono-env';
+import { HttpStatusCode } from '@/types/http';
+import { isInteger } from '@/utils/numbers';
 
 export const createAuthMiddleware = (
   sessionService: SessionService,

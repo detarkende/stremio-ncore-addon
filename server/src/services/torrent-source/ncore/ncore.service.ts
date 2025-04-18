@@ -18,7 +18,7 @@ import type { TorrentService } from '@/services/torrent';
 import type { StreamQuery } from '@/schemas/stream.schema';
 import { StreamType } from '@/schemas/stream.schema';
 import { processInBatches } from '@/utils/process-in-batches';
-import { CinemeatService } from '@/services/cinemeta';
+import type { CinemeatService } from '@/services/cinemeta';
 import { isSupportedMedia } from '@/utils/media-file-extensions';
 import { Cached, DEFAULT_MAX, DEFAULT_TTL } from '@/utils/cache';
 import { throwServerError } from '@/utils/errors';

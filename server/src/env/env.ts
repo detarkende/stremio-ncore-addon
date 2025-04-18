@@ -1,5 +1,5 @@
-import { logger } from '@/logger';
 import { z } from 'zod';
+import { logger } from '@/logger';
 
 export const envSchema = z
   .object({

@@ -1,7 +1,7 @@
-import { Button } from './button';
 import { Check, Clipboard } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip';
 import { useState } from 'react';
+import { Button } from './button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip';
 
 interface CopyToClipboardButtonProps {
   text: string;

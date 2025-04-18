@@ -1,8 +1,8 @@
-import { cn } from '@/lib/utils';
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
 import { CheckIcon, ChevronDownIcon } from 'lucide-react';
 import { ComponentPropsWithoutRef, ReactNode } from 'react';
 import { TruncatedText } from './truncated-text';
+import { cn } from '@/lib/utils';
 
 type SingularBaseValues = string | number | boolean;
 type MultipleBaseValues = string[] | number[] | boolean[];

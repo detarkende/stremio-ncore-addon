@@ -1,3 +1,9 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { updatePasswordSchema } from '@server/schemas/user.schema';
+import { UpdatePasswordRequest, User } from '@server/types/user';
+import { useMutation } from '@tanstack/react-query';
+import { FormProvider, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { api } from '@/api';
 import { Button } from '@/components/ui/button';
 import { DialogClose, DialogFooter } from '@/components/ui/dialog';
@@ -5,12 +11,6 @@ import { FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/for
 import { Input } from '@/components/ui/input';
 import { MutationKeys } from '@/constants/mutation-keys';
 import { handleError, HttpError } from '@/lib/errors';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { updatePasswordSchema } from '@server/schemas/user.schema';
-import { UpdatePasswordRequest, User } from '@server/types/user';
-import { useMutation } from '@tanstack/react-query';
-import { FormProvider, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 
 export const UpdatePasswordForm = ({
   user,

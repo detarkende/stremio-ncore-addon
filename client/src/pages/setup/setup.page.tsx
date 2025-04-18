@@ -1,6 +1,6 @@
-import { useIsConfigured } from '@/hooks/use-is-configured';
-import { SetupForm } from './components/setup-form';
 import { Redirect } from 'wouter';
+import { SetupForm } from './components/setup-form';
+import { useIsConfigured } from '@/hooks/use-is-configured';
 
 export const SetupPage = () => {
   const { isConfigured } = useIsConfigured();

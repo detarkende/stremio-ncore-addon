@@ -1,5 +1,5 @@
-import { Language, Resolution } from '@/db/schema/users';
 import { z } from 'zod';
+import { Language, Resolution } from '@/db/schema/users';
 
 export const createUserSchema = z.object({
   username: z.string().min(1, 'Username is required'),

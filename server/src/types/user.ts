@@ -1,11 +1,11 @@
-import { Language, Resolution, UserRole, usersTable } from '@/db/schema/users';
-import {
+import type { InferSelectModel } from 'drizzle-orm';
+import type { z } from 'zod';
+import type { Language, Resolution, UserRole, usersTable } from '@/db/schema/users';
+import type {
   createUserSchema,
   editUserSchema,
   updatePasswordSchema,
 } from '@/schemas/user.schema';
-import { InferSelectModel } from 'drizzle-orm';
-import { z } from 'zod';
 
 export class User {
   public id: number;

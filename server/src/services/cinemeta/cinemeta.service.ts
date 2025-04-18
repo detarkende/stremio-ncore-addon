@@ -1,5 +1,5 @@
-import { StreamType } from '@/schemas/stream.schema';
-import { CinemetaResponse } from './types';
+import type { CinemetaResponse } from './types';
+import type { StreamType } from '@/schemas/stream.schema';
 import { env } from '@/env';
 import { throwServerError } from '@/utils/errors';
 import { logger } from '@/logger';

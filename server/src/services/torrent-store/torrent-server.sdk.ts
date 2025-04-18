@@ -1,6 +1,6 @@
-import { HttpStatusCode } from '@/types/http';
-import { AddTorrentRequest, InfoHash, TorrentResponse } from './types';
 import { rm } from 'fs/promises';
+import type { AddTorrentRequest, InfoHash, TorrentResponse } from './types';
+import { HttpStatusCode } from '@/types/http';
 import { throwServerError } from '@/utils/errors';
 
 export class TorrentServerSdk {

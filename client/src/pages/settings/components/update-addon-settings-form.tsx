@@ -1,15 +1,15 @@
-import { SettingsFormFields } from '@/components/settings/settings-form-fields';
 import { Configuration } from '@server/db/schema/configuration';
 import { UpdateConfigRequest, updateConfigSchema } from '@server/schemas/config.schema';
 import { FormProvider, useForm } from 'react-hook-form';
-import { getUpdateAddonSettingsDefaultValues } from './constants';
 import { useMutation } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { getUpdateAddonSettingsDefaultValues } from './constants';
 import { MutationKeys } from '@/constants/mutation-keys';
 import { api } from '@/api';
 import { handleError, HttpError } from '@/lib/errors';
-import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { SettingsFormFields } from '@/components/settings/settings-form-fields';
 
 export const UpdateAddonSettingsForm = ({ config }: { config: Configuration }) => {
   const { mutateAsync, isPending } = useMutation({

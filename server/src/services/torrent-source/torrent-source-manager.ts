@@ -1,5 +1,5 @@
-import { isNotNull } from '@/utils/type-guards';
 import type { TorrentDetails, TorrentSource, TorrentSourceIssue } from './types';
+import { isNotNull } from '@/utils/type-guards';
 import type { StreamQuery } from '@/schemas/stream.schema';
 import { logger } from '@/logger';
 

@@ -1,10 +1,10 @@
-import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useController, useFormContext, useWatch } from 'react-hook-form';
+import { UpdateConfigRequest } from '@server/schemas/config.schema';
 import { DEFAULT_HITNRUN_CRON, SetupFormValues } from '../../pages/setup/constants';
+import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Switch } from '@/components/ui/switch';
 import { InfoTooltip } from '@/components/ui/info-tooltip';
 import { Input } from '@/components/ui/input';
-import { UpdateConfigRequest } from '@server/schemas/config.schema';
 
 type FormType = SetupFormValues | UpdateConfigRequest;
 
@@ -37,7 +37,9 @@ export const DeleteAfterHitnrun = () => {
               }}
             />
           </FormControl>
-          <FormLabel>Should delete torrents when hit'n'run period is over</FormLabel>
+          <FormLabel>
+            Should delete torrents when hit&apos;n&apos;run period is over
+          </FormLabel>
         </div>
         <FormMessage />
       </div>
@@ -52,6 +54,7 @@ export const DeleteAfterHitnrun = () => {
                 className="underline"
                 href="https://crontab.guru/#0_2_*_*_*"
                 target="_blank"
+                rel="noreferrer"
               >
                 here
               </a>

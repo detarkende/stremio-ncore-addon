@@ -1,7 +1,8 @@
-import { env } from '@/env';
-import { LocalIpResponse, localIpResponseSchema, ONE_HOUR } from './constants';
 import { createSecureContext } from 'node:tls';
-import { ServerOptions } from 'node:https';
+import type { ServerOptions } from 'node:https';
+import type { LocalIpResponse } from './constants';
+import { localIpResponseSchema, ONE_HOUR } from './constants';
+import { env } from '@/env';
 import { logger } from '@/logger';
 
 export class HttpsService {

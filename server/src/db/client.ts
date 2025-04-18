@@ -1,11 +1,11 @@
-import Database from 'better-sqlite3';
+import { resolve } from 'path';
+import { existsSync, mkdirSync } from 'fs';
+import type Database from 'better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
-import { resolve } from 'path';
+import type { SQLiteTransaction } from 'drizzle-orm/sqlite-core';
+import type { ExtractTablesWithRelations } from 'drizzle-orm';
 import { env } from '@/env';
-import { SQLiteTransaction } from 'drizzle-orm/sqlite-core';
-import { ExtractTablesWithRelations } from 'drizzle-orm';
-import { existsSync, mkdirSync } from 'fs';
 
 const configDir = resolve(env.ADDON_DIR, 'config');
 

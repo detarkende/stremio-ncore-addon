@@ -1,8 +1,8 @@
+import { useQuery } from '@tanstack/react-query';
+import { Alert } from '../ui/alert';
 import { api } from '@/api';
 import { Card } from '@/components/ui/card';
 import { QueryKeys } from '@/constants/query-keys';
-import { useQuery } from '@tanstack/react-query';
-import { Alert } from '../ui/alert';
 
 export const TorrentSourceIssues = () => {
   const { data, status, error, refetch } = useQuery({

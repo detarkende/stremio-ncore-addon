@@ -1,14 +1,14 @@
-import { UserFields } from '@/pages/setup/components/user-fields';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { editUserSchema } from '@server/schemas/user.schema';
 import { User } from '@server/types/user';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { DialogClose, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/api';
-import { toast } from 'sonner';
+import { UserFields } from '@/pages/setup/components/user-fields';
 import { QueryKeys } from '@/constants/query-keys';
 import { handleError, HttpError } from '@/lib/errors';
 import { useMe } from '@/hooks/use-me';
