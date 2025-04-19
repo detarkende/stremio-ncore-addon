@@ -1,9 +1,8 @@
 import { z } from 'zod';
-import { logger } from '@/logger';
 
 export const envSchema = z
   .object({
-    NODE_ENV: z.enum(['development', 'production']).default('development'),
+    NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
     PORT: z.coerce.number().default(3000),
     HTTPS_PORT: z.coerce.number().default(3443),
     TORRENT_SERVER_PORT: z.coerce.number().default(8080),
@@ -30,5 +29,3 @@ export const envSchema = z
 export type Env = z.infer<typeof envSchema>;
 
 export const env = envSchema.parse(process.env);
-
-logger.info('Environment variables parsed and loaded successfully.');

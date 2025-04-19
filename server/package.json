@@ -47,6 +47,7 @@
     "eslint-plugin-import": "^2.31.0",
     "globals": "^16.0.0",
     "jest": "^29.7.0",
+    "pino-roll": "^3.1.0",
     "stremio-addon-sdk": "^1.6.10",
     "tsc-alias": "^1.8.10",
     "tsx": "^4.19.2",

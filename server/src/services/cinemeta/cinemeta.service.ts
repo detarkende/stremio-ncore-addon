@@ -14,9 +14,10 @@ export class CinemetaService {
       const response = await fetch(cinemetaUrl);
       if (!response.ok) {
         logger.error(
+          {
+            status: response.status,
+          },
           `Failed to fetch metadata from Cinemeta at URL: ${cinemetaUrl}`,
-          response.statusText,
-          await response.text(),
         );
         throw new Error('Failed to fetch stream data from Cinemeta');
       }

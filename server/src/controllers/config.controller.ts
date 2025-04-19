@@ -52,7 +52,7 @@ export class ConfigController {
       logger.info('Configuration created successfully.');
       return c.json({ message: 'Configuration created successfully.' });
     } catch (e) {
-      logger.error('Error creating configuration:', e);
+      logger.error({ error: e }, 'Error creating configuration:');
       return c.json(
         { message: 'Unknown error occurred while creating configuration.' },
         HttpStatusCode.INTERNAL_SERVER_ERROR,

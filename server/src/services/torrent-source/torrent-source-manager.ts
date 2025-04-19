@@ -3,7 +3,10 @@ import { isNotNull } from '@/utils/type-guards';
 import type { StreamQuery } from '@/schemas/stream.schema';
 import { logger } from '@/logger';
 
-async function awaitAllReachablePromises<T>(promises: Promise<T>[]): Promise<T[]> {
+async function awaitAllReachablePromises<T>(
+  promises: Promise<T>[],
+  handleFailedPromises: (rejections: PromiseRejectedResult[]) => void,
+): Promise<T[]> {
   const awaitedResults: PromiseSettledResult<T>[] = await Promise.allSettled(promises);
   const successfulResults: PromiseFulfilledResult<T>[] = awaitedResults.filter(
     (promise): promise is PromiseFulfilledResult<T> => promise.status === 'fulfilled',
@@ -11,9 +14,9 @@ async function awaitAllReachablePromises<T>(promises: Promise<T>[]): Promise<T[]
   const failedResults: PromiseRejectedResult[] = awaitedResults.filter(
     (promise): promise is PromiseRejectedResult => promise.status === 'rejected',
   );
-  failedResults.forEach(({ reason }) =>
-    logger.error(reason ?? 'Unknown error occurred.'),
-  );
+  if (failedResults.length) {
+    handleFailedPromises(failedResults);
+  }
   return successfulResults.map(({ value }) => value);
 }
 
@@ -25,7 +28,14 @@ export class TorrentSourceManager {
 
   public async getRemovableInfoHashes(): Promise<string[]> {
     const promises = this.sources.map(async (source) => source.getRemovableInfoHashes());
-    const results = (await awaitAllReachablePromises(promises)).flat();
+    const results = (
+      await awaitAllReachablePromises(promises, (rejections) => {
+        logger.warn(
+          { errors: rejections.map((rejection) => rejection.reason) },
+          'Failed to get removable info hashes from some sources',
+        );
+      })
+    ).flat();
     return results;
   }
 
@@ -50,7 +60,16 @@ export class TorrentSourceManager {
     const promises = this.sources.map(async (source) =>
       source.getTorrentsForImdbId(params),
     );
-    const results = (await awaitAllReachablePromises(promises)).flat();
+    const results = (
+      await awaitAllReachablePromises(promises, (rejections) => {
+        logger.error(
+          `Failed to get torrents for imdb id "${params.imdbId}" from some sources`,
+          {
+            errors: rejections.map((rejection) => rejection.reason),
+          },
+        );
+      })
+    ).flat();
     return results;
   }
 
@@ -77,7 +96,18 @@ export class TorrentSourceManager {
         };
       },
     );
-    const results = (await awaitAllReachablePromises(promises)).flat().filter(isNotNull);
+    const results = (
+      await awaitAllReachablePromises(promises, (rejections) => {
+        logger.error(
+          {
+            errors: rejections.map((rejection) => rejection.reason),
+          },
+          'Failed to get config issues from some sources',
+        );
+      })
+    )
+      .flat()
+      .filter(isNotNull);
     return results;
   }
 }

@@ -107,7 +107,7 @@ export class ConfigService {
 
   public async updateConfig(data: UpdateConfigRequest): Promise<ConfigurationResponse> {
     const { addonLocation, deleteAfterHitnrun } = data;
-    logger.info('Updating configuration:', data);
+    logger.info({ data }, 'Updating configuration:');
     try {
       const oldConfig = this.getConfig();
       const [newConfig] = await this.db

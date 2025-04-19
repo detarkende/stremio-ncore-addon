@@ -11,7 +11,12 @@ export const throwServerError = (error: unknown, message: string): HTTPException
       cause = error;
     }
   }
-  logger.error(`${message}:`, error);
+  logger.error(
+    `Caught server error: ${message}. Returning "500 - Internal server error"`,
+    {
+      error,
+    },
+  );
   return new HTTPException(HttpStatusCode.INTERNAL_SERVER_ERROR, {
     message: `${message}. Error: ${error}`,
     cause,
