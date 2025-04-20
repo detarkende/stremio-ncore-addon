@@ -27,7 +27,7 @@ export const SettingsFormFields = () => {
           name="addonLocation.local"
           render={({ field }) => (
             <RadioGroup
-              value={field.value.toString()}
+              value={`${field.value}`}
               onValueChange={async (value) => {
                 const isLocal = value === 'true';
                 setValue('addonLocation', { local: isLocal, location: '' });
