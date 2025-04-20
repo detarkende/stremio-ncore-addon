@@ -9,6 +9,8 @@ export const useConfig = () => {
       const req = await api.config.$get();
       return req.json();
     },
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
   const { data: config, ...rest } = query;
   return { config, ...rest };
