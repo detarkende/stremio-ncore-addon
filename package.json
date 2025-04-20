@@ -21,7 +21,7 @@
     "lint:server": "pnpm --filter server lint",
     "lint:client": "pnpm --filter client lint",
     "test": "vitest run",
-    "release": ""
+    "release": "docker buildx build --platform linux/amd64,linux/arm64 -t detarkende/stremio-ncore-addon:$npm_config_name . --push"
   },
   "dependencies": {
     "hono": "4.7.2",
