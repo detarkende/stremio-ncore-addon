@@ -21,6 +21,7 @@ export class TorrentStoreService {
 
   public async startServer() {
     if (env.NODE_ENV === 'production') {
+      logger.info('Starting torrent server child process');
       const executablePath = resolve(
         import.meta.dirname,
         '../../../torrent-server/torrent-server',
@@ -44,7 +45,7 @@ export class TorrentStoreService {
           logger.info('Found torrent server.');
         } catch {
           if (retryCount >= 5) {
-            logger.error(
+            logger.fatal(
               'Torrent server is not running. Please start the torrent server first.',
             );
             throw new Error(
@@ -68,23 +69,32 @@ export class TorrentStoreService {
   }
 
   public async addTorrent(torrentFilePath: string): Promise<TorrentResponse> {
+    logger.info(`Adding torrent file to torrent client: ${torrentFilePath}`);
     this.checkServer();
     const torrent = await this.torrentServerSdk.addTorrent(torrentFilePath);
     return torrent;
   }
 
   public async getTorrent(infoHash: string): Promise<TorrentResponse | null> {
+    logger.info(`Getting torrent info from torrent client for info hash "${infoHash}"`);
     this.checkServer();
     const torrent = await this.torrentServerSdk.getTorrent(infoHash);
+    if (!torrent) {
+      logger.info(`Torrent with info hash "${infoHash}" not found.`);
+    } else {
+      logger.info(`Torrent with info hash "${infoHash}" found.`);
+    }
     return torrent;
   }
 
   public async deleteTorrent(infoHash: string): Promise<void> {
+    logger.info(`Deleting torrent from torrent client with info hash "${infoHash}"`);
     this.checkServer();
     return await this.torrentServerSdk.deleteTorrent(infoHash);
   }
 
   public async getStoreStats(): Promise<TorrentStoreStats[]> {
+    logger.info('Getting torrent client statistics');
     this.checkServer();
     const torrents = await this.torrentServerSdk.getAllTorrents();
     const stats = torrents
@@ -113,10 +123,13 @@ export class TorrentStoreService {
   }
 
   public async loadExistingTorrents(): Promise<void> {
+    logger.info('Loading existing torrents into torrent client');
     this.checkServer();
-    logger.info('Looking for torrent files...');
     const savedTorrentFilePaths = globSync(`${env.TORRENTS_DIR}/*.torrent`);
-    logger.info(`Found ${savedTorrentFilePaths.length} torrent files.`);
+    logger.info(
+      { torrentFiles: savedTorrentFilePaths },
+      `Found ${savedTorrentFilePaths.length} torrent files.`,
+    );
     await Promise.allSettled(
       savedTorrentFilePaths.map((filePath) => {
         return this.addTorrent(filePath);
@@ -126,16 +139,32 @@ export class TorrentStoreService {
   }
 
   public deleteUnnecessaryTorrents = async () => {
+    logger.info('Gathering unnecessary torrents');
     this.checkServer();
-    logger.info('Gathering unnecessary torrents...');
     const deletableInfoHashes = await this.torrentSource.getRemovableInfoHashes();
-    logger.info(`Found ${deletableInfoHashes.length} deletable torrents.`);
-    deletableInfoHashes.forEach(async (infoHash) => {
+    logger.info(
+      { deletableInfoHashes },
+      `Found ${deletableInfoHashes.length} deletable torrents.`,
+    );
+
+    const promises = deletableInfoHashes.map(async (infoHash) => {
       const torrent = await this.getTorrent(infoHash);
       if (torrent) {
-        this.deleteTorrent(infoHash);
+        await this.deleteTorrent(infoHash);
         logger.info(`Successfully deleted ${torrent.name} - ${torrent.infoHash}.`);
       }
     });
+    const results = await Promise.allSettled(promises);
+    const failed = results.filter((result) => result.status === 'rejected');
+    const succeeded = results.filter((result) => result.status === 'fulfilled');
+    if (failed.length > 0) {
+      logger.error(
+        { failed },
+        `Failed to delete ${failed.length} torrents. Please check the logs.`,
+      );
+    }
+    if (succeeded.length > 0) {
+      logger.info(`Successfully deleted ${succeeded.length} torrents.`);
+    }
   };
 }
