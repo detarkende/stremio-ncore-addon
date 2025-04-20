@@ -1,6 +1,9 @@
 import { useForm } from 'react-hook-form';
-import { loginSchema, type LoginFormValues, defaultValues } from '../constants';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Redirect } from 'wouter';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { loginSchema, type LoginFormValues, defaultValues } from '../constants';
 import {
   Form,
   FormControl,
@@ -20,13 +23,10 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { Redirect } from 'wouter';
 import { useMe } from '@/hooks/use-me';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/api';
 import { handleError, HttpError } from '@/lib/errors';
 import { QueryKeys } from '@/constants/query-keys';
-import { toast } from 'sonner';
 
 export const LoginForm = () => {
   const { data: me } = useMe();

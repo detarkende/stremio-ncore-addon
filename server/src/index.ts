@@ -1,36 +1,12 @@
+import { createServer } from 'node:https';
 import { Hono } from 'hono';
 import { contextStorage } from 'hono/context-storage';
 import { serve } from '@hono/node-server';
 import { cors } from 'hono/cors';
-import { logger } from 'hono/logger';
-import { createServer } from 'node:https';
 
-import { UserService } from '@/services/user';
-import { ManifestService } from '@/services/manifest';
-import { TorrentStoreService } from '@/services/torrent-store';
-import { TorrentService } from '@/services/torrent';
-import { StreamService } from '@/services/stream';
-
-import { ManifestController } from '@/controllers/manifest.controller';
-import { AuthController } from '@/controllers/auth.controller';
-import { StreamController } from '@/controllers/stream.controller';
-import { TorrentController } from '@/controllers/torrent.controller';
-
-import { NcoreService } from '@/services/torrent-source/ncore';
-import { TorrentSourceManager } from '@/services/torrent-source';
 import { zValidator } from '@hono/zod-validator';
-import { loginSchema } from '@/schemas/login.schema';
-import {
-  applyServeStatic,
-  createAdminMiddleware,
-  createAuthMiddleware,
-  createAdminOrSelfMiddleware,
-  createDeviceTokenMiddleware,
-} from '@/middlewares';
-import { UserController } from '@/controllers/user.controller';
 import { CinemeatService } from './services/cinemeta';
-import { db } from '@/db';
-import { HonoEnv } from './types/hono-env';
+import type { HonoEnv } from './types/hono-env';
 import { ConfigController } from './controllers/config.controller';
 import { ConfigService } from './services/config';
 import { env } from './env';
@@ -48,7 +24,31 @@ import {
   editUserSchema,
   updatePasswordSchema,
 } from './schemas/user.schema';
-import { createServerOptions } from './utils/server-options';
+import { HttpsService } from './services/https';
+import { logger, requestLogger } from './logger';
+import { UserService } from '@/services/user';
+import { ManifestService } from '@/services/manifest';
+import { TorrentStoreService } from '@/services/torrent-store';
+import { TorrentService } from '@/services/torrent';
+import { StreamService } from '@/services/stream';
+
+import { ManifestController } from '@/controllers/manifest.controller';
+import { AuthController } from '@/controllers/auth.controller';
+import { StreamController } from '@/controllers/stream.controller';
+import { TorrentController } from '@/controllers/torrent.controller';
+
+import { NcoreService } from '@/services/torrent-source/ncore';
+import { TorrentSourceManager } from '@/services/torrent-source';
+import { loginSchema } from '@/schemas/login.schema';
+import {
+  applyServeStatic,
+  createAdminMiddleware,
+  createAuthMiddleware,
+  createAdminOrSelfMiddleware,
+  createDeviceTokenMiddleware,
+} from '@/middlewares';
+import { UserController } from '@/controllers/user.controller';
+import { db } from '@/db';
 
 const userService = new UserService(db);
 const configService = new ConfigService(db, userService);
@@ -82,6 +82,7 @@ const torrentStoreService = new TorrentStoreService(torrentSource);
 await torrentStoreService.startServer();
 const streamService = new StreamService(configService, userService);
 configService.torrentStoreService = torrentStoreService;
+const httpsService = new HttpsService();
 
 const configController = new ConfigController(configService, torrentSource);
 const manifestController = new ManifestController(manifestService);
@@ -106,13 +107,13 @@ baseApp.use(cors());
 
 baseApp.get('/manifest.json', (c) => manifestController.getBaseManifest(c));
 
-if (process.env.NODE_ENV === 'production') {
+if (env.NODE_ENV === 'production') {
   applyServeStatic(baseApp);
-  baseApp.use(logger());
 }
 
 const app = new Hono<HonoEnv>()
   .use(contextStorage())
+  .use(requestLogger)
   .use(async (c, next) => {
     const resp = await next();
     if (c.error && c.error instanceof MissingConfigError) {
@@ -128,7 +129,7 @@ const app = new Hono<HonoEnv>()
   .get('/config/torrent-sources/issues', (c) =>
     configController.getTorrentSourceConfigIssues(c),
   )
-  .get('/config', isAdmin, (c) => configController.getConfig(c))
+  .get('/config', isAuthenticated, (c) => configController.getConfig(c))
   .post('/config', zValidator('json', createConfigSchema), (c) =>
     configController.createConfig(c),
   )
@@ -190,15 +191,17 @@ serve({
   fetch: baseApp.fetch,
   port: env.PORT,
 });
-console.log(`HTTP server started on port ${env.PORT}!`);
+logger.info(`HTTP server started on port ${env.PORT}!`);
 
 // HTTPS server
 serve({
   fetch: baseApp.fetch,
   port: env.HTTPS_PORT,
   createServer,
-  serverOptions: await createServerOptions(),
+  serverOptions: httpsService.createServerOptions(),
 });
-console.log(`HTTPS server started on port ${env.HTTPS_PORT}!`);
+logger.info(`HTTPS server started on port ${env.HTTPS_PORT}!`);
+
+logger.debug(`Server running in ${env.NODE_ENV} environment`);
 
 export type ApiRoutes = typeof app;

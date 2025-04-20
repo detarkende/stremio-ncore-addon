@@ -1,8 +1,8 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { api } from '@/api';
 import { QueryKeys } from '@/constants/query-keys';
 import { handleError, HttpError } from '@/lib/errors';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
 
 export const useMe = () => {
   const queryClient = useQueryClient();

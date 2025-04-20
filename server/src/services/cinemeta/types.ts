@@ -1,4 +1,4 @@
-import { StreamType } from '@/schemas/stream.schema';
+import type { StreamType } from '@/schemas/stream.schema';
 
 export interface CinemetaResponse {
   meta: {

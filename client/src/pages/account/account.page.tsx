@@ -1,3 +1,6 @@
+import { Separator } from '@radix-ui/react-separator';
+import { Redirect } from 'wouter';
+import { DeviceTokenList } from './components/device-token-list';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -8,10 +11,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Separator } from '@radix-ui/react-separator';
-import { Redirect } from 'wouter';
 import { useMe } from '@/hooks/use-me';
-import { DeviceTokenList } from './components/device-token-list';
 import { UserActions } from '@/components/user';
 import { TorrentSourceIssues } from '@/components/torrent-source-issues';
 

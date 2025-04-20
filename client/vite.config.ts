@@ -15,4 +15,8 @@ export default defineConfig({
       '@server': path.resolve(__dirname, '../dist/server/'),
     },
   },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+  },
 });

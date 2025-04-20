@@ -1,9 +1,9 @@
-import { Button } from '@/components/ui/button';
 import { PlusCircle, Trash2 } from 'lucide-react';
 import { useFieldArray } from 'react-hook-form';
-import { UserFields } from './user-fields';
-import { SetupFormValues } from '../constants';
 import { languageValues as languageOptions } from '@server/db/schema/users';
+import { SetupFormValues } from '../constants';
+import { UserFields } from './user-fields';
+import { Button } from '@/components/ui/button';
 
 export const NonAdminUsers = () => {
   const { fields, append, remove } = useFieldArray<SetupFormValues>({

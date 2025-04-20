@@ -1,15 +1,18 @@
-import { Database } from '@/db';
-import { ConfigurationResponse, configurationTable } from '@/db/schema/configuration';
-import { MissingConfigError } from './config.error';
-import { CreateConfigRequest, UpdateConfigRequest } from '@/schemas/config.schema';
-import { UserService } from '../user';
-import { UserRole } from '@/db/schema/users';
 import { HTTPException } from 'hono/http-exception';
+import type { ScheduledTask } from 'node-cron';
+import { schedule } from 'node-cron';
+import type { UserService } from '../user';
+import type { TorrentStoreService } from '../torrent-store';
+import { MissingConfigError } from './config.error';
+import type { Database } from '@/db';
+import type { ConfigurationResponse } from '@/db/schema/configuration';
+import { configurationTable } from '@/db/schema/configuration';
+import type { CreateConfigRequest, UpdateConfigRequest } from '@/schemas/config.schema';
+import { UserRole } from '@/db/schema/users';
 import { HttpStatusCode } from '@/types/http';
-import { schedule, ScheduledTask } from 'node-cron';
-import { TorrentStoreService } from '../torrent-store';
 import { env } from '@/env';
 import { getLocalIpUrl } from '@/utils/https';
+import { logger } from '@/logger';
 
 export class ConfigService {
   constructor(
@@ -24,7 +27,7 @@ export class ConfigService {
   public scheduleDeleteAfterHitnrunCron() {
     const config = this.getConfigOrNull();
     if (!config) {
-      console.log(
+      logger.info(
         'Missing config in config service. Cannot schedule deleteAfterHitnrun cron.',
       );
       return;
@@ -32,7 +35,7 @@ export class ConfigService {
     this.deleteAfterHitnrunCronTask?.stop();
     this.deleteAfterHitnrunCronTask = null;
     if (!this.torrentStoreService) {
-      console.log('Missing torrent store service in config service.');
+      logger.info('Missing torrent store service in config service.');
       return;
     }
     if (config.deleteAfterHitnrun) {
@@ -85,14 +88,14 @@ export class ConfigService {
         })
         .returning();
 
-      console.log('Creating admin user...');
+      logger.info('Creating admin user...');
       await this.userService.createUser(admin, tx, UserRole.ADMIN);
-      console.log('Creating non-admin users...');
+      logger.info('Creating non-admin users...');
       const nonAdminUsersPromises = nonAdminUsers.map((u) =>
         this.userService.createUser(u, tx, UserRole.USER),
       );
       await Promise.all(nonAdminUsersPromises);
-      console.log('finished creating users');
+      logger.info('finished creating users');
       return config;
     });
     this.scheduleDeleteAfterHitnrunCron();
@@ -104,7 +107,7 @@ export class ConfigService {
 
   public async updateConfig(data: UpdateConfigRequest): Promise<ConfigurationResponse> {
     const { addonLocation, deleteAfterHitnrun } = data;
-    console.log('Updating configuration:', data);
+    logger.info({ data }, 'Updating configuration:');
     try {
       const oldConfig = this.getConfig();
       const [newConfig] = await this.db

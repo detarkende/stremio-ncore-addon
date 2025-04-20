@@ -1,6 +1,6 @@
 import type { ComponentPropsWithoutRef, PropsWithChildren } from 'react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip';
 import { InfoIcon, type LucideProps } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip';
 
 interface InfoTooltipProps extends PropsWithChildren {
   tooltipProps?: ComponentPropsWithoutRef<typeof Tooltip>;

@@ -1,8 +1,8 @@
-import type { Hono } from 'hono';
-import { serveStatic } from '@hono/node-server/serve-static';
 import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { relative, resolve } from 'path';
+import { serveStatic } from '@hono/node-server/serve-static';
+import type { Hono } from 'hono';
 
 export const applyServeStatic = (app: Hono) => {
   const reserverRoutes = [/^\/api\/.*/, /^\/manifest\.json$/];

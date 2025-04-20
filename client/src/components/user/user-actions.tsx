@@ -1,15 +1,15 @@
 import { User } from '@server/types/user';
+import { useState } from 'react';
+import { EllipsisIcon, LockIcon, PencilIcon, Trash2Icon } from 'lucide-react';
+import { UpdatePasswordModal } from '../update-password/update-password-modal';
 import { DeleteUserModal } from './delete-user/delete-user-modal';
 import { EditUserModal } from './edit-user/edit-user-modal';
-import { useState } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { EllipsisIcon, LockIcon, PencilIcon, Trash2Icon } from 'lucide-react';
-import { UpdatePasswordModal } from '../update-password/update-password-modal';
 
 enum OpenedModal {
   None,
@@ -21,6 +21,7 @@ enum OpenedModal {
 interface UserActionsProps {
   user: User;
   isDeleteEnabled?: boolean;
+  isMe?: boolean;
 }
 
 export const UserActions = ({ user, isDeleteEnabled = true }: UserActionsProps) => {

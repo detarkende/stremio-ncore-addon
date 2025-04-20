@@ -1,10 +1,11 @@
-import { usersTable } from '@/db/schema/users';
-import { Session, sessionsTable } from '@/db/schema/sessions';
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from '@oslojs/encoding';
 import { sha256 } from '@oslojs/crypto/sha2';
-import { Database } from '@/db';
 import { eq } from 'drizzle-orm';
 import { SESSION_MAX_DURATION, SESSION_REFRESH_INTERVAL_MS } from './constants';
+import { sessionsTable } from '@/db/schema/sessions';
+import type { Session } from '@/db/schema/sessions';
+import type { Database } from '@/db';
+import { usersTable } from '@/db/schema/users';
 import { User } from '@/types/user';
 
 type SessionValidationResult =

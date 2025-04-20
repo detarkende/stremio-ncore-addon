@@ -1,5 +1,11 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'sonner';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { CreateConfigRequest, createConfigSchema } from '@server/schemas/config.schema';
+import { defaultSetupFormValues } from '../constants';
+import { NonAdminUsers } from './non-admin-users';
+import { UserFields } from './user-fields';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -11,18 +17,11 @@ import {
 } from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
 
-import { NonAdminUsers } from './non-admin-users';
-import { defaultSetupFormValues } from '../constants';
-import { UserFields } from './user-fields';
-import { toast } from 'sonner';
-
 import { Separator } from '@/components/ui/separator';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { MutationKeys } from '@/constants/mutation-keys';
 import { api } from '@/api';
 import { QueryKeys } from '@/constants/query-keys';
 import { handleError, HttpError } from '@/lib/errors';
-import { CreateConfigRequest, createConfigSchema } from '@server/schemas/config.schema';
 import { SettingsFormFields } from '@/components/settings/settings-form-fields';
 
 export const SetupForm = () => {

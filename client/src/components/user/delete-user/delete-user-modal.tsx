@@ -1,3 +1,6 @@
+import { User } from '@server/types/user';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import {
   Dialog,
   DialogClose,
@@ -6,11 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { User } from '@server/types/user';
 import { Button } from '@/components/ui/button';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/api';
-import { toast } from 'sonner';
 import { MutationKeys } from '@/constants/mutation-keys';
 import { FullScreenLoader } from '@/components/ui/full-screen-loader';
 import { QueryKeys } from '@/constants/query-keys';

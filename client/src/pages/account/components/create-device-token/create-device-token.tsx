@@ -1,4 +1,22 @@
-import { Button } from '@/components/ui/button';
+import { PlusIcon } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  CreateDeviceTokenFormValues,
+  createDeviceTokenSchema,
+  defaultCreateDeviceTokenFormValues,
+} from './constants';
+import { Input } from '@/components/ui/input';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import {
   Dialog,
   DialogClose,
@@ -9,25 +27,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { PlusIcon } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import {
-  CreateDeviceTokenFormValues,
-  createDeviceTokenSchema,
-  defaultCreateDeviceTokenFormValues,
-} from './constants';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Input } from '@/components/ui/input';
-import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Button } from '@/components/ui/button';
 import { api } from '@/api';
 import { MutationKeys } from '@/constants/mutation-keys';
 import { Alert } from '@/components/ui/alert';

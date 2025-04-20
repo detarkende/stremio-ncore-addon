@@ -1,7 +1,7 @@
-import { CustomManifest } from './types';
-import { ConfigService } from '../config';
-import { DeviceTokenService } from '../device-token';
-import { UserService } from '../user';
+import type { ConfigService } from '../config';
+import type { DeviceTokenService } from '../device-token';
+import type { UserService } from '../user';
+import type { CustomManifest } from './types';
 
 export class ManifestService {
   constructor(
@@ -20,7 +20,7 @@ export class ManifestService {
         configurationRequired: true,
       },
       baseUrl: config.addonUrl,
-      version: '0.8.0',
+      version: '0.9.0',
       name: 'nCore',
       description: 'Provides streams from a personal nCore account.',
       catalogs: [],

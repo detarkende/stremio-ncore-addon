@@ -1,11 +1,12 @@
-import { UserRole } from '@/db/schema/users';
-import { CreateConfigRequest, UpdateConfigRequest } from '@/schemas/config.schema';
-import { ConfigService } from '@/services/config';
-import { TorrentSourceManager } from '@/services/torrent-source';
-import { HonoEnv } from '@/types/hono-env';
-import { HttpStatusCode } from '@/types/http';
-import { Context } from 'hono';
+import type { Context } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+import { UserRole } from '@/db/schema/users';
+import { logger } from '@/logger';
+import type { CreateConfigRequest, UpdateConfigRequest } from '@/schemas/config.schema';
+import type { ConfigService } from '@/services/config';
+import type { TorrentSourceManager } from '@/services/torrent-source';
+import type { HonoEnv } from '@/types/hono-env';
+import { HttpStatusCode } from '@/types/http';
 
 export class ConfigController {
   constructor(
@@ -48,10 +49,10 @@ export class ConfigController {
       }
 
       await this.configService.createConfig(data);
-      console.log('Configuration created successfully.');
+      logger.info('Configuration created successfully.');
       return c.json({ message: 'Configuration created successfully.' });
     } catch (e) {
-      console.error('Error creating configuration:', e);
+      logger.error({ error: e }, 'Error creating configuration:');
       return c.json(
         { message: 'Unknown error occurred while creating configuration.' },
         HttpStatusCode.INTERNAL_SERVER_ERROR,

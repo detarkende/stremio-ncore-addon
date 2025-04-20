@@ -5,7 +5,7 @@
 ```yaml
 services:
   stremio-ncore-addon:
-    image: detarkende/stremio-ncore-addon:0.8.0
+    image: detarkende/stremio-ncore-addon:0.9.0
     environment:
       - NCORE_USERNAME=
       - NCORE_PASSWORD=

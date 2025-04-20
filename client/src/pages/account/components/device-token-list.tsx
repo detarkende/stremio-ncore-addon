@@ -1,19 +1,19 @@
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useCallback, useState, type PropsWithChildren } from 'react';
+import { DeviceToken } from '@server/db/schema/device-tokens';
+import { toast } from 'sonner';
+import { CreateDeviceToken } from './create-device-token';
+import { DeviceTokenItem } from './device-token-item';
 import { api } from '@/api';
 import { Alert } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { useCallback, useState, type PropsWithChildren } from 'react';
-import { CreateDeviceToken } from './create-device-token';
 import {
   Accordion,
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
 } from '@/components/ui/accordion';
-import { DeviceTokenItem } from './device-token-item';
-import { DeviceToken } from '@server/db/schema/device-tokens';
 import { MutationKeys } from '@/constants/mutation-keys';
-import { toast } from 'sonner';
 import { handleError, HttpError } from '@/lib/errors';
 
 const List = ({ children }: PropsWithChildren) => (

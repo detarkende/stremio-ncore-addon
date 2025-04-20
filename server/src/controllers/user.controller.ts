@@ -1,16 +1,16 @@
+import type { Context } from 'hono';
+import { HTTPException } from 'hono/http-exception';
 import { UserRole } from '@/db/schema/users';
-import { UserService } from '@/services/user';
-import { HonoEnv } from '@/types/hono-env';
+import type { UserService } from '@/services/user';
+import type { HonoEnv } from '@/types/hono-env';
 import { HttpStatusCode } from '@/types/http';
-import {
+import type {
   CreateUserRequest,
   EditUserRequest,
   UpdatePasswordRequest,
-  User,
 } from '@/types/user';
+import { User } from '@/types/user';
 import { isInteger } from '@/utils/numbers';
-import { Context } from 'hono';
-import { HTTPException } from 'hono/http-exception';
 
 export class UserController {
   constructor(private userService: UserService) {}

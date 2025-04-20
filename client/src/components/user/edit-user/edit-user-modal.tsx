@@ -1,6 +1,6 @@
 import { User } from '@server/types/user';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { EditUserForm } from './edit-user-form';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface EditUserModalProps {
   user: User;

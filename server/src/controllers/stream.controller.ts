@@ -1,12 +1,12 @@
 import type { Context } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+import { proxy } from 'hono/proxy';
 import { streamQuerySchema } from '@/schemas/stream.schema';
 import type { TorrentService } from '@/services/torrent';
 import type { StreamService } from '@/services/stream';
 import type { UserService } from '@/services/user';
 import type { TorrentStoreService } from '@/services/torrent-store';
 import { playSchema } from '@/schemas/play.schema';
-import { proxy } from 'hono/proxy';
 import { HttpStatusCode } from '@/types/http';
 import type { TorrentSourceManager } from '@/services/torrent-source';
 

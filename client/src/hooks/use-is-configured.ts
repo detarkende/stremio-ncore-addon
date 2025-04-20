@@ -1,10 +1,10 @@
+import { useQuery } from '@tanstack/react-query';
 import { api } from '@/api';
 import { QueryKeys } from '@/constants/query-keys';
-import { useQuery } from '@tanstack/react-query';
 
 export const useIsConfigured = () => {
   const query = useQuery({
-    queryKey: [QueryKeys.CONFIG],
+    queryKey: [QueryKeys.IS_CONFIGURED],
     queryFn: async () => {
       const req = await api.config['is-configured'].$get();
       const { isConfigured } = await req.json();

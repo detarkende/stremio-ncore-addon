@@ -1,12 +1,12 @@
 import type { Stream } from 'stremio-addon-sdk';
 import type { TorrentDetails } from '../torrent-source';
 import type { TorrentFileDetails } from '../torrent-source/types';
+import type { ConfigService } from '../config';
+import type { UserService } from '../user';
 import { languageEmojiMap } from './constants';
 import { rateList } from '@/utils/rate-list';
 import { formatBytes } from '@/utils/bytes';
-import { ConfigService } from '../config';
-import { UserService } from '../user';
-import { User } from '@/types/user';
+import type { User } from '@/types/user';
 import { Language } from '@/db/schema/users';
 
 export class StreamService {

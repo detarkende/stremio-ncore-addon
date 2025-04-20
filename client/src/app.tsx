@@ -1,10 +1,12 @@
+import { lazy, Suspense } from 'react';
 import { Redirect, Route, Switch } from 'wouter';
 import { useMe } from './hooks/use-me';
 import { useIsConfigured } from './hooks/use-is-configured';
 import { Toaster } from './components/ui/sonner';
-import { Layout } from './components/layout';
+
 import { ROUTES } from './constants/routes';
-import { lazy, Suspense } from 'react';
+
+import { Layout } from './components/layout';
 import { PageLoader } from './components/ui/page-loader';
 
 const SettingsPage = lazy(() => import('@/pages/settings'));
