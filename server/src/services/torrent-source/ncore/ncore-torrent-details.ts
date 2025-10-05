@@ -47,6 +47,10 @@ export class NcoreTorrentDetails extends TorrentDetails {
     return `${ncoreResolutionLabels[this.getNcoreResolutionByCategory(this.category)]} (${resolution})`;
   }
 
+  public displayResolutionOnly(resolution: Resolution): string {
+    return `${resolution.toLowerCase()}`;
+  }
+
   public getName(): string {
     return this.release_name;
   }

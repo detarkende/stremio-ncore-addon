@@ -40,6 +40,14 @@ export abstract class TorrentDetails implements ParsedTorrentDetails {
    * ```
    */
   abstract displayResolution(resolution: Resolution): string;
+  /**
+   * Produces a string with only the resolution, without additional labels.
+   * ```ts
+   * // Example:
+   * torrent.displayResolutionOnly(Resolution.R720P); // "720P"
+   * ```
+   */
+  abstract displayResolutionOnly(resolution: Resolution): string;
   abstract getLanguage(): Language;
   abstract getSeeders(): number;
   /**
