@@ -184,7 +184,7 @@ declare module 'webtorrent' {
     public destroy(callBack?: (err: Error | undefined) => void): void;
   }
 
-  interface TorrentOptions {
+  export interface TorrentOptions {
     /**
      * Torrent trackers to use (added to list in .torrent or magnet uri)
      */

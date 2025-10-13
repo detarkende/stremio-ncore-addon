@@ -1,30 +1,39 @@
 import { resolve } from 'path';
-import { existsSync, mkdirSync } from 'fs';
-import type Database from 'better-sqlite3';
+import SQLite, { type Database as SQLiteDatabase } from 'better-sqlite3';
+import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import type { SQLiteTransaction } from 'drizzle-orm/sqlite-core';
-import type { ExtractTablesWithRelations } from 'drizzle-orm';
+import { type ExtractTablesWithRelations } from 'drizzle-orm';
 import { env } from 'src/env';
+import { ensureDirExists } from 'src/utils/files';
+import { logger } from 'src/logger';
 
-const configDir = resolve(env.ADDON_DIR, 'config');
+let db: BetterSQLite3Database<Record<string, never>> & { $client: SQLiteDatabase };
 
-if (!existsSync(configDir)) {
-  mkdirSync(configDir);
+export function createDbInstance({ isTestDb = false } = {}) {
+  let sqlite: SQLiteDatabase;
+
+  if (isTestDb) {
+    logger.warn('Using in-memory SQLite database for testing.');
+    sqlite = new SQLite(':memory:');
+  } else {
+    const configDir = resolve(env.ADDON_DIR, 'config');
+    ensureDirExists(configDir);
+    sqlite = new SQLite(resolve(configDir, 'sna.db'));
+  }
+
+  db = drizzle({ client: sqlite, casing: 'snake_case' });
+
+  const migrationsFolder = resolve(import.meta.dirname, './migrations');
+  migrate(db, { migrationsFolder });
 }
 
-const db = drizzle(resolve(env.ADDON_DIR, 'config/sna.db'), { casing: 'snake_case' });
-
-const migrationsFolder = resolve(import.meta.dirname, './migrations');
-
-migrate(db, { migrationsFolder });
-
 export { db };
-export type Database = typeof db;
 
 export type Transaction = SQLiteTransaction<
   'sync',
-  Database.RunResult,
+  SQLite.RunResult,
   Record<string, never>,
   ExtractTablesWithRelations<Record<string, never>>
 >;

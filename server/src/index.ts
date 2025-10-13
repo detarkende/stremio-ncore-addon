@@ -1,3 +1,4 @@
+import './init';
 import { createServer } from 'node:https';
 import { Hono } from 'hono';
 import { contextStorage } from 'hono/context-storage';

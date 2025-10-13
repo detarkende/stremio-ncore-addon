@@ -29,6 +29,13 @@
       "when": 1757860150482,
       "tag": "0003_remove-device-tokens",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1760376491548,
+      "tag": "0004_update-session-user-cascade-rules",
+      "breakpoints": true
     }
   ]
 }

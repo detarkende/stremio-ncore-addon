@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { eq } from 'drizzle-orm';
 import { db } from 'src/db';
-import { usersTable } from 'src/db/schema/users';
+import { UserRole, usersTable } from 'src/db/schema/users';
 import { User } from 'src/types/user';
 import {
   createUserSchema,
@@ -54,7 +54,7 @@ export const userRoutes = new Hono()
             await createUserRequestToInsertStatement({ user: userData, isAdmin: false }),
           )
           .returning();
-        return c.json(new User(createdUser));
+        return c.json(new User(createdUser), HttpStatusCode.CREATED);
       } catch (error) {
         logger.error(error, 'Error creating user');
         return c.json(
@@ -141,6 +141,14 @@ export const userRoutes = new Hono()
   .delete('/:userId', useCookieAuth('adminOnly'), userFromUrlExists(), async (c) => {
     const { userFromUrl } = c.var;
     try {
+      if (userFromUrl.role === UserRole.ADMIN) {
+        return c.json(
+          {
+            message: 'Cannot delete an admin user.',
+          },
+          { status: HttpStatusCode.BAD_REQUEST },
+        );
+      }
       await db.delete(usersTable).where(eq(usersTable.id, userFromUrl.id));
       return c.json({ message: 'User deleted successfully' });
     } catch (error) {

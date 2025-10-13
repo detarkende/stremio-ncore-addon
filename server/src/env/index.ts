@@ -1,5 +1,1 @@
-export { env } from './env';
-
-import { logger } from 'src/logger';
-
-logger.info('Environment variables parsed and loaded successfully.');
+export { env, type Env, loadEnv } from './env';

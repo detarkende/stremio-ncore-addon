@@ -11,3 +11,9 @@ export const writeFileWithCreateDir: typeof writeFileSync = (filePath, ...restAr
   }
   writeFileSync(filePath, ...restArgs);
 };
+
+export function ensureDirExists(dirPath: string) {
+  if (!existsSync(dirPath)) {
+    mkdirSync(dirPath, { recursive: true });
+  }
+}

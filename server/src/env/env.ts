@@ -1,3 +1,4 @@
+import { logger } from 'src/logger';
 import { z } from 'zod/v4';
 
 export const envSchema = z
@@ -25,7 +26,7 @@ export const envSchema = z
         description:
           'Threshold for downloading the whole file. If more than this percentage of the file is downloaded, it will be downloaded fully instead of on demand.',
       }),
-    ADDON_DIR: z.string().meta({
+    ADDON_DIR: z.string().default('/addon').meta({
       description: `The directory where the addon's files (torrents, downloads, and logs) will be placed.`,
     }),
     NCORE_USERNAME: z.string(),
@@ -83,16 +84,20 @@ export const envSchema = z
     };
   });
 
-type Env = z.infer<typeof envSchema>;
+export type Env = z.infer<typeof envSchema>;
+export let env: Env;
 
-const envParseResult = envSchema.safeParse(process.env);
-if (!envParseResult.success) {
-  // eslint-disable-next-line no-console
-  console.error(
-    `\nEnvironment variables validation failed:\n\n` +
-      z.prettifyError(envParseResult.error) +
-      '\n\n',
-  );
-  process.exit(1);
+export function loadEnv(processEnv: NodeJS.ProcessEnv) {
+  const envParseResult = envSchema.safeParse(processEnv);
+  if (!envParseResult.success) {
+    // eslint-disable-next-line no-console
+    console.error(
+      `\nEnvironment variables validation failed:\n\n` +
+        z.prettifyError(envParseResult.error) +
+        '\n\n',
+    );
+    process.exit(1);
+  }
+  env = envParseResult.data;
+  logger.info('Environment variables parsed and loaded successfully.');
 }
-export const env: Env = envParseResult.data;

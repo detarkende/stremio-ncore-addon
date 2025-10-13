@@ -14,5 +14,5 @@
     "lib": ["ES2022"]
   },
   "include": ["src"],
-  "exclude": ["node_modules", "dist", "test", "**/*.test.*"]
+  "exclude": ["node_modules", "dist"]
 }

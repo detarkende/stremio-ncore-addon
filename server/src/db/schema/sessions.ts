@@ -4,7 +4,7 @@ import { usersTable } from './users';
 export const sessionsTable = sqliteTable('sessions', {
   id: text().primaryKey(),
   userId: integer()
-    .references(() => usersTable.id)
+    .references(() => usersTable.id, { onDelete: 'cascade', onUpdate: 'cascade' })
     .notNull(),
   expiresAt: integer({ mode: 'timestamp_ms' }).notNull(),
 });

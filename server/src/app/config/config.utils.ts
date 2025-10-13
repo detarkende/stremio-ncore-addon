@@ -1,5 +1,4 @@
 import nodeCron, { type ScheduledTask } from 'node-cron';
-import type { InferSelectModel } from 'drizzle-orm';
 import { db } from 'src/db';
 import {
   configurationTable,
@@ -40,7 +39,7 @@ export function configRequestToInsertStatement(
 
 export let _deleteAfterHitnrunCronTask: ScheduledTask | null = null;
 
-export function scheduleHitnRunCron() {
+export function scheduleHitnRunCron(task: () => void) {
   const config = getConfig();
   if (!config) {
     return null;
@@ -50,22 +49,8 @@ export function scheduleHitnRunCron() {
   }
   const cronExpression = config.deleteAfterHitnrunCron;
   if (config.deleteAfterHitnrun && cronExpression && nodeCron.validate(cronExpression)) {
-    _deleteAfterHitnrunCronTask = nodeCron.schedule(cronExpression, () => {
-      // TODO: Implement the task to be executed
-    });
+    _deleteAfterHitnrunCronTask = nodeCron.schedule(cronExpression, task);
     _deleteAfterHitnrunCronTask.start();
   }
   return null;
-}
-
-export function getConfigResponse(
-  config: InferSelectModel<typeof configurationTable>,
-): ConfigurationResponse {
-  return {
-    localOnly: config.localOnly,
-    addonLocation: config.addonLocation,
-    deleteAfterHitnrun: config.deleteAfterHitnrun,
-    deleteAfterHitnrunCron: config.deleteAfterHitnrunCron,
-    addonUrl: getAddonUrl(config.addonLocation, config.localOnly),
-  };
 }

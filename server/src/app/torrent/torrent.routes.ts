@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { HttpStatusCode } from 'src/types/http';
 import { deleteTorrent, getStoreStats } from './torrent.utils';
 
 export const torrentRoutes = new Hono()
@@ -9,6 +10,15 @@ export const torrentRoutes = new Hono()
   })
   .delete('/torrents/:infoHash', async (c) => {
     const { infoHash } = c.req.param();
-    await deleteTorrent(infoHash);
-    return c.status(204);
+    const deleteError = await deleteTorrent(infoHash);
+    if (deleteError) {
+      return c.json(
+        { message: deleteError.message },
+        { status: HttpStatusCode.INTERNAL_SERVER_ERROR },
+      );
+    }
+    return c.json(
+      { message: 'Successfully deleted torrent.' },
+      { status: HttpStatusCode.OK },
+    );
   });

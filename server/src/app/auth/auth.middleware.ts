@@ -21,19 +21,23 @@ export function useCookieAuth(
   allow: 'anyUser' | 'adminOnly' | 'adminOrSelfOnly' = 'anyUser',
 ): MiddlewareHandler<CookieAuthEnv, '/:userId'> {
   return createMiddleware<CookieAuthEnv, '/:userId'>(async (c, next) => {
-    const cookie = getCookie(c, SESSION_COOKIE_NAME) ?? '';
+    const cookie = getCookie(c, SESSION_COOKIE_NAME);
+    if (!cookie) {
+      throw new HTTPException(HttpStatusCode.UNAUTHORIZED);
+    }
     const { session, user } = await validateSessionToken(cookie);
 
+    if (!session || !user) {
+      throw new HTTPException(HttpStatusCode.UNAUTHORIZED);
+    }
     const isAllowed =
-      user &&
-      session &&
-      (allow === 'anyUser' ||
-        (allow === 'adminOnly' && user?.role === UserRole.ADMIN) ||
-        (allow === 'adminOrSelfOnly' &&
-          (user.role === UserRole.ADMIN || user.id === Number(c.req.param('userId')))));
+      allow === 'anyUser' ||
+      (allow === 'adminOnly' && user?.role === UserRole.ADMIN) ||
+      (allow === 'adminOrSelfOnly' &&
+        (user.role === UserRole.ADMIN || user.id === Number(c.req.param('userId'))));
 
     if (!isAllowed) {
-      throw new HTTPException(HttpStatusCode.UNAUTHORIZED);
+      throw new HTTPException(HttpStatusCode.FORBIDDEN);
     }
 
     c.set('user', user);
@@ -52,8 +56,11 @@ export const useUrlTokenAuth = ({ adminOnly } = { adminOnly: false }) =>
   createMiddleware<UrlTokenAuthEnv, '/:token'>(async (c, next) => {
     const { token } = c.req.param();
     const user = await getUserByToken(token);
-    if (!user || (adminOnly && user.role !== UserRole.ADMIN)) {
+    if (!user) {
       throw new HTTPException(HttpStatusCode.UNAUTHORIZED);
+    }
+    if (adminOnly && user.role !== UserRole.ADMIN) {
+      throw new HTTPException(HttpStatusCode.FORBIDDEN);
     }
     c.set('user', user);
     return next();

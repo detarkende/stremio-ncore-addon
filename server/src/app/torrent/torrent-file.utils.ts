@@ -1,3 +1,4 @@
+import { globSync } from 'node:fs';
 import parseTorrent from 'parse-torrent';
 import contentDisposition from 'content-disposition';
 import { writeFileWithCreateDir } from 'src/utils/files';
@@ -77,4 +78,8 @@ export async function downloadTorrentFile(torrentUrl: string): Promise<string> {
     logger.error({ error: e }, 'Failed to download torrent file');
     throw new Error('Failed to download torrent file', { cause: e });
   }
+}
+
+export function getExistingTorrentFilePaths(): string[] {
+  return globSync(`${env.TORRENTS_DIR}/*.torrent`);
 }

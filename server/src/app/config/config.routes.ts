@@ -11,11 +11,11 @@ import { logger } from 'src/logger';
 import { isNcoreAccessible } from '../ncore';
 import { createUserRequestToInsertStatement } from '../user/user.utils';
 import { useCookieAuth } from '../auth/auth.middleware';
+import { deleteUnnecessaryTorrents } from '../torrent/torrent.utils';
 import { useIsConfigured } from './config.middleware';
 import {
   configRequestToInsertStatement,
   getConfig,
-  getConfigResponse,
   scheduleHitnRunCron,
 } from './config.utils';
 
@@ -60,7 +60,7 @@ export const configRoutes = new Hono()
             await createUserRequestToInsertStatement({ user: admin, isAdmin: true }),
           ]);
       });
-      scheduleHitnRunCron();
+      scheduleHitnRunCron(deleteUnnecessaryTorrents);
     } catch (error) {
       logger.error(error, 'Failed to save configuration or create admin user');
       throw new HTTPException(HttpStatusCode.INTERNAL_SERVER_ERROR, {
@@ -77,12 +77,13 @@ export const configRoutes = new Hono()
     async (c) => {
       const data = c.req.valid('json');
       try {
-        const [updatedConfig] = await db
+        await db
           .update(configurationTable)
           .set(configRequestToInsertStatement(data))
           .where(eq(configurationTable.id, 1))
           .returning();
-        return c.json(getConfigResponse(updatedConfig));
+        const updatedConfig = getConfig();
+        return c.json(updatedConfig);
       } catch (error) {
         logger.error(error, 'Failed to update configuration');
         throw new HTTPException(HttpStatusCode.INTERNAL_SERVER_ERROR, {

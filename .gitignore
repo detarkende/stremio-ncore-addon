@@ -6,6 +6,8 @@ config.json
 .vscode/schemas/config.schema.json
 .eslintcache
 
+.turbo
+coverage
 dist
 .env
 .env.*
