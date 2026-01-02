@@ -24,7 +24,7 @@ jobs:
         run: pnpm run check-formatting
       - name: Lint with ESLint
         run: pnpm run lint
-      - name: Run unit tests
-        run: pnpm run test
       - name: Run build
         run: pnpm run build
+      - name: Run unit tests
+        run: pnpm run test

@@ -1,4 +1,3 @@
-import nodeCron, { type ScheduledTask } from 'node-cron';
 import { db } from 'src/db';
 import {
   configurationTable,
@@ -35,22 +34,4 @@ export function configRequestToInsertStatement(
     deleteAfterHitnrunCron: data.deleteAfterHitnrun.cron,
     localOnly: data.addonLocation.local,
   };
-}
-
-export let _deleteAfterHitnrunCronTask: ScheduledTask | null = null;
-
-export function scheduleHitnRunCron(task: () => void) {
-  const config = getConfig();
-  if (!config) {
-    return null;
-  }
-  if (_deleteAfterHitnrunCronTask) {
-    _deleteAfterHitnrunCronTask.destroy();
-  }
-  const cronExpression = config.deleteAfterHitnrunCron;
-  if (config.deleteAfterHitnrun && cronExpression && nodeCron.validate(cronExpression)) {
-    _deleteAfterHitnrunCronTask = nodeCron.schedule(cronExpression, task);
-    _deleteAfterHitnrunCronTask.start();
-  }
-  return null;
 }

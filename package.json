@@ -16,7 +16,10 @@
     "test:watch": "vitest",
     "test:watch-ui": "vitest --ui",
     "release": "docker buildx build --platform linux/amd64,linux/arm64 -t detarkende/stremio-ncore-addon:$npm_config_name . --push",
-    "clean:deps": "find . -name node_modules -type d -prune -exec rm -rf '{}' +"
+    "clean:deps": "find . -name node_modules -type d -prune -exec rm -rf '{}' +",
+    "clean:cache": "find . -name .turbo -type d -prune -exec rm -rf '{}' +",
+    "clean:dist": "find . -name dist -type d -prune -exec rm -rf '{}' +",
+    "clean:all": "pnpm clean:deps & pnpm clean:cache & pnpm clean:dist"
   },
   "dependencies": {
     "cron-validator": "^1.4.0",
@@ -41,7 +44,15 @@
       "@types/parse-torrent": "patches/@types__parse-torrent.patch",
       "@types/stremio-addon-sdk": "patches/@types__stremio-addon-sdk.patch",
       "webtorrent": "patches/webtorrent.patch"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "better-sqlite3",
+      "bufferutil",
+      "esbuild",
+      "node-datachannel",
+      "utf-8-validate",
+      "utp-native"
+    ]
   },
-  "packageManager": "pnpm@10.26.2"
+  "packageManager": "pnpm@10.27.0"
 }

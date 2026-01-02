@@ -1,4 +1,5 @@
+$schema: https://raw.githubusercontent.com/SchemaStore/schemastore/refs/heads/master/src/schemas/json/pnpm-workspace.json
 packages:
   - 'client'
   - 'server'
-  - 'packages/*'
+allowBuilds: true
