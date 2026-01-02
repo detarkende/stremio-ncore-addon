@@ -1,6 +1,19 @@
 import type { MiddlewareHandler } from 'hono';
-import type { HonoEnv } from 'src/types/hono-env';
+import type { Session } from 'src/db/schema/sessions';
+import type { User } from 'src/types/user';
 import { logger } from './logger';
+
+type HonoEnv = {
+  Variables:
+    | {
+        user: User;
+        session: Session;
+      }
+    | {
+        user: null;
+        session: null;
+      };
+};
 
 export const requestLogger: MiddlewareHandler<HonoEnv> = async (c, next) => {
   const start = Date.now();

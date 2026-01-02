@@ -4,13 +4,7 @@ export {
   NcoreOrderDirection,
   NcoreSearchBy,
 } from './ncore.types';
-export {
-  getRemovableInfoHashes,
-  getTorrentUrlByNcoreId,
-  getTorrentsByImdbId,
-  getTorrentsByTitle,
-  isNcoreAccessible,
-} from './ncore.service';
+import { NcoreService } from './ncore.service';
 export {
   MovieCategory,
   SeriesCategory,
@@ -19,3 +13,5 @@ export {
   MOVIE_CATEGORY_FILTERS,
   SERIES_CATEGORY_FILTERS,
 } from './ncore.constants';
+
+export const ncoreService = new NcoreService();

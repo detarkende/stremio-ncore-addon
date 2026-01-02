@@ -25,7 +25,8 @@ export const app = new Hono()
   .route('/', torrentRoutes)
   .route('/', streamRoutes)
   .route('/', configRoutes)
-  .use(serveStatic({ root: './client/dist' }));
+  .use('*', serveStatic({ root: './client/dist' }))
+  .use('*', serveStatic({ root: './client/dist', path: 'index.html' }));
 
 // HTTP server
 serve({

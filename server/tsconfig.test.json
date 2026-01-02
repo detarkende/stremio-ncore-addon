@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "types": ["vitest/globals", "vite/client"]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.test.ts",
+    "src/**/tests/**/*.ts",
+    "src/test-utils/**/*.ts",
+    "src/test-utils/setup.ts"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

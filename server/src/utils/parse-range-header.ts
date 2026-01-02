@@ -15,10 +15,10 @@ export const parseRangeHeader = (
   }
   const ranges = parseRange(fileSize, rangeHeader);
   if (ranges === -1) {
-    throwRangeError('Malformed range header', fileSize);
+    throwRangeError('Unsatisfiable range header', fileSize);
   }
   if (ranges === -2) {
-    throwRangeError('Unsatisfiable range header', fileSize);
+    throwRangeError('Malformed range header', fileSize);
   }
   if (ranges.length === 0) {
     throwRangeError('No valid ranges found in range header', fileSize);

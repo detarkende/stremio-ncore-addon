@@ -22,4 +22,5 @@ export {
   type UpdateUserRequest,
   type UpdatePasswordRequest,
 } from './schemas/user.schema';
+export { formatBytes } from './utils/bytes';
 export type ApiRoutes = typeof app;

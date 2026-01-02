@@ -1,7 +1,15 @@
 import type { ParsedShow } from '@ctrl/video-filename-parser';
 import { filenameParse, parseResolution } from '@ctrl/video-filename-parser';
 import type { Resolution, Language } from 'src/db/schema/users';
-import { StreamType } from 'src/schemas/stream.schema';
+import { StreamType } from 'src/app/stream/stream.constants';
+import { isSupportedMedia } from 'src/utils/media-file-extensions';
+
+export interface TorrentFileDetails {
+  name: string;
+  path: string;
+  length: number;
+  offset: number;
+}
 
 export interface TorrentFileDetails {
   name: string;
@@ -12,22 +20,12 @@ export interface TorrentFileDetails {
 
 export interface ParsedTorrentDetails {
   infoHash: string;
-  files: TorrentFileDetails[];
-}
-
-export interface TorrentFileDetails {
   name: string;
-  path: string;
-  length: number;
-  offset: number;
-}
-
-export interface ParsedTorrentDetails {
-  infoHash: string;
   files: TorrentFileDetails[];
 }
 
 export abstract class TorrentDetails implements ParsedTorrentDetails {
+  abstract name: string;
   abstract infoHash: string;
   abstract files: TorrentFileDetails[];
   abstract sourceName: string;
@@ -79,6 +77,7 @@ export abstract class TorrentDetails implements ParsedTorrentDetails {
     }));
     const searchedEpisodeIndex = parsedFileNames.findIndex(({ file, parsed }) => {
       return (
+        isSupportedMedia(file.path) &&
         !file.path.toLocaleLowerCase().includes('sample') &&
         parsed.seasons?.includes(parseInt(season)) &&
         (parsed.episodeNumbers?.includes(parseInt(episode)) || parsed.fullSeason)
@@ -107,5 +106,6 @@ export interface Torrent {
   progress: number;
   size: number;
   downloaded: number;
+  path: string;
   files: TorrentFile[];
 }

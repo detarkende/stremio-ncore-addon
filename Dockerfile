@@ -1,4 +1,4 @@
-FROM node:22-alpine AS node-base
+FROM node:22-alpine3.23 AS node-base
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml .npmrc pnpm-workspace.yaml ./
@@ -18,8 +18,7 @@ RUN pnpm install
 
 FROM build-deps AS build
 COPY . .
-RUN pnpm run build:server
-RUN pnpm run build:client
+RUN pnpm run build
 
 FROM node-base AS runtime
 COPY --from=prod-deps /app/server/deps/node_modules ./node_modules

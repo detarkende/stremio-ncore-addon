@@ -1,6 +1,5 @@
 import { Hono } from 'hono';
 import type { MockInstance } from 'vitest';
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { HttpStatusCode } from 'src/types/http';
 import { UserRole, Language, Resolution } from 'src/db/schema/users';
 import mockFs from 'mock-fs';

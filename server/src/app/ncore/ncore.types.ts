@@ -8,11 +8,11 @@ export type NcoreTorrent = {
   download_url: string;
   freeleech: boolean;
   imdb_id: string;
-  imdb_rating: number;
+  imdb_rating: string;
   size: `${number}`;
   type: 'movie' | 'show';
   leechers: `${number}`;
-  seeders: number;
+  seeders: `${number}`;
 };
 
 export type NcorePageResponseJson = {

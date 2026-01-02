@@ -7,14 +7,16 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "start": "NODE_ENV=production node server/dist/index.js",
-    "preview": "NODE_ENV=production node --env-file .env server/dist/index.js",
+    "preview": "NODE_ENV=production node --env-file .env server/dist/index.js | pino-pretty",
     "ci": "pnpm check-formatting && pnpm lint && pnpm test",
     "check-formatting": "prettier --check .",
     "format": "prettier --write .",
     "lint": "turbo lint",
-    "test": "turbo test",
-    "test:watch": "turbo test:watch",
-    "release": "docker buildx build --platform linux/amd64,linux/arm64 -t detarkende/stremio-ncore-addon:$npm_config_name . --push"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:watch-ui": "vitest --ui",
+    "release": "docker buildx build --platform linux/amd64,linux/arm64 -t detarkende/stremio-ncore-addon:$npm_config_name . --push",
+    "clean:deps": "find . -name node_modules -type d -prune -exec rm -rf '{}' +"
   },
   "dependencies": {
     "cron-validator": "^1.4.0",
@@ -22,21 +24,24 @@
     "zod": "3.25.67"
   },
   "devDependencies": {
+    "@vitest/coverage-istanbul": "^4.0.10",
+    "@vitest/ui": "^4.0.10",
     "eslint": "^9.36.0",
     "prettier": "^3.5.3",
     "tsc-alias": "^1.8.16",
     "turbo": "^2.5.8",
     "typescript": "^5.8.3",
     "vite": "^7.1.6",
-    "vitest": "^3.2.4"
+    "vite-tsconfig-paths": "6.0.0-beta.4",
+    "vitest": "^4.0.10"
   },
   "pnpm": {
-    "allowNonAppliedPatches": true,
+    "allowUnusedPatches": true,
     "patchedDependencies": {
       "@types/parse-torrent": "patches/@types__parse-torrent.patch",
       "@types/stremio-addon-sdk": "patches/@types__stremio-addon-sdk.patch",
       "webtorrent": "patches/webtorrent.patch"
     }
   },
-  "packageManager": "pnpm@9.12.2"
+  "packageManager": "pnpm@10.26.2"
 }

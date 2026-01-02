@@ -100,7 +100,7 @@ export const userRoutes = new Hono()
         await db
           .update(usersTable)
           .set({
-            passwordHash: await hashPassword(password),
+            passwordHash: hashPassword(password),
           })
           .where(eq(usersTable.id, userFromUrl.id));
         return c.json({ message: 'Password updated successfully' });

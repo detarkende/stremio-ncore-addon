@@ -1,7 +1,8 @@
-import { afterEach, beforeEach } from 'vitest';
 import { loadEnv } from 'src/env';
 import { createDbInstance } from 'src/db/client';
 import mockFs from 'mock-fs';
+
+vi.mock('src/logger');
 
 function setupTestEnv() {
   loadEnv({
@@ -9,6 +10,7 @@ function setupTestEnv() {
     ADDON_DIR: '/addon_dir',
     NCORE_USERNAME: 'username',
     NCORE_PASSWORD: 'password',
+    TORRENT_PORT: '0',
   });
   createDbInstance({ isTestDb: true });
 }
@@ -20,4 +22,5 @@ beforeEach(() => {
 
 afterEach(() => {
   mockFs.restore();
+  vi.resetAllMocks();
 });

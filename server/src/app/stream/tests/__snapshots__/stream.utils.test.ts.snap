@@ -1,0 +1,117 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Stream utils > getStreamDescription > displayLanguage is 'en' > torrentLanguage is 'en' > isRecommended is false > isSpeculated is false > should return correct description 1`] = `
+"🇬🇧 | HD (720p) | 1.15 GiB
+Example.Movie.mkv
+⬆️ 150"
+`;
+
+exports[`Stream utils > getStreamDescription > displayLanguage is 'en' > torrentLanguage is 'en' > isRecommended is false > isSpeculated is true > should return correct description 1`] = `
+"⚠️ Speculated source ⚠️
+This might be a different torrent!
+🇬🇧 | HD (720p) | 1.15 GiB
+Example.Movie.mkv
+⬆️ 150"
+`;
+
+exports[`Stream utils > getStreamDescription > displayLanguage is 'en' > torrentLanguage is 'en' > isRecommended is true > isSpeculated is false > should return correct description 1`] = `
+"⭐️ Recommended
+🇬🇧 | HD (720p) | 1.15 GiB
+Example.Movie.mkv
+⬆️ 150"
+`;
+
+exports[`Stream utils > getStreamDescription > displayLanguage is 'en' > torrentLanguage is 'en' > isRecommended is true > isSpeculated is true > should return correct description 1`] = `
+"⚠️ Speculated source ⚠️
+This might be a different torrent!
+🇬🇧 | HD (720p) | 1.15 GiB
+Example.Movie.mkv
+⬆️ 150"
+`;
+
+exports[`Stream utils > getStreamDescription > displayLanguage is 'en' > torrentLanguage is 'hu' > isRecommended is false > isSpeculated is false > should return correct description 1`] = `
+"🇭🇺 | HD (720p) | 1.15 GiB
+Example.Movie.mkv
+⬆️ 150"
+`;
+
+exports[`Stream utils > getStreamDescription > displayLanguage is 'en' > torrentLanguage is 'hu' > isRecommended is false > isSpeculated is true > should return correct description 1`] = `
+"⚠️ Speculated source ⚠️
+This might be a different torrent!
+🇭🇺 | HD (720p) | 1.15 GiB
+Example.Movie.mkv
+⬆️ 150"
+`;
+
+exports[`Stream utils > getStreamDescription > displayLanguage is 'en' > torrentLanguage is 'hu' > isRecommended is true > isSpeculated is false > should return correct description 1`] = `
+"⭐️ Recommended
+🇭🇺 | HD (720p) | 1.15 GiB
+Example.Movie.mkv
+⬆️ 150"
+`;
+
+exports[`Stream utils > getStreamDescription > displayLanguage is 'en' > torrentLanguage is 'hu' > isRecommended is true > isSpeculated is true > should return correct description 1`] = `
+"⚠️ Speculated source ⚠️
+This might be a different torrent!
+🇭🇺 | HD (720p) | 1.15 GiB
+Example.Movie.mkv
+⬆️ 150"
+`;
+
+exports[`Stream utils > getStreamDescription > displayLanguage is 'hu' > torrentLanguage is 'en' > isRecommended is false > isSpeculated is false > should return correct description 1`] = `
+"🇬🇧 | HD (720p) | 1.15 GiB
+Example.Movie.mkv
+⬆️ 150"
+`;
+
+exports[`Stream utils > getStreamDescription > displayLanguage is 'hu' > torrentLanguage is 'en' > isRecommended is false > isSpeculated is true > should return correct description 1`] = `
+"⚠️ Bizonytalan forrás ⚠️
+Ez lehet egy másik torrent!
+🇬🇧 | HD (720p) | 1.15 GiB
+Example.Movie.mkv
+⬆️ 150"
+`;
+
+exports[`Stream utils > getStreamDescription > displayLanguage is 'hu' > torrentLanguage is 'en' > isRecommended is true > isSpeculated is false > should return correct description 1`] = `
+"⭐️ Ajánlott
+🇬🇧 | HD (720p) | 1.15 GiB
+Example.Movie.mkv
+⬆️ 150"
+`;
+
+exports[`Stream utils > getStreamDescription > displayLanguage is 'hu' > torrentLanguage is 'en' > isRecommended is true > isSpeculated is true > should return correct description 1`] = `
+"⚠️ Bizonytalan forrás ⚠️
+Ez lehet egy másik torrent!
+🇬🇧 | HD (720p) | 1.15 GiB
+Example.Movie.mkv
+⬆️ 150"
+`;
+
+exports[`Stream utils > getStreamDescription > displayLanguage is 'hu' > torrentLanguage is 'hu' > isRecommended is false > isSpeculated is false > should return correct description 1`] = `
+"🇭🇺 | HD (720p) | 1.15 GiB
+Example.Movie.mkv
+⬆️ 150"
+`;
+
+exports[`Stream utils > getStreamDescription > displayLanguage is 'hu' > torrentLanguage is 'hu' > isRecommended is false > isSpeculated is true > should return correct description 1`] = `
+"⚠️ Bizonytalan forrás ⚠️
+Ez lehet egy másik torrent!
+🇭🇺 | HD (720p) | 1.15 GiB
+Example.Movie.mkv
+⬆️ 150"
+`;
+
+exports[`Stream utils > getStreamDescription > displayLanguage is 'hu' > torrentLanguage is 'hu' > isRecommended is true > isSpeculated is false > should return correct description 1`] = `
+"⭐️ Ajánlott
+🇭🇺 | HD (720p) | 1.15 GiB
+Example.Movie.mkv
+⬆️ 150"
+`;
+
+exports[`Stream utils > getStreamDescription > displayLanguage is 'hu' > torrentLanguage is 'hu' > isRecommended is true > isSpeculated is true > should return correct description 1`] = `
+"⚠️ Bizonytalan forrás ⚠️
+Ez lehet egy másik torrent!
+🇭🇺 | HD (720p) | 1.15 GiB
+Example.Movie.mkv
+⬆️ 150"
+`;

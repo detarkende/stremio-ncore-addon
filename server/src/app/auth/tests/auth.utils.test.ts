@@ -1,4 +1,3 @@
-import { describe, expect, it, vi } from 'vitest';
 import { createTestUser } from 'src/test-utils/users';
 import { db } from 'src/db';
 import { sessionsTable } from 'src/db/schema/sessions';

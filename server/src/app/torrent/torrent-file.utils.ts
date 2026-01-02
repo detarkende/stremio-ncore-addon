@@ -1,61 +1,67 @@
-import { globSync } from 'node:fs';
 import parseTorrent from 'parse-torrent';
-import contentDisposition from 'content-disposition';
-import { writeFileWithCreateDir } from 'src/utils/files';
-import { env } from 'src/env';
 import { cacheFunction, DEFAULT_TTL } from 'src/utils/cache';
 import { logger } from 'src/logger';
+import { db } from 'src/db';
+import type { DbTorrent } from 'src/db/schema/torrents';
+import { torrentsTable } from 'src/db/schema/torrents';
 import type { ParsedTorrentDetails } from './torrent.types';
 
-export const _fetchTorrent = cacheFunction(
+export async function _fetchTorrent(
+  torrentUrl: string,
+): Promise<{ torrentBuffer: Buffer }> {
+  try {
+    const response = await fetch(torrentUrl, { signal: AbortSignal.timeout(5_000) });
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch torrent from URL ${torrentUrl}. Status: ${response.status}`,
+      );
+    }
+    return { torrentBuffer: Buffer.from(await response.arrayBuffer()) };
+  } catch (e) {
+    logger.error({ error: e }, `Failed to fetch torrent from URL ${torrentUrl}`);
+    throw new Error(`Failed to fetch torrent from URL ${torrentUrl}`, { cause: e });
+  }
+}
+
+export const _cachedFetchTorrent = cacheFunction(
   {
     max: 1_000,
     ttl: DEFAULT_TTL,
     ttlAutopurge: true,
     generateKey: (torrentUrl) => torrentUrl,
   },
-  async (
-    torrentUrl: string,
-  ): Promise<{ torrentBuffer: ArrayBuffer; fileName: string }> => {
-    try {
-      const response = await fetch(torrentUrl, { signal: AbortSignal.timeout(5_000) });
-      if (!response.ok) {
-        logger.error(
-          { status: response.status },
-          `Failed to fetch torrent from URL ${torrentUrl}`,
-        );
-        throw new Error(
-          `Failed to fetch torrent from URL ${torrentUrl}. Status: ${response.status}`,
-        );
-      }
-      const fileName = contentDisposition
-        .parse(response.headers.get('content-disposition') ?? '')
-        .parameters.filename?.replace(/\.torrent$/i, '');
-
-      return { torrentBuffer: await response.arrayBuffer(), fileName };
-    } catch (e) {
-      logger.error({ error: e }, `Failed to fetch torrent from URL ${torrentUrl}`);
-      throw new Error(`Failed to fetch torrent from URL ${torrentUrl}`, { cause: e });
-    }
-  },
+  _fetchTorrent,
 );
 
-export async function downloadAndParseTorrent(
-  torrentUrl: string,
+export async function parseTorrentBuffer(
+  torrentBuffer: Buffer,
 ): Promise<ParsedTorrentDetails> {
+  const uint8Array = new Uint8Array(torrentBuffer);
+  const torrentData = await parseTorrent(uint8Array);
+  return {
+    infoHash: torrentData.infoHash,
+    name: torrentData.name || 'unknown',
+    files:
+      torrentData.files?.map((file) => ({
+        name: file.name,
+        length: file.length,
+        offset: file.offset,
+        path: file.path,
+      })) ?? [],
+  };
+}
+
+export async function downloadAndParseTorrent(torrentUrl: string): Promise<{
+  torrentBuffer: Buffer;
+  torrentFileData: ParsedTorrentDetails;
+}> {
   try {
     logger.info(`Fetching and parsing torrent from URL ${torrentUrl}`);
-    const { torrentBuffer } = await _fetchTorrent(torrentUrl);
-    const torrentData = await parseTorrent(new Uint8Array(torrentBuffer));
+    const { torrentBuffer } = await _cachedFetchTorrent(torrentUrl);
+    const torrentFileData = await parseTorrentBuffer(torrentBuffer);
     return {
-      infoHash: torrentData.infoHash,
-      files:
-        torrentData.files?.map((file) => ({
-          name: file.name,
-          length: file.length,
-          offset: file.offset,
-          path: file.path,
-        })) ?? [],
+      torrentBuffer,
+      torrentFileData,
     };
   } catch (e) {
     logger.error({ error: e }, 'Failed to fetch and parse torrent');
@@ -63,23 +69,6 @@ export async function downloadAndParseTorrent(
   }
 }
 
-export async function downloadTorrentFile(torrentUrl: string): Promise<string> {
-  logger.info(`Downloading torrent file from URL ${torrentUrl}`);
-  try {
-    const { torrentBuffer, fileName } = await _fetchTorrent(torrentUrl);
-    const parsedTorrent = await parseTorrent(new Uint8Array(torrentBuffer));
-
-    const torrentFilePath = `${env.TORRENTS_DIR}/${fileName}-${parsedTorrent.infoHash}.torrent`;
-
-    writeFileWithCreateDir(torrentFilePath, Buffer.from(torrentBuffer));
-    logger.info(`Torrent file downloaded to ${torrentFilePath}`);
-    return torrentFilePath;
-  } catch (e) {
-    logger.error({ error: e }, 'Failed to download torrent file');
-    throw new Error('Failed to download torrent file', { cause: e });
-  }
-}
-
-export function getExistingTorrentFilePaths(): string[] {
-  return globSync(`${env.TORRENTS_DIR}/*.torrent`);
+export function getExistingTorrents(): DbTorrent[] {
+  return db.select().from(torrentsTable).all();
 }

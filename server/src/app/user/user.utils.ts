@@ -41,8 +41,8 @@ export function generateRandomToken() {
   return token;
 }
 
-export function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, PASSWORD_SALT_ROUNDS);
+export function hashPassword(password: string): string {
+  return bcrypt.hashSync(password, PASSWORD_SALT_ROUNDS);
 }
 
 export function verifyPassword(password: string, hash: string): Promise<boolean> {
@@ -59,16 +59,16 @@ export function updateUserRequestToUpdateStatement(user: UpdateUserRequest) {
   return updateStatement;
 }
 
-export async function createUserRequestToInsertStatement({
+export function createUserRequestToInsertStatement({
   user,
   isAdmin,
 }: {
   user: CreateUserRequest;
   isAdmin: boolean;
-}): Promise<typeof usersTable.$inferInsert> {
+}): typeof usersTable.$inferInsert {
   return {
     ...updateUserRequestToUpdateStatement(user),
-    passwordHash: await hashPassword(user.password),
+    passwordHash: hashPassword(user.password),
     role: isAdmin ? UserRole.ADMIN : UserRole.USER,
     token: generateRandomToken(),
   };

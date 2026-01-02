@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import { db } from 'src/db';
 import { configurationTable } from 'src/db/schema/configuration';
 import type { UpdateConfigRequest } from 'src/exports';
@@ -65,6 +64,4 @@ describe('Config Utils', () => {
       });
     });
   });
-
-  describe.todo('scheduleHitnRunCron', () => {});
 });

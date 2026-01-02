@@ -7,7 +7,6 @@ import type { SQLiteTransaction } from 'drizzle-orm/sqlite-core';
 import { type ExtractTablesWithRelations } from 'drizzle-orm';
 import { env } from 'src/env';
 import { ensureDirExists } from 'src/utils/files';
-import { logger } from 'src/logger';
 
 let db: BetterSQLite3Database<Record<string, never>> & { $client: SQLiteDatabase };
 
@@ -15,7 +14,6 @@ export function createDbInstance({ isTestDb = false } = {}) {
   let sqlite: SQLiteDatabase;
 
   if (isTestDb) {
-    logger.warn('Using in-memory SQLite database for testing.');
     sqlite = new SQLite(':memory:');
   } else {
     const configDir = resolve(env.ADDON_DIR, 'config');

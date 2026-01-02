@@ -17,6 +17,10 @@ export function getRandomInt(
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+export function getRandomBoolean(): boolean {
+  return Math.random() < 0.5;
+}
+
 export function getRandomUuid(): string {
   return crypto.randomUUID();
 }

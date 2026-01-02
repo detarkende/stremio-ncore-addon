@@ -6,21 +6,21 @@ import { logger } from 'src/logger';
 import { HttpStatusCode } from 'src/types/http';
 import { parseRangeHeader } from 'src/utils/parse-range-header';
 import { useUrlTokenAuth } from '../auth/auth.middleware';
+import { ncoreService } from '../ncore';
 import {
-  getTorrentsByImdbId,
-  getTorrentsByTitle,
-  getTorrentUrlByNcoreId,
-} from '../ncore';
-import {
-  addTorrent,
-  downloadTorrentFile,
-  getTorrent,
+  downloadAndParseTorrent,
   type TorrentDetails,
   type TorrentFileDetails,
+  torrentClient,
 } from '../torrent';
 import { useIsConfigured } from '../config/config.middleware';
+import { insertNewTorrent, insertUserTorrentFileRecord } from '../torrent/torrent.utils';
 import { convertTorrentToStream, getCinemetaData, orderTorrents } from './stream.utils';
-import { streamParamsSchema, type CinemetaResponse } from './stream.constants';
+import {
+  listStreamsParamsSchema,
+  playStreamParamsSchema,
+  type CinemetaResponse,
+} from './stream.constants';
 
 export const streamRoutes = new Hono()
   .basePath('/api')
@@ -28,12 +28,13 @@ export const streamRoutes = new Hono()
     '/auth/:token/stream/:type/:imdbId',
     useUrlTokenAuth(),
     useIsConfigured(),
-    zValidator('param', streamParamsSchema),
+    zValidator('param', listStreamsParamsSchema),
     async (c) => {
-      const { type, imdbId: imdbIdWithEpisodeDetails, token } = c.req.valid('param');
+      const { token } = c.req.param();
+      const { type, imdbId: imdbIdWithEpisodeDetails } = c.req.valid('param');
       const [imdbId, season, episode] = imdbIdWithEpisodeDetails.split(':');
 
-      let torrentDetails: TorrentDetails[] = await getTorrentsByImdbId({
+      let torrentDetails: TorrentDetails[] = await ncoreService.getTorrentsByImdbId({
         type,
         imdbId,
       });
@@ -49,7 +50,7 @@ export const streamRoutes = new Hono()
         }
         if (cinemetaData) {
           try {
-            const torrentsByTitle = await getTorrentsByTitle({
+            const torrentsByTitle = await ncoreService.getTorrentsByTitle({
               type,
               title: cinemetaData.meta.name,
             });
@@ -80,6 +81,8 @@ export const streamRoutes = new Hono()
           isRecommended: i === 0,
           addonUrl,
           preferredLanguage: c.var.user.preferredLanguage,
+          imdbId,
+          type,
         }),
       );
 
@@ -87,17 +90,32 @@ export const streamRoutes = new Hono()
     },
   )
   .get(
-    '/auth/:token/stream/:torrentSourceId/:infoHash/:filePath',
+    '/auth/:token/stream',
     useIsConfigured(),
     useUrlTokenAuth(),
+    zValidator('query', playStreamParamsSchema),
     async (c) => {
-      const { torrentSourceId, infoHash, filePath } = c.req.param();
+      const { type, imdbId, torrentSourceId, infoHash, filePath } = c.req.valid('query');
 
-      let torrent = await getTorrent(infoHash);
+      let torrent = await torrentClient.getTorrent(infoHash);
       if (!torrent) {
-        const ncoreUrl = await getTorrentUrlByNcoreId(torrentSourceId);
-        const torrentFilePath = await downloadTorrentFile(ncoreUrl);
-        torrent = await addTorrent(torrentFilePath);
+        const ncoreUrl = await ncoreService.getTorrentUrlByNcoreId(torrentSourceId);
+        const { torrentFileData, torrentBuffer } =
+          await downloadAndParseTorrent(ncoreUrl);
+        const dbTorrent = insertNewTorrent({
+          userId: c.var.user.id,
+          imdbId,
+          torrentFileData,
+          torrentBuffer,
+          type,
+        });
+        torrent = await torrentClient.addTorrent(dbTorrent, true);
+      } else {
+        // Log user-torrent association if not already present
+        insertUserTorrentFileRecord({
+          userId: c.var.user.id,
+          torrentInfoHash: infoHash,
+        });
       }
 
       const file = torrent.files.find((f) => f.path === filePath);

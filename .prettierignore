@@ -1,2 +1,3 @@
 pnpm-lock.yaml
 server/src/db/migrations/meta
+**/mocks/**

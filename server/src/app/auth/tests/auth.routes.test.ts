@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import { testClient } from 'hono/testing';
 import { createTestUser, createTestUserWithSession } from 'src/test-utils/users';
 import { UserRole } from 'src/db/schema/users';
@@ -15,7 +14,7 @@ describe('Auth routes', () => {
       { role: UserRole.USER, roleName: 'non-admin' },
     ])('should login a $roleName user with correct credentials', async ({ role }) => {
       const testPassword = 'password123';
-      const passwordHash = await hashPassword(testPassword);
+      const passwordHash = hashPassword(testPassword);
       const testUser = await createTestUser({ role, passwordHash });
 
       const response = await client.api.login.$post({

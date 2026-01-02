@@ -1,4 +1,3 @@
-import { describe, expect, it, vi } from 'vitest';
 import { Language, Resolution, UserRole } from 'src/db/schema/users';
 import {
   createTestUser,
@@ -242,7 +241,7 @@ describe('User routes', () => {
 
   describe('PUT /api/users/:userId/password', async () => {
     const OLD_PASSWORD = 'old-password';
-    const oldPasswordHash = await hashPassword(OLD_PASSWORD);
+    const oldPasswordHash = hashPassword(OLD_PASSWORD);
     const NEW_PASSWORD = 'new-password';
     it.each([
       {

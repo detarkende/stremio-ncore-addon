@@ -1,22 +1,16 @@
-import { defineConfig } from 'vitest/config';
-import tsconfigPaths from 'vite-tsconfig-paths';
+import { defineConfig, mergeConfig } from 'vitest/config';
+import sharedConfig from '../vitest.shared';
 
-export default defineConfig({
-  test: {
-    globals: false,
-    environment: 'node',
-    setupFiles: ['./src/test-utils/setup.ts'],
-    sequence: {
-      shuffle: true,
+export default mergeConfig(
+  sharedConfig,
+  defineConfig({
+    test: {
+      include: ['src/**/*.test.ts'],
+      setupFiles: ['./src/test-utils/setup.ts'],
+      environment: 'node',
+      alias: {
+        'src/': new URL('./src/', import.meta.url).pathname,
+      },
     },
-    coverage: {
-      provider: 'istanbul',
-      include: ['src/**/*.ts'],
-      reportsDirectory: './coverage',
-      clean: true,
-      enabled: true,
-      exclude: ['**/*.test.ts', 'coverage/**', 'src/test-utils/**', 'src/exports.ts'],
-    },
-  },
-  plugins: [tsconfigPaths()],
-});
+  }),
+);

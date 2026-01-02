@@ -1,6 +1,7 @@
 declare module 'webtorrent' {
   import type { RequestOptions, Server } from 'http';
   import type { EventEmitter } from 'events';
+  import type { default as Bitfield } from 'bitfield';
   import type { Wire } from 'bittorrent-protocol';
   import type { Instance as ParseTorrent } from 'parse-torrent';
   import type { Instance as SimplePeer } from 'simple-peer';
@@ -222,7 +223,7 @@ declare module 'webtorrent' {
     /**
      * Preloaded numerical array/buffer to use to know what pieces are already downloaded (any type accepted by UInt8Array constructor is valid)
      */
-    bitfield?: Uint8Array | ArrayLike<number>;
+    bitfield?: Uint8Array;
     /**
      * Custom chunk store
      */
@@ -293,7 +294,7 @@ declare module 'webtorrent' {
     destroyStore?: boolean | undefined;
   }
 
-  class Instance extends EventEmitter {
+  export class Instance extends EventEmitter {
     constructor(config?: Options);
     WEBRTC_SUPPORT: boolean;
 
@@ -444,7 +445,7 @@ declare module 'webtorrent' {
 
     readonly maxWebConns: number;
 
-    bitfield: Uint8Array | ArrayLike<number>;
+    bitfield: Bitfield;
 
     destroy(opts?: TorrentDestroyOptions, cb?: (err: Error | string) => void): void;
 
@@ -473,6 +474,8 @@ declare module 'webtorrent' {
     on(event: 'wire', callback: (wire: Wire, addr?: string) => void): this;
 
     on(event: 'noPeers', callback: (announceType: 'tracker' | 'dht') => void): this;
+
+    on(event: 'verified', callback: (pieceIndex: number) => void): this;
   }
 
   interface TorrentFile extends NodeJS.EventEmitter {

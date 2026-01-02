@@ -1,11 +1,11 @@
 import type { Stream } from 'stremio-addon-sdk';
-import type { StreamType } from 'src/schemas/stream.schema';
 import { env } from 'src/env';
 import type { Resolution } from 'src/db/schema/users';
 import { Language } from 'src/db/schema/users';
 import { rateList } from 'src/utils/rate-list';
 import { formatBytes } from 'src/utils/bytes';
 import type { TorrentDetails, TorrentFileDetails } from '../torrent';
+import type { StreamType } from './stream.constants';
 import { cinemetaResponseSchema, languageEmojiMap } from './stream.constants';
 import type { CinemetaResponse } from './stream.constants';
 
@@ -68,6 +68,8 @@ export function convertTorrentToStream({
   isRecommended,
   addonUrl,
   preferredLanguage,
+  type,
+  imdbId,
 }: {
   torrent: TorrentDetails;
   token: string;
@@ -75,39 +77,30 @@ export function convertTorrentToStream({
   isRecommended: boolean;
   preferredLanguage: Language;
   addonUrl: string;
+  type: StreamType;
+  imdbId: string;
 }): Stream {
-  const languageEmoji = languageEmojiMap[torrent.getLanguage()];
-  const fileSizeString = formatBytes(file.length);
+  const description = getStreamDescription({
+    fileName: file.name,
+    fileSize: file.length,
+    isRecommended,
+    isSpeculated: Boolean(torrent.isSpeculated),
+    displayLanguage: preferredLanguage,
+    torrentLanguage: torrent.getLanguage(),
+    resolution: torrent.displayResolution(torrent.getFileResolution(file.name)),
+    seeders: torrent.getSeeders(),
+  });
 
-  let recommendedLine = '';
-  if (isRecommended && !torrent.isSpeculated) {
-    switch (preferredLanguage) {
-      case Language.HU:
-        recommendedLine = '⭐️ Ajánlott\n';
-        break;
-      default:
-        recommendedLine = '⭐️ Recommended\n';
-    }
-  }
-
-  let warningLine = '';
-  if (torrent.isSpeculated) {
-    switch (preferredLanguage) {
-      case Language.HU:
-        warningLine = `⚠️ Bizonytalan forrás ⚠️\nEz lehet egy másik torrent!\n`;
-        break;
-      default:
-        warningLine = `⚠️ Speculated source ⚠️\nThis might be a different torrent!\n`;
-    }
-  }
-  const typeLine = `${languageEmoji} | ${torrent.displayResolution(torrent.getFileResolution(file.name))} | ${fileSizeString}\n`;
-  const title = `${file.name}\n`;
-  const seeders = `⬆️ ${torrent.getSeeders()}\n`;
-  const description = warningLine + recommendedLine + typeLine + title + seeders;
+  const url = new URL(`${addonUrl}/api/auth/${token}/stream`);
+  url.searchParams.append('type', type);
+  url.searchParams.append('imdbId', imdbId);
+  url.searchParams.append('torrentSourceId', torrent.sourceId);
+  url.searchParams.append('infoHash', torrent.infoHash);
+  url.searchParams.append('filePath', file.path);
 
   return {
     infoHash: torrent.infoHash,
-    url: `${addonUrl}/api/auth/${token}/stream/${torrent.sourceName}/${torrent.sourceId}/${torrent.infoHash}/${encodeURIComponent(file.path)}`,
+    url: url.toString(),
     description,
     fileIdx: torrent.files.indexOf(file),
     name: 'stremio-ncore-addon',
@@ -118,4 +111,54 @@ export function convertTorrentToStream({
       notWebReady: true,
     },
   };
+}
+
+export function getStreamDescription({
+  displayLanguage,
+  torrentLanguage,
+  fileName,
+  fileSize,
+  isRecommended,
+  isSpeculated,
+  resolution,
+  seeders,
+}: {
+  displayLanguage: Language;
+  torrentLanguage: Language;
+  isRecommended: boolean;
+  isSpeculated: boolean;
+  fileSize: number;
+  fileName: string;
+  resolution: string;
+  seeders: number;
+}): string {
+  const languageEmoji = languageEmojiMap[torrentLanguage];
+  const fileSizeString = formatBytes(fileSize);
+
+  let recommendedLine = '';
+  if (isRecommended && !isSpeculated) {
+    switch (displayLanguage) {
+      case Language.HU:
+        recommendedLine = '⭐️ Ajánlott\n';
+        break;
+      default:
+        recommendedLine = '⭐️ Recommended\n';
+    }
+  }
+
+  let warningLine = '';
+  if (isSpeculated) {
+    switch (displayLanguage) {
+      case Language.HU:
+        warningLine = `⚠️ Bizonytalan forrás ⚠️\nEz lehet egy másik torrent!\n`;
+        break;
+      default:
+        warningLine = `⚠️ Speculated source ⚠️\nThis might be a different torrent!\n`;
+    }
+  }
+  const typeLine = `${languageEmoji} | ${resolution} | ${fileSizeString}\n`;
+  const title = `${fileName}\n`;
+  const seedersString = `⬆️ ${seeders}`;
+  const description = warningLine + recommendedLine + typeLine + title + seedersString;
+  return description;
 }

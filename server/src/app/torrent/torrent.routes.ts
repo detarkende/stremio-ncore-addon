@@ -1,16 +1,16 @@
 import { Hono } from 'hono';
 import { HttpStatusCode } from 'src/types/http';
-import { deleteTorrent, getStoreStats } from './torrent.utils';
+import { torrentClient } from './torrent.client';
 
 export const torrentRoutes = new Hono()
   .basePath('/api')
   .get('/torrents', async (c) => {
-    const torrents = await getStoreStats();
+    const torrents = await torrentClient.getStoreStats();
     return c.json(torrents);
   })
   .delete('/torrents/:infoHash', async (c) => {
     const { infoHash } = c.req.param();
-    const deleteError = await deleteTorrent(infoHash);
+    const deleteError = await torrentClient.deleteTorrent(infoHash);
     if (deleteError) {
       return c.json(
         { message: deleteError.message },

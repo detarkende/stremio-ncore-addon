@@ -1,7 +1,6 @@
 import { Hono } from 'hono';
-import { describe, expect, it } from 'vitest';
 import { db } from 'src/db';
-import { configurationTable } from 'src/db/schema/configuration';
+import { configurationTable } from '../../../db/schema/configuration';
 import { useIsConfigured } from '../config.middleware';
 
 describe('Config Middleware', () => {
