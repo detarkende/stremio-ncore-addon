@@ -9,7 +9,7 @@
     "skipLibCheck": true,
     "experimentalDecorators": true,
     "rootDir": "src",
-    "baseUrl": ".",
+    "paths": { "*": ["./*"] },
     "outDir": "dist",
     "lib": ["ES2022"]
   },

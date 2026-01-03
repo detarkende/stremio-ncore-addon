@@ -1,4 +1,4 @@
-import type { app } from './index';
+import type { apiRoutes } from './index';
 export {
   UserRole,
   Language,
@@ -23,4 +23,4 @@ export {
   type UpdatePasswordRequest,
 } from './schemas/user.schema';
 export { formatBytes } from './utils/bytes';
-export type ApiRoutes = typeof app;
+export type ApiRoutes = typeof apiRoutes;

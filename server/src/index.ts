@@ -15,16 +15,18 @@ import { manifestRoutes } from './app/manifest';
 import { configRoutes } from './app/config';
 import { HttpsService } from './app/https';
 
-export const app = new Hono()
-  .use(contextStorage())
-  .use(cors())
-  .use(requestLogger)
+const app = new Hono();
+app.use(contextStorage()).use(cors()).use(requestLogger);
+
+export const apiRoutes = app
   .route('/', manifestRoutes)
   .route('/', userRoutes)
   .route('/', authRoutes)
   .route('/', torrentRoutes)
   .route('/', streamRoutes)
-  .route('/', configRoutes)
+  .route('/', configRoutes);
+
+app
   .use('*', serveStatic({ root: './client/dist' }))
   .use('*', serveStatic({ root: './client/dist', path: 'index.html' }));
 

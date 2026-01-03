@@ -1,48 +1,53 @@
 import { rm, cp } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { build, type Plugin } from 'esbuild';
+import { build, type UserConfig } from 'tsdown';
+import { builtinModules } from 'node:module';
 
 const baseDir = path.resolve(import.meta.dirname, '..');
-const distPath = `${baseDir}/dist`;
+const distPath = path.resolve(baseDir, 'dist');
 
 if (existsSync(distPath)) {
   console.log(`Deleting old dist folder ("${distPath}")`);
   await rm(distPath, { recursive: true });
 }
 
-const commonBuildOptions: Parameters<typeof build>[0] = {
+const commonBuildOptions: UserConfig = {
   bundle: true,
   format: 'esm',
-  packages: 'external',
-  outdir: distPath,
-  splitting: false,
+  outDir: distPath,
+  clean: false,
   sourcemap: true,
-  treeShaking: true,
-  tsconfig: `${baseDir}/tsconfig.app.json`,
+  treeshake: true,
+  tsconfig: path.resolve(baseDir, 'tsconfig.json'),
+  dts: false,
+  outputOptions: {
+    inlineDynamicImports: true,
+  },
 };
 
-console.log('Building server with esbuild...');
+console.log('Building server with tsdown...');
 await build({
   ...commonBuildOptions,
-  entryPoints: [`${baseDir}/src/index.ts`],
+  entry: path.resolve(baseDir, 'src/index.ts'),
   platform: 'node',
   target: 'node22',
 });
 
-const migrationsSrc = `${baseDir}/src/db/migrations`;
-const migrationsDest = `${distPath}/migrations`;
+const migrationsSrc = path.resolve(baseDir, 'src/db/migrations');
+const migrationsDest = path.resolve(distPath, 'migrations');
 
 console.log(`Copying migrations folder from "${migrationsSrc}" to "${migrationsDest}"`);
 await cp(migrationsSrc, migrationsDest, { recursive: true });
 
-console.log('Building exports with esbuild...');
+console.log('Building exports with tsdown...');
 await build({
   ...commonBuildOptions,
-  entryPoints: [`${baseDir}/src/exports.ts`],
+  entry: path.resolve(baseDir, 'src/exports.ts'),
   platform: 'browser',
   target: 'esnext',
-  plugins: [],
+  dts: { build: true },
+  external: [...builtinModules, /node:.*/],
 });
 
 console.log('Build complete!');

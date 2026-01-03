@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "cron-validator": "^1.4.0",
-    "hono": "4.9.7",
+    "hono": "4.11.3",
     "zod": "4.3.4"
   },
   "devDependencies": {
