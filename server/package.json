@@ -5,7 +5,7 @@
   "exports": {
     ".": {
       "@sna/source": "./src/exports.ts",
-      "types": "./dist/exports.d.ts",
+      "types": "./src/exports.ts",
       "default": "./dist/exports.js"
     }
   },
@@ -13,7 +13,7 @@
     "dev": "node --watch --env-file ../.env --experimental-transform-types --import tsx src/index.ts | pino-pretty",
     "start": "node --env-file --enable-source-maps ../.env ./dist/index.js",
     "build": "node ./scripts/build.ts",
-    "typecheck": "tsc --noemit",
+    "typecheck": "tsc --noemit -p ./tsconfig.app.json",
     "db:generate": "ADDON_DIR=downloads drizzle-kit generate --name",
     "lint": "eslint ."
   },

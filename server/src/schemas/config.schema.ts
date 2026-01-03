@@ -14,10 +14,7 @@ export const createConfigSchema = z.object({
     }),
     z.object({
       local: z.literal(true),
-      location: z
-        .string()
-        .min(1, 'Local network IP must not be empty')
-        .ip({ version: 'v4' }),
+      location: z.ipv4().min(1, 'Local network IP must not be empty'),
     }),
   ]),
   admin: createUserSchema,

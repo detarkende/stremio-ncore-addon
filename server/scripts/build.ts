@@ -1,8 +1,7 @@
 import { rm, cp } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { build } from 'esbuild';
-import tsconfigRaw from '../tsconfig.json' with { type: 'json' };
+import { build, type Plugin } from 'esbuild';
 
 const baseDir = path.resolve(import.meta.dirname, '..');
 const distPath = `${baseDir}/dist`;
@@ -20,7 +19,7 @@ const commonBuildOptions: Parameters<typeof build>[0] = {
   splitting: false,
   sourcemap: true,
   treeShaking: true,
-  tsconfigRaw,
+  tsconfig: `${baseDir}/tsconfig.app.json`,
 };
 
 console.log('Building server with esbuild...');
@@ -43,6 +42,7 @@ await build({
   entryPoints: [`${baseDir}/src/exports.ts`],
   platform: 'browser',
   target: 'esnext',
+  plugins: [],
 });
 
 console.log('Build complete!');

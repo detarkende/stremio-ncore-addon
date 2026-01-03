@@ -17,6 +17,7 @@ import {
 
 export class NcoreTorrentDetails extends TorrentDetails {
   public sourceName = 'ncore';
+  public name: string;
   public sourceId: string;
   public infoHash: string;
   public fallbackResolution: Resolution;
@@ -30,6 +31,7 @@ export class NcoreTorrentDetails extends TorrentDetails {
 
   constructor(ncoreTorrent: NcoreTorrent, parsedDetails: ParsedTorrentDetails) {
     super();
+    this.name = parsedDetails.name;
     this.infoHash = parsedDetails.infoHash;
     this.sourceId = ncoreTorrent.torrent_id;
     this.files = parsedDetails.files;
@@ -40,7 +42,7 @@ export class NcoreTorrentDetails extends TorrentDetails {
       : Resolution.R720P;
     this.category = ncoreTorrent.category;
     this.release_name = ncoreTorrent.release_name;
-    this.seeders = ncoreTorrent.seeders;
+    this.seeders = parseInt(ncoreTorrent.seeders);
   }
 
   public displayResolution(resolution: Resolution): string {

@@ -4,8 +4,8 @@ import { Language, Resolution } from 'src/db/schema/users';
 export const createUserSchema = z.object({
   username: z.string().min(1, 'Username is required'),
   password: z.string().min(1, 'Password is required'),
-  preferredLanguage: z.nativeEnum(Language, {
-    required_error: 'Preferred language is required',
+  preferredLanguage: z.enum(Language, {
+    error: 'Preferred language is required',
   }),
   preferredResolutions: z
     .array(z.nativeEnum(Resolution))
