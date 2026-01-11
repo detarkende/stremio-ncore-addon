@@ -9,6 +9,7 @@ import importPlugin from 'eslint-plugin-import';
 
 export default defineConfig([
   // ...tanstackConfig,
+  globalIgnores(['src/styles.css']),
   {
     files: ['src/**/*.{ts,tsx}'],
     plugins: { js, ts, import: importPlugin, react },

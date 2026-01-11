@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "turbo build",
-    "dev": "turbo dev",
+    "dev": "concurrently --kill-others \"pnpm --filter server dev\" \"pnpm --filter client dev\"",
     "start": "NODE_ENV=production node server/dist/index.js",
     "preview": "NODE_ENV=production node --env-file .env server/dist/index.js | pino-pretty",
     "ci": "pnpm check-formatting && pnpm lint && pnpm test",
@@ -29,6 +29,7 @@
   "devDependencies": {
     "@vitest/coverage-istanbul": "^4.0.10",
     "@vitest/ui": "^4.0.10",
+    "concurrently": "^9.2.1",
     "eslint": "^9.36.0",
     "prettier": "^3.5.3",
     "tsc-alias": "^1.8.16",

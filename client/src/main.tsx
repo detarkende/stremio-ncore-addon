@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 
 import * as TanStackQueryProvider from './integrations/tanstack-query/root-provider.tsx';
+import * as HeroUiProvider from './integrations/heroui/root-provider.tsx';
 
 // Import the generated route tree
 import { routeTree } from './routeTree.gen';
@@ -38,7 +39,9 @@ if (rootElement && !rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
-        <RouterProvider router={router} />
+        <HeroUiProvider.Provider>
+          <RouterProvider router={router} />
+        </HeroUiProvider.Provider>
       </TanStackQueryProvider.Provider>
     </StrictMode>,
   );

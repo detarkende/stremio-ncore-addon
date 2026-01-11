@@ -11,6 +11,7 @@
     "check": "prettier --write . && eslint --fix"
   },
   "dependencies": {
+    "@heroui/react": "^2.8.7",
     "@sna/server": "workspace:^",
     "@tailwindcss/vite": "^4.0.6",
     "@tanstack/react-devtools": "^0.7.0",
@@ -20,6 +21,8 @@
     "@tanstack/react-router": "^1.132.0",
     "@tanstack/react-router-devtools": "^1.132.0",
     "@tanstack/router-plugin": "^1.132.0",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.23.26",
     "lucide-react": "^0.545.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -42,6 +45,7 @@
     "eslint-plugin-react": "^7.37.5",
     "jsdom": "^27.0.0",
     "prettier": "^3.5.3",
+    "scss": "^0.2.4",
     "typescript": "^5.7.2",
     "vite": "^7.1.7",
     "vitest": "^3.0.5",
