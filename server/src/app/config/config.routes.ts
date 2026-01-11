@@ -24,6 +24,9 @@ export const configRoutes = new Hono()
   })
   .get('/config', useCookieAuth(), (c) => {
     const config = getConfig();
+    if (!config) {
+      throw new HTTPException(HttpStatusCode.NOT_FOUND);
+    }
     return c.json(config);
   })
   .post('/config', zValidator('json', createConfigSchema), async (c) => {

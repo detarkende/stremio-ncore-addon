@@ -4,6 +4,7 @@
   "type": "module",
   "exports": {
     ".": {
+      "@sna/source": "./dist/exports.d.ts",
       "types": "./dist/exports.d.ts",
       "default": "./dist/exports.js"
     }
@@ -63,7 +64,7 @@
     "pino-pretty": "^13.0.0",
     "simple-peer": "^9.11.1",
     "stremio-addon-sdk": "^1.6.10",
-    "tsdown": "0.19.0-beta.2",
+    "tsup": "^8.5.1",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.33.0"

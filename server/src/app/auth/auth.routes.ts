@@ -3,6 +3,7 @@ import { zValidator } from '@hono/zod-validator';
 import { deleteCookie, setCookie } from 'hono/cookie';
 import { loginSchema } from 'src/schemas/login.schema';
 import { HttpStatusCode } from 'src/types/http';
+import { HTTPException } from 'hono/http-exception';
 import { getUserByCredentials } from '../user/user.utils';
 import { useCookieAuth } from './auth.middleware';
 import { createSession, generateSessionToken, invalidateSession } from './auth.utils';
@@ -14,10 +15,9 @@ export const authRoutes = new Hono()
     const credentials = c.req.valid('json');
     const user = await getUserByCredentials(credentials);
     if (!user) {
-      return c.json(
-        { success: false, message: 'Incorrect credentials' },
-        HttpStatusCode.UNAUTHORIZED,
-      );
+      throw new HTTPException(HttpStatusCode.UNAUTHORIZED, {
+        message: 'Incorrect credentials',
+      });
     }
     const sessionToken = generateSessionToken();
     const session = await createSession(sessionToken, user.id);
@@ -27,7 +27,7 @@ export const authRoutes = new Hono()
       path: '/',
       sameSite: 'Strict',
     });
-    return c.json({ success: true, message: undefined });
+    return c.body(null);
   })
   .post('/logout', useCookieAuth(), async (c) => {
     const { session } = c.var;

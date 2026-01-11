@@ -1,7 +1,7 @@
 import { rm, cp } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { build, type UserConfig } from 'tsdown';
+import { build, type Options } from 'tsup';
 import { builtinModules } from 'node:module';
 
 const baseDir = path.resolve(import.meta.dirname, '..');
@@ -12,7 +12,7 @@ if (existsSync(distPath)) {
   await rm(distPath, { recursive: true });
 }
 
-const commonBuildOptions: UserConfig = {
+const commonBuildOptions: Options = {
   bundle: true,
   format: 'esm',
   outDir: distPath,
@@ -21,15 +21,13 @@ const commonBuildOptions: UserConfig = {
   treeshake: true,
   tsconfig: path.resolve(baseDir, 'tsconfig.json'),
   dts: false,
-  outputOptions: {
-    inlineDynamicImports: true,
-  },
+  splitting: false,
 };
 
-console.log('Building server with tsdown...');
+console.log('Building server with tsup...');
 await build({
   ...commonBuildOptions,
-  entry: path.resolve(baseDir, 'src/index.ts'),
+  entry: [path.resolve(baseDir, 'src/index.ts')],
   platform: 'node',
   target: 'node22',
 });
@@ -40,13 +38,13 @@ const migrationsDest = path.resolve(distPath, 'migrations');
 console.log(`Copying migrations folder from "${migrationsSrc}" to "${migrationsDest}"`);
 await cp(migrationsSrc, migrationsDest, { recursive: true });
 
-console.log('Building exports with tsdown...');
+console.log('Building exports with tsup...');
 await build({
   ...commonBuildOptions,
-  entry: path.resolve(baseDir, 'src/exports.ts'),
+  entry: [path.resolve(baseDir, 'src/exports.ts')],
   platform: 'browser',
   target: 'esnext',
-  dts: { build: true },
+  dts: true,
   external: [...builtinModules, /node:.*/],
 });
 

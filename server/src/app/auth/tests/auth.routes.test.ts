@@ -23,10 +23,8 @@ describe('Auth routes', () => {
           password: testPassword,
         },
       });
-      const body = await response.json();
 
       expect(response.status).toBe(200);
-      expect(body).toEqual({ success: true, message: undefined });
       const cookies = response.headers.get('Set-Cookie');
       expect(cookies).toBeDefined();
       expect(cookies).toMatch(
@@ -40,10 +38,8 @@ describe('Auth routes', () => {
           password: 'wrongpassword',
         },
       });
-      const body = await response.json();
 
       expect(response.status).toBe(401);
-      expect(body).toEqual({ success: false, message: 'Incorrect credentials' });
       const cookies = response.headers.get('Set-Cookie');
       expect(cookies).toBeNull();
     });
