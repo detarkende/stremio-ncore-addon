@@ -25,9 +25,9 @@ describe('Config Middleware', () => {
       await db.insert(configurationTable).values([
         {
           id: 1,
-          addonLocation: 'https://example.com',
+          localIp: '192.168.1.15',
+          remoteUrl: null,
           deleteAfterHitnrun: false,
-          localOnly: false,
         },
       ]);
       const app = new Hono().get('/', useIsConfigured(), (c) => c.json({ ok: true }));

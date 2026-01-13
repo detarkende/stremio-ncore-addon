@@ -1,11 +1,11 @@
 import type { ScheduledTask } from 'node-cron';
-import type { ConfigurationResponse } from 'src/db/schema/configuration';
+import type { Configuration } from 'src/db/schema/configuration';
 import nodeCron from 'node-cron';
 
 export class DeleteOldTorrentsScheduler {
   private task: ScheduledTask | null = null;
 
-  public schedule(config: ConfigurationResponse | null, fn: () => void) {
+  public schedule(config: Configuration | null, fn: () => void) {
     if (!config) {
       return;
     }

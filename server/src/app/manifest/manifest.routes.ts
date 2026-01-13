@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import { HttpStatusCode } from 'src/types/http';
+import { getCurrentRequestUrl } from 'src/utils/url';
 import { getConfig } from '../config/config.utils';
 import { useUrlTokenAuth } from '../auth';
 import { useIsConfigured } from '../config';
@@ -14,7 +15,7 @@ export const manifestRoutes = new Hono()
         message: 'Server configuration missing',
       });
     }
-    const manifest = getManifest({ addonUrl: config.addonUrl });
+    const manifest = getManifest({ addonUrl: getCurrentRequestUrl(c.req.url, config) });
     return c.json(manifest);
   })
   .get(
@@ -23,7 +24,10 @@ export const manifestRoutes = new Hono()
     useUrlTokenAuth(),
     async (c) => {
       const { user, config } = c.var;
-      const manifest = getManifest({ addonUrl: config.addonUrl, user });
+      const manifest = getManifest({
+        addonUrl: getCurrentRequestUrl(c.req.url, config),
+        user,
+      });
       return c.json(manifest);
     },
   );

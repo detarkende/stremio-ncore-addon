@@ -10,33 +10,35 @@ describe('Config Utils', () => {
       expect(config).toBeNull();
     });
 
-    it('should return configuration with computed addonUrl and default values if configuration exists', async () => {
-      await db
-        .insert(configurationTable)
-        .values({ id: 1, addonLocation: 'http://example.com' });
+    it('should return configuration with default values if configuration exists', async () => {
+      await db.insert(configurationTable).values({ id: 1, localIp: '192.168.1.6' });
 
       expect(getConfig()).toEqual({
         id: 1,
-        addonLocation: 'http://example.com',
+        localIp: '192.168.1.6',
+        localUrl: 'https://192-168-1-6.local-ip.medicmobile.org:3443',
         deleteAfterHitnrun: false,
         deleteAfterHitnrunCron: '0 2 * * *',
-        localOnly: false,
-        addonUrl: 'http://example.com',
+        remoteUrl: null,
       });
     });
 
-    it('should return configuration with local IP addonUrl if localOnly is true', async () => {
-      await db
-        .insert(configurationTable)
-        .values({ id: 1, addonLocation: '192.168.1.15', localOnly: true });
+    it('should return correct configuration when all config options are set', async () => {
+      await db.insert(configurationTable).values({
+        id: 1,
+        localIp: '192.168.1.15',
+        remoteUrl: 'https://example.com',
+        deleteAfterHitnrun: true,
+        deleteAfterHitnrunCron: '30 3 * * *',
+      });
 
       expect(getConfig()).toEqual({
         id: 1,
-        addonLocation: '192.168.1.15',
-        deleteAfterHitnrun: false,
-        deleteAfterHitnrunCron: '0 2 * * *',
-        localOnly: true,
-        addonUrl: 'https://192-168-1-15.local-ip.medicmobile.org:3443',
+        localIp: '192.168.1.15',
+        localUrl: 'https://192-168-1-15.local-ip.medicmobile.org:3443',
+        remoteUrl: 'https://example.com',
+        deleteAfterHitnrun: true,
+        deleteAfterHitnrunCron: '30 3 * * *',
       });
     });
   });
@@ -44,10 +46,8 @@ describe('Config Utils', () => {
   describe('configRequestToInsertStatement', () => {
     it('should convert UpdateConfigRequest to insert statement format', () => {
       const request: UpdateConfigRequest = {
-        addonLocation: {
-          location: 'https://example.com',
-          local: false,
-        },
+        localIp: '192.168.1.15',
+        remoteUrl: 'https://example.com',
         deleteAfterHitnrun: {
           enabled: false,
           cron: '',
@@ -57,8 +57,8 @@ describe('Config Utils', () => {
       const insertObject = configRequestToInsertStatement(request);
 
       expect(insertObject).toEqual({
-        addonLocation: 'https://example.com',
-        localOnly: false,
+        remoteUrl: 'https://example.com',
+        localIp: '192.168.1.15',
         deleteAfterHitnrun: false,
         deleteAfterHitnrunCron: '',
       });

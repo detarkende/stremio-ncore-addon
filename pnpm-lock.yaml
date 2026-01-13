@@ -173,7 +173,7 @@ importers:
         version: 7.3.0(@types/node@22.18.0)(jiti@2.6.1)(lightningcss@1.30.2)(sass-embedded@1.89.1)(tsx@4.19.4)(yaml@2.8.0)
       vitest:
         specifier: ^3.0.5
-        version: 3.2.4(@types/node@22.18.0)(@vitest/ui@4.0.16)(jiti@2.6.1)(jsdom@27.4.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1)(tsx@4.19.4)(yaml@2.8.0)
+        version: 3.2.4(@types/node@22.18.0)(@vitest/ui@4.0.16(vitest@4.0.16))(jiti@2.6.1)(jsdom@27.4.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1)(tsx@4.19.4)(yaml@2.8.0)
       web-vitals:
         specifier: ^5.1.0
         version: 5.1.0
@@ -201,12 +201,15 @@ importers:
       bcryptjs:
         specifier: ^3.0.2
         version: 3.0.2
+      better-sqlite3:
+        specifier: ^12.6.0
+        version: 12.6.0
       content-disposition:
         specifier: ^0.5.4
         version: 0.5.4
       drizzle-orm:
         specifier: ^0.38.4
-        version: 0.38.4(@libsql/client-wasm@0.14.0)(@libsql/client@0.15.15(bufferutil@4.0.9)(utf-8-validate@6.0.5))(@types/better-sqlite3@7.6.13)(@types/react@19.2.7)(better-sqlite3@11.10.0)(react@19.2.3)
+        version: 0.38.4(@libsql/client-wasm@0.14.0)(@libsql/client@0.15.15(bufferutil@4.0.9)(utf-8-validate@6.0.5))(@types/better-sqlite3@7.6.13)(@types/react@19.2.7)(better-sqlite3@12.6.0)(react@19.2.3)
       hono:
         specifier: ^4.11.3
         version: 4.11.3
@@ -236,7 +239,7 @@ importers:
         version: 2.7.1
       vitest:
         specifier: ^2.1.9
-        version: 2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16(vitest@4.0.16))(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1)
+        version: 2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16)(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1)
       webtorrent:
         specifier: ^2.6.8
         version: 2.6.8(patch_hash=263e41f2dda2c44d06283513019f881c0406396c7ab7af7f87cc0dbfda027ace)
@@ -279,10 +282,10 @@ importers:
         version: 1.6.12(patch_hash=5c5c9aeb78421e13ba3c6ee17f28733343c0aff50f074a993d0485d28fa2ce22)
       '@vitest/coverage-istanbul':
         specifier: 2.1.9
-        version: 2.1.9(vitest@2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16(vitest@4.0.16))(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1))
+        version: 2.1.9(vitest@2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16)(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1))
       '@vitest/coverage-v8':
         specifier: 2.1.9
-        version: 2.1.9(vitest@2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16(vitest@4.0.16))(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1))
+        version: 2.1.9(vitest@2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16)(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1))
       bitfield:
         specifier: ^4.2.0
         version: 4.2.0
@@ -3838,8 +3841,9 @@ packages:
     resolution: {integrity: sha512-sMm2sV5PRs0YOVk0LTKtjuIprVzxgTQUsrGX/7Yph2Rm4FO2Fqqtq7hNjsOB5xezM4v4+5rljCgK++UeQJZguA==}
     engines: {node: '>=12.20.0'}
 
-  better-sqlite3@11.10.0:
-    resolution: {integrity: sha512-EwhOpyXiOEL/lKzHz9AW1msWFNzGc/z+LzeB3/jnFJpxu+th2yqvzsSWas1v9jgs9+xiXJcD5A8CJxAG2TaghQ==}
+  better-sqlite3@12.6.0:
+    resolution: {integrity: sha512-FXI191x+D6UPWSze5IzZjhz+i9MK9nsuHsmTX9bXVl52k06AfZ2xql0lrgIUuzsMsJ7Vgl5kIptvDgBLIV3ZSQ==}
+    engines: {node: 20.x || 22.x || 23.x || 24.x || 25.x}
 
   bidi-js@1.0.3:
     resolution: {integrity: sha512-RKshQI1R3YQ+n9YJz2QQ147P66ELpa1FQEg20Dk8oW9t2KgLbpDLLp9aGZ7y8WHSshDknG0bknqGw5/tyCs5tw==}
@@ -11102,7 +11106,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-istanbul@2.1.9(vitest@2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16(vitest@4.0.16))(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1))':
+  '@vitest/coverage-istanbul@2.1.9(vitest@2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16)(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1))':
     dependencies:
       '@istanbuljs/schema': 0.1.3
       debug: 4.4.3
@@ -11114,7 +11118,7 @@ snapshots:
       magicast: 0.3.5
       test-exclude: 7.0.1
       tinyrainbow: 1.2.0
-      vitest: 2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16(vitest@4.0.16))(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1)
+      vitest: 2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16)(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -11135,7 +11139,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-v8@2.1.9(vitest@2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16(vitest@4.0.16))(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1))':
+  '@vitest/coverage-v8@2.1.9(vitest@2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16)(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -11149,7 +11153,7 @@ snapshots:
       std-env: 3.9.0
       test-exclude: 7.0.1
       tinyrainbow: 1.2.0
-      vitest: 2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16(vitest@4.0.16))(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1)
+      vitest: 2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16)(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -11514,11 +11518,10 @@ snapshots:
 
   bep53-range@2.0.0: {}
 
-  better-sqlite3@11.10.0:
+  better-sqlite3@12.6.0:
     dependencies:
       bindings: 1.5.0
       prebuild-install: 7.1.3
-    optional: true
 
   bidi-js@1.0.3:
     dependencies:
@@ -11529,7 +11532,6 @@ snapshots:
   bindings@1.5.0:
     dependencies:
       file-uri-to-path: 1.0.0
-    optional: true
 
   bitfield@4.2.0: {}
 
@@ -12017,13 +12019,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.38.4(@libsql/client-wasm@0.14.0)(@libsql/client@0.15.15(bufferutil@4.0.9)(utf-8-validate@6.0.5))(@types/better-sqlite3@7.6.13)(@types/react@19.2.7)(better-sqlite3@11.10.0)(react@19.2.3):
+  drizzle-orm@0.38.4(@libsql/client-wasm@0.14.0)(@libsql/client@0.15.15(bufferutil@4.0.9)(utf-8-validate@6.0.5))(@types/better-sqlite3@7.6.13)(@types/react@19.2.7)(better-sqlite3@12.6.0)(react@19.2.3):
     optionalDependencies:
       '@libsql/client': 0.15.15(bufferutil@4.0.9)(utf-8-validate@6.0.5)
       '@libsql/client-wasm': 0.14.0
       '@types/better-sqlite3': 7.6.13
       '@types/react': 19.2.7
-      better-sqlite3: 11.10.0
+      better-sqlite3: 12.6.0
       react: 19.2.3
 
   dunder-proto@1.0.1:
@@ -12792,8 +12794,7 @@ snapshots:
     dependencies:
       flat-cache: 4.0.1
 
-  file-uri-to-path@1.0.0:
-    optional: true
+  file-uri-to-path@1.0.0: {}
 
   filename-reserved-regex@3.0.0: {}
 
@@ -15288,7 +15289,7 @@ snapshots:
       tsx: 4.19.4
       yaml: 2.8.0
 
-  vitest@2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16(vitest@4.0.16))(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1):
+  vitest@2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16)(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1):
     dependencies:
       '@vitest/expect': 2.1.9
       '@vitest/mocker': 2.1.9(vite@5.4.20(@types/node@22.15.29)(lightningcss@1.30.2)(sass-embedded@1.89.1))
@@ -15325,7 +15326,7 @@ snapshots:
       - supports-color
       - terser
 
-  vitest@3.2.4(@types/node@22.18.0)(@vitest/ui@4.0.16)(jiti@2.6.1)(jsdom@27.4.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1)(tsx@4.19.4)(yaml@2.8.0):
+  vitest@3.2.4(@types/node@22.18.0)(@vitest/ui@4.0.16(vitest@4.0.16))(jiti@2.6.1)(jsdom@27.4.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1)(tsx@4.19.4)(yaml@2.8.0):
     dependencies:
       '@types/chai': 5.2.2
       '@vitest/expect': 3.2.4

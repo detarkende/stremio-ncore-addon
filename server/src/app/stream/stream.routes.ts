@@ -5,6 +5,7 @@ import { getMimeType } from 'hono/utils/mime';
 import { logger } from 'src/logger';
 import { HttpStatusCode } from 'src/types/http';
 import { parseRangeHeader } from 'src/utils/parse-range-header';
+import { getCurrentRequestUrl } from 'src/utils/url';
 import { useUrlTokenAuth } from '../auth/auth.middleware';
 import { ncoreService } from '../ncore';
 import {
@@ -71,7 +72,7 @@ export const streamRoutes = new Hono()
         type,
       });
 
-      const { addonUrl } = c.var.config;
+      const addonUrl = getCurrentRequestUrl(c.req.url, c.var.config);
 
       const streams = torrentDetails.map((torrent, i) =>
         convertTorrentToStream({

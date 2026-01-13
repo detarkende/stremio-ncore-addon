@@ -18,16 +18,16 @@ type TextProps<C extends React.ElementType> = {
   ref?: React.Ref<C>;
   children?: React.ReactNode;
   variant?: TextVariant;
-} & Omit<React.ComponentProps<C>, 'as' | 'ref' | 'children'>;
+} & Omit<React.ComponentPropsWithoutRef<C>, 'as' | 'children' | 'key'>;
 
 export const Text = <C extends React.ElementType>({
   children,
-  as,
+  as: asProp,
   ref,
   variant = 'body-lg',
   ...props
 }: TextProps<C>) => {
-  const Component = as;
+  const Component = asProp as React.ElementType;
   return (
     <Component {...props} ref={ref} className={clsx(variants[variant], props.className)}>
       {children}

@@ -7,7 +7,7 @@ export {
   resolutionValues,
 } from './db/schema/users';
 export type { User } from './types/user';
-export type { ConfigurationResponse } from './db/schema/configuration';
+export type { Configuration } from './db/schema/configuration';
 export {
   type CreateConfigRequest,
   type UpdateConfigRequest,

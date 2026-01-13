@@ -69,7 +69,7 @@ describe('Config Routes', () => {
 
       const body = await response.json();
       expect(body).toEqual(expect.objectContaining(testConfig));
-      expect(body).toHaveProperty('addonUrl');
+      expect(body).toHaveProperty('remoteUrl');
     });
   });
 
@@ -126,10 +126,7 @@ describe('Config Routes', () => {
             preferredLanguage: Language.EN,
             preferredResolutions: [Resolution.R720P, Resolution.R1080P],
           },
-          addonLocation: {
-            local: false,
-            location: 'https://example.com/addon',
-          },
+          localIp: '192.168.1.15',
           deleteAfterHitnrun: {
             enabled: true,
             cron: '0 0 * * *',
@@ -156,8 +153,8 @@ describe('Config Routes', () => {
       expect(configs.length).toBe(1);
       expect(configs[0]).toEqual({
         id: 1,
-        localOnly: false,
-        addonLocation: 'https://example.com/addon',
+        remoteUrl: null,
+        localIp: '192.168.1.15',
         deleteAfterHitnrun: true,
         deleteAfterHitnrunCron: '0 0 * * *',
       });
@@ -176,10 +173,8 @@ describe('Config Routes', () => {
             preferredLanguage: Language.EN,
             preferredResolutions: [Resolution.R720P, Resolution.R1080P],
           },
-          addonLocation: {
-            local: false,
-            location: 'https://example.com/addon',
-          },
+          localIp: '192.168.1.15',
+          remoteUrl: 'https://example.com/addon',
           deleteAfterHitnrun: {
             enabled: true,
             cron: '0 0 * * *',
@@ -202,10 +197,8 @@ describe('Config Routes', () => {
             preferredLanguage: Language.EN,
             preferredResolutions: [Resolution.R720P, Resolution.R1080P],
           },
-          addonLocation: {
-            local: false,
-            location: 'https://example.com/addon',
-          },
+          localIp: '192.168.1.15',
+          remoteUrl: 'https://example.com/addon',
           deleteAfterHitnrun: {
             enabled: true,
             cron: '0 0 * * *',
@@ -232,10 +225,8 @@ describe('Config Routes', () => {
             preferredLanguage: Language.EN,
             preferredResolutions: [Resolution.R720P, Resolution.R1080P],
           },
-          addonLocation: {
-            local: false,
-            location: 'https://example.com/addon',
-          },
+          localIp: '192.168.1.15',
+          remoteUrl: 'https://example.com/addon',
           deleteAfterHitnrun: {
             enabled: true,
             cron: '0 0 * * *',
@@ -254,8 +245,8 @@ describe('Config Routes', () => {
     it('should allow admin users to update the configuration', async () => {
       const scheduleSpy = vi.spyOn(deleteOldTorrentsScheduler, 'schedule');
       configureApp({
-        addonLocation: 'https://example.com/old-location',
-        localOnly: false,
+        remoteUrl: undefined,
+        localIp: '192.168.1.15',
         deleteAfterHitnrun: false,
         deleteAfterHitnrunCron: '',
       });
@@ -266,10 +257,8 @@ describe('Config Routes', () => {
       const response = await client.api.config.$put(
         {
           json: {
-            addonLocation: {
-              local: true,
-              location: '192.168.0.11',
-            },
+            localIp: '192.168.1.11',
+            remoteUrl: 'http://example.com/addon',
             deleteAfterHitnrun: {
               enabled: true,
               cron: '30 2 * * *',
@@ -281,9 +270,9 @@ describe('Config Routes', () => {
       expect(response.status).toBe(200);
       expect(await response.json()).toEqual({
         id: 1,
-        addonUrl: expect.stringContaining('192-168-0-11'),
-        localOnly: true,
-        addonLocation: '192.168.0.11',
+        remoteUrl: 'http://example.com/addon',
+        localIp: '192.168.1.11',
+        localUrl: 'https://192-168-1-11.local-ip.medicmobile.org:3443',
         deleteAfterHitnrun: true,
         deleteAfterHitnrunCron: '30 2 * * *',
       });

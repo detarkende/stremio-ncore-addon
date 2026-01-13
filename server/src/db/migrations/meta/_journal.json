@@ -43,6 +43,13 @@
       "when": 1764449648125,
       "tag": "0005_add-torrent-table",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1768160513631,
+      "tag": "0006_config-addon-location-splitting",
+      "breakpoints": true
     }
   ]
 }

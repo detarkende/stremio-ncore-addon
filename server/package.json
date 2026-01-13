@@ -25,6 +25,7 @@
     "@oslojs/crypto": "^1.0.1",
     "@oslojs/encoding": "^1.1.0",
     "bcryptjs": "^3.0.2",
+    "better-sqlite3": "^12.6.0",
     "content-disposition": "^0.5.4",
     "drizzle-orm": "^0.38.4",
     "hono": "^4.11.3",

@@ -3,20 +3,8 @@ import { z } from 'zod';
 import { createUserSchema } from './user.schema';
 
 export const createConfigSchema = z.object({
-  addonLocation: z.union([
-    z.object({
-      local: z.literal(false),
-      location: z
-        .string()
-        .min(1, 'Addon URL must not be empty.')
-        .url()
-        .refine((v) => !v.endsWith('/'), 'Addon URL must not end with a slash.'),
-    }),
-    z.object({
-      local: z.literal(true),
-      location: z.ipv4().min(1, 'Local network IP must not be empty'),
-    }),
-  ]),
+  localIp: z.ipv4(),
+  remoteUrl: z.url().optional(),
   admin: createUserSchema,
   deleteAfterHitnrun: z.union([
     z.object({ enabled: z.literal(false), cron: z.literal('') }),

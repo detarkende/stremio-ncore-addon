@@ -1,5 +1,4 @@
 import { queryOptions } from '@tanstack/react-query';
-import type { ConfigurationResponse } from '@sna/server';
 import { QueryKeys } from '../keys';
 import { apiClient } from '@/integrations/api';
 import { handleHttpError } from '@/utils/http';
@@ -29,7 +28,7 @@ export const configQueryOptions = queryOptions({
     if (!response.ok) {
       handleHttpError(response);
     }
-    const data: ConfigurationResponse = await response.json();
+    const data = await response.json();
     return data;
   },
 });

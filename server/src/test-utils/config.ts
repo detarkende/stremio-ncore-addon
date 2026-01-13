@@ -4,10 +4,10 @@ import { configurationTable } from 'src/db/schema/configuration';
 
 const defaultConfig: Configuration = {
   id: 1,
-  addonLocation: '192.168.1.5',
+  localIp: '192.168.1.5',
+  remoteUrl: 'http://my-addon.com',
   deleteAfterHitnrun: false,
   deleteAfterHitnrunCron: '0 2 * * *',
-  localOnly: true,
 };
 
 export function configureApp(
