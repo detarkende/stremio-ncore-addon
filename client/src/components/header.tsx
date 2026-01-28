@@ -9,18 +9,30 @@ import {
 } from '@heroui/react';
 import { Fragment, useState } from 'react';
 import { useLocation } from '@tanstack/react-router';
+import { UserRole } from '@sna/server';
 import { Text } from './text';
 import { Link } from '@/components/link';
 import type { FileRouteTypes } from '@/routeTree.gen';
 
-const navbarItems: { label: string; href: FileRouteTypes['to'] }[] = [
+interface NavbarItem {
+  label: string;
+  href: FileRouteTypes['to'];
+}
+
+const genericNavbarItems: NavbarItem[] = [
   { label: 'Account', href: '/account' },
   { label: 'Settings', href: '/settings' },
+];
+const adminNavbarItems: NavbarItem[] = [
+  ...genericNavbarItems,
   { label: 'Torrents', href: '/torrents' },
 ];
 
-export function Header() {
+export function Header({ userRole }: { userRole: UserRole }) {
   const [isOpen, setIsOpen] = useState(false);
+  const isAdmin = userRole === UserRole.ADMIN;
+
+  const navbarItems = isAdmin ? adminNavbarItems : genericNavbarItems;
 
   const onLinkClick = () => {
     setIsOpen(false);
@@ -32,6 +44,7 @@ export function Header() {
       onMenuOpenChange={setIsOpen}
       maxWidth="xl"
       position="sticky"
+      className="container"
     >
       <NavbarBrand>
         <Text as="span" className="text-xl font-bold">

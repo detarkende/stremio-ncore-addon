@@ -4,7 +4,7 @@
   "type": "module",
   "exports": {
     ".": {
-      "@sna/source": "./dist/exports.d.ts",
+      "@sna/source": "./src/exports.ts",
       "types": "./dist/exports.d.ts",
       "default": "./dist/exports.js"
     }

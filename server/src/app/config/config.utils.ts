@@ -23,7 +23,7 @@ export function configRequestToInsertStatement(
 ): typeof configurationTable.$inferInsert {
   return {
     localIp: data.localIp,
-    remoteUrl: data.remoteUrl,
+    remoteUrl: data.remoteUrl || null,
     deleteAfterHitnrun: data.deleteAfterHitnrun.enabled,
     deleteAfterHitnrunCron: data.deleteAfterHitnrun.cron,
   };

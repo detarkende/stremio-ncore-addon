@@ -1,19 +1,20 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { isConfiguredQueryOptions } from '@/integrations/tanstack-query/queries/config';
 
 export const Route = createFileRoute('/')({
   component: App,
-  loader: ({ context }) => context.queryClient.ensureQueryData(isConfiguredQueryOptions),
+  loader: async ({ context }) => {
+    const isConfigured = await context.queryClient.ensureQueryData(
+      isConfiguredQueryOptions,
+    );
+    if (isConfigured) {
+      throw redirect({ to: '/login' });
+    } else {
+      throw redirect({ to: '/setup' });
+    }
+  },
 });
 
 function App() {
-  const { data: isConfigured } = useSuspenseQuery(isConfiguredQueryOptions);
-  const navigate = useNavigate();
-  if (isConfigured) {
-    navigate({ to: '/login' });
-  } else {
-    navigate({ to: '/setup' });
-  }
   return null;
 }

@@ -1,44 +1,45 @@
-import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { useForm } from '@tanstack/react-form';
+import { createFileRoute, redirect, useRouter } from '@tanstack/react-router';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { loginSchema, type LoginCredentials } from '@sna/server';
-import { addToast, Button, Form, Input } from '@heroui/react';
+import { addToast, Form } from '@heroui/react';
 import { useLayoutEffect, useRef } from 'react';
 import { meOrNullQueryOptions } from '@/integrations/tanstack-query/queries/me';
 import { Text } from '@/components/text';
 import { apiClient } from '@/integrations/api';
 import { handleHttpError } from '@/utils/http';
+import { useAppForm } from '@/components/form';
 
 export const Route = createFileRoute('/_configured/login')({
-  loader: ({ context }) => context.queryClient.ensureQueryData(meOrNullQueryOptions),
+  loader: async ({ context }) => {
+    const me = await context.queryClient.ensureQueryData(meOrNullQueryOptions);
+    if (me) {
+      throw redirect({ to: '/account' });
+    }
+  },
   component: RouteComponent,
 });
 
 function RouteComponent() {
   const router = useRouter();
-  const { data: me } = useSuspenseQuery(meOrNullQueryOptions);
-  if (me) {
-    router.navigate({ to: '/account' });
-  }
   const firstFieldRef = useRef<HTMLInputElement>(null);
   const { mutateAsync } = useMutation({
     mutationFn: async (values: LoginCredentials) => {
       const response = await apiClient.api.login.$post(
         { json: values },
-        { init: { signal: AbortSignal.timeout(1_000) } }, // 6 second timeout
+        { init: { signal: AbortSignal.timeout(6_000) } }, // 6 second timeout
       );
       if (!response.ok) {
         await handleHttpError(response);
       }
-      return;
     },
   });
+  const queryClient = useQueryClient();
 
   useLayoutEffect(() => {
     firstFieldRef.current?.focus();
   }, []);
 
-  const form = useForm({
+  const form = useAppForm({
     validators: {
       onChange: loginSchema,
     },
@@ -50,8 +51,8 @@ function RouteComponent() {
           color: 'success',
           timeout: 3000,
         });
+        await queryClient.refetchQueries(meOrNullQueryOptions);
         await router.invalidate();
-        await router.navigate({ to: '/account' });
       } catch (error) {
         addToast({
           title: 'Login failed',
@@ -74,58 +75,45 @@ function RouteComponent() {
       <div className="max-w-sm w-full flex flex-col gap-4">
         <Text as="h1" variant="heading-lg">
           Log in <span>👋</span>
-          <Form
-            className="flex flex-col gap-4 py-4"
-            validationBehavior="native"
-            onSubmit={(e) => {
-              e.preventDefault();
-              form.handleSubmit();
-            }}
-          >
-            <form.Field name="username">
-              {(field) => (
-                <Input
-                  isRequired
-                  label="Username"
-                  labelPlacement="outside-top"
-                  variant="bordered"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  ref={firstFieldRef}
-                  autoComplete="username"
-                />
-              )}
-            </form.Field>
-            <form.Field name="password">
-              {(field) => (
-                <Input
-                  isRequired
-                  type="password"
-                  label="Password"
-                  labelPlacement="outside-top"
-                  variant="bordered"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  autoComplete="password"
-                />
-              )}
-            </form.Field>
-
-            <form.Subscribe>
-              {(state) => {
-                return (
-                  <Button
-                    type="submit"
-                    isDisabled={!state.canSubmit}
-                    color="primary"
-                    className="w-full"
-                  >
-                    Log in
-                  </Button>
-                );
+          <form.AppForm>
+            <Form
+              className="flex flex-col gap-4 py-4"
+              validationBehavior="native"
+              onSubmit={(e) => {
+                e.preventDefault();
+                form.handleSubmit();
               }}
-            </form.Subscribe>
-          </Form>
+            >
+              <form.AppField name="username">
+                {(field) => (
+                  <field.TextField
+                    isRequired
+                    label="Username"
+                    labelPlacement="outside-top"
+                    variant="bordered"
+                    ref={firstFieldRef}
+                    autoComplete="username"
+                  />
+                )}
+              </form.AppField>
+              <form.AppField name="password">
+                {(field) => (
+                  <field.TextField
+                    isRequired
+                    type="password"
+                    label="Password"
+                    labelPlacement="outside-top"
+                    variant="bordered"
+                    autoComplete="password"
+                  />
+                )}
+              </form.AppField>
+
+              <form.SubmitButton color="primary" className="w-full">
+                Log in
+              </form.SubmitButton>
+            </Form>
+          </form.AppForm>
         </Text>
       </div>
     </div>

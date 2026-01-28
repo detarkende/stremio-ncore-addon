@@ -80,6 +80,9 @@ importers:
       '@tanstack/react-form':
         specifier: ^1.0.0
         version: 1.27.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@tanstack/react-form-devtools':
+        specifier: ^0.2.12
+        version: 0.2.12(@types/react@19.2.7)(csstype@3.2.3)(react@19.2.3)(solid-js@1.9.10)
       '@tanstack/react-query':
         specifier: ^5.66.5
         version: 5.79.0(react@19.2.3)
@@ -173,7 +176,7 @@ importers:
         version: 7.3.0(@types/node@22.18.0)(jiti@2.6.1)(lightningcss@1.30.2)(sass-embedded@1.89.1)(tsx@4.19.4)(yaml@2.8.0)
       vitest:
         specifier: ^3.0.5
-        version: 3.2.4(@types/node@22.18.0)(@vitest/ui@4.0.16(vitest@4.0.16))(jiti@2.6.1)(jsdom@27.4.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1)(tsx@4.19.4)(yaml@2.8.0)
+        version: 3.2.4(@types/node@22.18.0)(@vitest/ui@4.0.16)(jiti@2.6.1)(jsdom@27.4.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1)(tsx@4.19.4)(yaml@2.8.0)
       web-vitals:
         specifier: ^5.1.0
         version: 5.1.0
@@ -239,7 +242,7 @@ importers:
         version: 2.7.1
       vitest:
         specifier: ^2.1.9
-        version: 2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16)(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1)
+        version: 2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16(vitest@4.0.16))(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1)
       webtorrent:
         specifier: ^2.6.8
         version: 2.6.8(patch_hash=263e41f2dda2c44d06283513019f881c0406396c7ab7af7f87cc0dbfda027ace)
@@ -282,10 +285,10 @@ importers:
         version: 1.6.12(patch_hash=5c5c9aeb78421e13ba3c6ee17f28733343c0aff50f074a993d0485d28fa2ce22)
       '@vitest/coverage-istanbul':
         specifier: 2.1.9
-        version: 2.1.9(vitest@2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16)(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1))
+        version: 2.1.9(vitest@2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16(vitest@4.0.16))(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1))
       '@vitest/coverage-v8':
         specifier: 2.1.9
-        version: 2.1.9(vitest@2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16)(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1))
+        version: 2.1.9(vitest@2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16(vitest@4.0.16))(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1))
       bitfield:
         specifier: ^4.2.0
         version: 4.2.0
@@ -3007,6 +3010,27 @@ packages:
     peerDependencies:
       solid-js: '>=1.9.7'
 
+  '@tanstack/devtools-utils@0.3.0':
+    resolution: {integrity: sha512-JgApXVrgtgSLIPrm/QWHx0u6c9Ji0MNMDWhwujapj8eMzux5aOfi+2Ycwzj0A0qITXA12SEPYV3HC568mDtYmQ==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@types/react': '>=17.0.0'
+      preact: '>=10.0.0'
+      react: '>=17.0.0'
+      solid-js: '>=1.9.7'
+      vue: '>=3.2.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      preact:
+        optional: true
+      react:
+        optional: true
+      solid-js:
+        optional: true
+      vue:
+        optional: true
+
   '@tanstack/devtools-vite@0.3.12':
     resolution: {integrity: sha512-fGJgu4xUhKmGk+a+/aHD8l5HKVk6+ObA+6D3YC3xCXbai/YmaGhztqcZf1tKUqjZyYyQLHsjqmKzvJgVpQP1jw==}
     engines: {node: '>=18'}
@@ -3027,6 +3051,11 @@ packages:
 
   '@tanstack/form-core@1.27.7':
     resolution: {integrity: sha512-nvogpyE98fhb0NDw1Bf2YaCH+L7ZIUgEpqO9TkHucDn6zg3ni521boUpv0i8HKIrmmFwDYjWZoCnrgY4HYWTkw==}
+
+  '@tanstack/form-devtools@0.2.12':
+    resolution: {integrity: sha512-+X4i4aKszU04G5ID3Q/lslKpmop6QfV9To8MdEzEGGGBakKPtilFzKq+xSpcqd/DPtq2+LtbCSZWQP9CJhInnA==}
+    peerDependencies:
+      solid-js: '>=1.9.9'
 
   '@tanstack/history@1.141.0':
     resolution: {integrity: sha512-LS54XNyxyTs5m/pl1lkwlg7uZM3lvsv2FIIV1rsJgnfwVCnI+n4ZGZ2CcjNT13BPu/3hPP+iHmliBSscJxW5FQ==}
@@ -3050,6 +3079,11 @@ packages:
       '@types/react-dom': '>=16.8'
       react: '>=16.8'
       react-dom: '>=16.8'
+
+  '@tanstack/react-form-devtools@0.2.12':
+    resolution: {integrity: sha512-6m95ZKJyfER5mUp7DR7/FtsDoVmgHS8NgOkh3Z/pr1tGEnomK+HULuZZJd7lfT3r9tCDuC4rjPNZYLpzq3kdxA==}
+    peerDependencies:
+      react: ^17.0.0 || ^18.0.0 || ^19.0.0
 
   '@tanstack/react-form@1.27.7':
     resolution: {integrity: sha512-xTg4qrUY0fuLaSnkATLZcK3BWlnwLp7IuAb6UTbZKngiDEvvDCNTvVvHgPlgef1O2qN4klZxInRyRY6oEkXZ2A==}
@@ -4174,6 +4208,9 @@ packages:
 
   dateformat@4.6.3:
     resolution: {integrity: sha512-2P0p0pFGzHS5EMnhdxQi7aJN+iMheud0UhG4dlE1DLAlvL8JHjJJTX/CSm4JXwV0Ka5nGk3zC5mcb5bUQUxxMA==}
+
+  dayjs@1.11.19:
+    resolution: {integrity: sha512-t5EcLVS6QPBNqM2z8fakk/NKel+Xzshgt8FFKAn+qwlD1pzZWxh0nVCrvFK7ZDb6XucZeF9z8C7CBWTRIVApAw==}
 
   debug@2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
@@ -10490,6 +10527,16 @@ snapshots:
     transitivePeerDependencies:
       - csstype
 
+  '@tanstack/devtools-utils@0.3.0(@types/react@19.2.7)(csstype@3.2.3)(react@19.2.3)(solid-js@1.9.10)':
+    dependencies:
+      '@tanstack/devtools-ui': 0.4.4(csstype@3.2.3)(solid-js@1.9.10)
+    optionalDependencies:
+      '@types/react': 19.2.7
+      react: 19.2.3
+      solid-js: 1.9.10
+    transitivePeerDependencies:
+      - csstype
+
   '@tanstack/devtools-vite@0.3.12(bufferutil@4.0.9)(utf-8-validate@6.0.5)(vite@7.3.0(@types/node@22.18.0)(jiti@2.6.1)(lightningcss@1.30.2)(sass-embedded@1.89.1)(tsx@4.19.4)(yaml@2.8.0))':
     dependencies:
       '@babel/core': 7.28.4
@@ -10546,6 +10593,22 @@ snapshots:
       '@tanstack/pacer-lite': 0.1.1
       '@tanstack/store': 0.7.7
 
+  '@tanstack/form-devtools@0.2.12(@types/react@19.2.7)(csstype@3.2.3)(react@19.2.3)(solid-js@1.9.10)':
+    dependencies:
+      '@tanstack/devtools-ui': 0.4.4(csstype@3.2.3)(solid-js@1.9.10)
+      '@tanstack/devtools-utils': 0.3.0(@types/react@19.2.7)(csstype@3.2.3)(react@19.2.3)(solid-js@1.9.10)
+      '@tanstack/form-core': 1.27.7
+      clsx: 2.1.1
+      dayjs: 1.11.19
+      goober: 2.1.18(csstype@3.2.3)
+      solid-js: 1.9.10
+    transitivePeerDependencies:
+      - '@types/react'
+      - csstype
+      - preact
+      - react
+      - vue
+
   '@tanstack/history@1.141.0': {}
 
   '@tanstack/pacer-lite@0.1.1': {}
@@ -10566,6 +10629,18 @@ snapshots:
       - csstype
       - solid-js
       - utf-8-validate
+
+  '@tanstack/react-form-devtools@0.2.12(@types/react@19.2.7)(csstype@3.2.3)(react@19.2.3)(solid-js@1.9.10)':
+    dependencies:
+      '@tanstack/devtools-utils': 0.3.0(@types/react@19.2.7)(csstype@3.2.3)(react@19.2.3)(solid-js@1.9.10)
+      '@tanstack/form-devtools': 0.2.12(@types/react@19.2.7)(csstype@3.2.3)(react@19.2.3)(solid-js@1.9.10)
+      react: 19.2.3
+    transitivePeerDependencies:
+      - '@types/react'
+      - csstype
+      - preact
+      - solid-js
+      - vue
 
   '@tanstack/react-form@1.27.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
@@ -11106,7 +11181,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-istanbul@2.1.9(vitest@2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16)(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1))':
+  '@vitest/coverage-istanbul@2.1.9(vitest@2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16(vitest@4.0.16))(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1))':
     dependencies:
       '@istanbuljs/schema': 0.1.3
       debug: 4.4.3
@@ -11118,7 +11193,7 @@ snapshots:
       magicast: 0.3.5
       test-exclude: 7.0.1
       tinyrainbow: 1.2.0
-      vitest: 2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16)(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1)
+      vitest: 2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16(vitest@4.0.16))(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -11139,7 +11214,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-v8@2.1.9(vitest@2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16)(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1))':
+  '@vitest/coverage-v8@2.1.9(vitest@2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16(vitest@4.0.16))(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -11153,7 +11228,7 @@ snapshots:
       std-env: 3.9.0
       test-exclude: 7.0.1
       tinyrainbow: 1.2.0
-      vitest: 2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16)(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1)
+      vitest: 2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16(vitest@4.0.16))(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -11936,6 +12011,8 @@ snapshots:
   date-fns@4.1.0: {}
 
   dateformat@4.6.3: {}
+
+  dayjs@1.11.19: {}
 
   debug@2.6.9:
     dependencies:
@@ -15289,7 +15366,7 @@ snapshots:
       tsx: 4.19.4
       yaml: 2.8.0
 
-  vitest@2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16)(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1):
+  vitest@2.1.9(@types/node@22.15.29)(@vitest/ui@4.0.16(vitest@4.0.16))(jsdom@25.0.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1):
     dependencies:
       '@vitest/expect': 2.1.9
       '@vitest/mocker': 2.1.9(vite@5.4.20(@types/node@22.15.29)(lightningcss@1.30.2)(sass-embedded@1.89.1))
@@ -15326,7 +15403,7 @@ snapshots:
       - supports-color
       - terser
 
-  vitest@3.2.4(@types/node@22.18.0)(@vitest/ui@4.0.16(vitest@4.0.16))(jiti@2.6.1)(jsdom@27.4.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1)(tsx@4.19.4)(yaml@2.8.0):
+  vitest@3.2.4(@types/node@22.18.0)(@vitest/ui@4.0.16)(jiti@2.6.1)(jsdom@27.4.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.30.2)(sass-embedded@1.89.1)(tsx@4.19.4)(yaml@2.8.0):
     dependencies:
       '@types/chai': 5.2.2
       '@vitest/expect': 3.2.4

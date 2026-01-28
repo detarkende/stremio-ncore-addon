@@ -23,7 +23,9 @@ export const configQueryOptions = queryOptions({
   queryFn: async (context) => {
     const response = await apiClient.api.config.$get(
       {},
-      { init: { signal: context.signal } },
+      {
+        init: { signal: context.signal },
+      },
     );
     if (!response.ok) {
       handleHttpError(response);

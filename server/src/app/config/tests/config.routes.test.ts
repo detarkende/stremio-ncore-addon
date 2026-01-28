@@ -127,6 +127,7 @@ describe('Config Routes', () => {
             preferredResolutions: [Resolution.R720P, Resolution.R1080P],
           },
           localIp: '192.168.1.15',
+          remoteUrl: '',
           deleteAfterHitnrun: {
             enabled: true,
             cron: '0 0 * * *',

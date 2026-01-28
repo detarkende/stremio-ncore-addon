@@ -12,6 +12,7 @@ const SERVER_URL = 'http://localhost:3000';
 export default defineConfig({
   server: {
     proxy: { '/api': SERVER_URL, '/manifest.json': SERVER_URL },
+    host: true,
   },
 
   plugins: [

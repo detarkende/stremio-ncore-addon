@@ -24,7 +24,7 @@ export const Text = <C extends React.ElementType>({
   children,
   as: asProp,
   ref,
-  variant = 'body-lg',
+  variant = 'body-md',
   ...props
 }: TextProps<C>) => {
   const Component = asProp as React.ElementType;
