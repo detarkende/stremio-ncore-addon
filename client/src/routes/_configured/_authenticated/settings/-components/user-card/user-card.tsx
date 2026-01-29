@@ -13,8 +13,9 @@ import { useState } from 'react';
 import { EditUserForm } from './edit-user-form';
 import { ChangePasswordForm } from './change-password-form';
 import { DeleteUser } from './delete-user-form';
+import { Token } from './token';
 
-type UserMenuOption = 'edit' | 'change-password' | 'delete';
+type UserMenuOption = 'token' | 'edit' | 'change-password' | 'delete';
 
 export function UserCard({ user, isMe }: { user: UserType; isMe: boolean }) {
   const [dropdownValue, setDropdownValue] = useState<UserMenuOption | null>(null);
@@ -36,6 +37,7 @@ export function UserCard({ user, isMe }: { user: UserType; isMe: boolean }) {
             onAction={(key) => setDropdownValue(key as UserMenuOption)}
             disabledKeys={isMe ? ['delete'] : []}
           >
+            <DropdownItem key="token">View/Rotate token</DropdownItem>
             <DropdownItem key="edit">Edit user</DropdownItem>
             <DropdownItem key="change-password">Change password</DropdownItem>
             <DropdownItem key="delete" color="danger" className="text-danger">
@@ -44,6 +46,9 @@ export function UserCard({ user, isMe }: { user: UserType; isMe: boolean }) {
           </DropdownMenu>
         </Dropdown>
       </div>
+      {dropdownValue === 'token' && (
+        <Token user={user} isMe={isMe} onClose={cancelDropdownSelection} />
+      )}
       {dropdownValue === 'edit' && (
         <EditUserForm user={user} isMe={isMe} onClose={cancelDropdownSelection} />
       )}

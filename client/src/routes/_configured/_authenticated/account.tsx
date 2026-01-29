@@ -29,7 +29,7 @@ function RouteComponent() {
 
   return (
     <div className="min-h-full flex justify-center">
-      <div className="max-w-lg w-full">
+      <div className="max-w-xl w-full">
         <Card>
           <CardHeader className="py-3">
             <Text as="h2" variant="heading-lg">
