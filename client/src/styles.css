@@ -4,9 +4,8 @@
 @source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
 @custom-variant dark (&:is(.dark *));
 
-@utility container {
-  margin-inline: auto;
-  padding-inline: 24px;
+.container {
+  @apply mx-auto max-w-[min(100vw,80rem)] px-6;
 }
 
 html,

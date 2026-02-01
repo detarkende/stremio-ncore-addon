@@ -12,7 +12,7 @@ export function Layout({ children, userRole }: LayoutProps) {
       <div className="bg-default-50">
         <Header userRole={userRole} />
       </div>
-      <main className="container max-w-screen h-full pt-2 pb-20">{children}</main>
+      <main className="container w-full h-full px-6 pt-2 pb-20">{children}</main>
     </div>
   );
 }

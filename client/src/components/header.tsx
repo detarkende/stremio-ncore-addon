@@ -45,7 +45,7 @@ export function Header({ userRole }: { userRole: UserRole }) {
       onMenuOpenChange={setIsOpen}
       maxWidth="xl"
       position="sticky"
-      className="sm:container bg-default-50"
+      className="bg-default-50"
     >
       <NavbarBrand>
         <Text as="span" className="text-xl font-bold">

@@ -4,7 +4,7 @@ import type { PropsWithChildren } from 'react';
 export const Provider = ({ children }: PropsWithChildren) => {
   return (
     <HeroUIProvider className="min-h-full">
-      <ToastProvider />
+      <ToastProvider placement="top-right" toastOffset={64} />
       {children}
     </HeroUIProvider>
   );
