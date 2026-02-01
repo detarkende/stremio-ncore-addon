@@ -3,4 +3,5 @@ export const QueryKeys = {
   IS_CONFIGURED: 'is-configured',
   CONFIG: 'config',
   USERS: 'users',
+  TORRENTS: 'torrents',
 };

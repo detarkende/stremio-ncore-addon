@@ -1,12 +1,12 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 import { Layout } from '@/components/layout';
-import { meQueryOptions } from '@/integrations/tanstack-query/queries/me';
+import { meOrNullQueryOptions } from '@/integrations/tanstack-query/queries/me';
 import { LoaderScreen } from '@/components/loader-screen';
 
 export const Route = createFileRoute('/_configured/_authenticated')({
   component: RouteComponent,
-  loader: async ({ context }) => {
-    const me = await context.queryClient.ensureQueryData(meQueryOptions);
+  beforeLoad: async ({ context }) => {
+    const me = await context.queryClient.ensureQueryData(meOrNullQueryOptions);
     if (!me) {
       throw redirect({ to: '/login' });
     }
@@ -16,7 +16,7 @@ export const Route = createFileRoute('/_configured/_authenticated')({
 });
 
 function RouteComponent() {
-  const { me } = Route.useLoaderData();
+  const { me } = Route.useRouteContext();
   return (
     <Layout userRole={me.role}>
       <Outlet />

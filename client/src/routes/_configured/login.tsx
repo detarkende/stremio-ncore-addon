@@ -10,7 +10,7 @@ import { handleHttpError } from '@/utils/http';
 import { useAppForm } from '@/components/form';
 
 export const Route = createFileRoute('/_configured/login')({
-  loader: async ({ context }) => {
+  beforeLoad: async ({ context }) => {
     const me = await context.queryClient.ensureQueryData(meOrNullQueryOptions);
     if (me) {
       throw redirect({ to: '/account' });

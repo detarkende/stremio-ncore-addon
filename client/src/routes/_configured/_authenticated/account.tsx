@@ -2,7 +2,6 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { Card, CardBody, CardHeader, Divider } from '@heroui/react';
 import { GlobeIcon, NetworkIcon } from 'lucide-react';
-import { meQueryOptions } from '@/integrations/tanstack-query/queries/me';
 import { Text } from '@/components/text';
 import { configQueryOptions } from '@/integrations/tanstack-query/queries/config';
 import { apiClient } from '@/integrations/api';
@@ -13,7 +12,7 @@ export const Route = createFileRoute('/_configured/_authenticated/account')({
 });
 
 function RouteComponent() {
-  const { data: me } = useSuspenseQuery(meQueryOptions);
+  const { me } = Route.useRouteContext();
   const { data: config } = useSuspenseQuery(configQueryOptions);
 
   const { localUrl, remoteUrl } = config;

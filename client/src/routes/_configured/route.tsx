@@ -3,7 +3,7 @@ import { isConfiguredQueryOptions } from '@/integrations/tanstack-query/queries/
 
 export const Route = createFileRoute('/_configured')({
   component: RouteComponent,
-  loader: async ({ context }) => {
+  beforeLoad: async ({ context }) => {
     const isConfigured = await context.queryClient.ensureQueryData(
       isConfiguredQueryOptions,
     );

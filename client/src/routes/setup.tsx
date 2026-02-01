@@ -18,7 +18,7 @@ import { AddonSettingsFields } from '@/components/form/field-groups/addon-settin
 
 export const Route = createFileRoute('/setup')({
   component: RouteComponent,
-  loader: async ({ context }) => {
+  beforeLoad: async ({ context }) => {
     const isConfigured = await context.queryClient.ensureQueryData(
       isConfiguredQueryOptions,
     );

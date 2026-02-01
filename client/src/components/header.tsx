@@ -11,6 +11,7 @@ import { Fragment, useState } from 'react';
 import { useLocation } from '@tanstack/react-router';
 import { UserRole } from '@sna/server';
 import { Text } from './text';
+import { LogoutButton } from './logout-button';
 import { Link } from '@/components/link';
 import type { FileRouteTypes } from '@/routeTree.gen';
 
@@ -60,6 +61,9 @@ export function Header({ userRole }: { userRole: UserRole }) {
             onClick={onLinkClick}
           />
         ))}
+        <NavbarItem>
+          <LogoutButton />
+        </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end" className="sm:hidden">
         <NavbarMenuToggle />
@@ -73,6 +77,11 @@ export function Header({ userRole }: { userRole: UserRole }) {
               isMobile
             />
           ))}
+          <NavbarMenuItem>
+            <NavbarItem>
+              <LogoutButton />
+            </NavbarItem>
+          </NavbarMenuItem>
         </NavbarMenu>
       </NavbarContent>
     </Navbar>
