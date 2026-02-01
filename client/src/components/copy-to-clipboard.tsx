@@ -46,6 +46,7 @@ export function CopyToClipboard({ text }: { text: string }) {
     <Tooltip {...tooltipPropsMap[buttonState]}>
       <Button
         size="sm"
+        className="h-6"
         onPress={handleCopy}
         isIconOnly
         aria-label="Copy to clipboard"

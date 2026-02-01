@@ -45,7 +45,7 @@ export function Header({ userRole }: { userRole: UserRole }) {
       onMenuOpenChange={setIsOpen}
       maxWidth="xl"
       position="sticky"
-      className="container"
+      className="sm:container bg-default-50"
     >
       <NavbarBrand>
         <Text as="span" className="text-xl font-bold">
@@ -67,7 +67,7 @@ export function Header({ userRole }: { userRole: UserRole }) {
       </NavbarContent>
       <NavbarContent justify="end" className="sm:hidden">
         <NavbarMenuToggle />
-        <NavbarMenu>
+        <NavbarMenu className="bg-default-50">
           {navbarItems.map((item) => (
             <HeaderLink
               key={item.href}
@@ -77,10 +77,8 @@ export function Header({ userRole }: { userRole: UserRole }) {
               isMobile
             />
           ))}
-          <NavbarMenuItem>
-            <NavbarItem>
-              <LogoutButton />
-            </NavbarItem>
+          <NavbarMenuItem className="text-right">
+            <LogoutButton />
           </NavbarMenuItem>
         </NavbarMenu>
       </NavbarContent>
@@ -104,8 +102,13 @@ function HeaderLink({
   const Wrapper = isMobile ? NavbarMenuItem : Fragment;
   return (
     <Wrapper isActive={isActive}>
-      <NavbarItem isActive={isActive}>
-        <Link to={href} size="lg" onClick={onClick}>
+      <NavbarItem isActive={isActive} className="text-right sm:text-left">
+        <Link
+          to={href}
+          size="lg"
+          onClick={onClick}
+          className={isMobile ? '' : 'hover:underline underline-offset-3'}
+        >
           {label}
         </Link>
       </NavbarItem>

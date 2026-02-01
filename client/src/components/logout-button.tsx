@@ -41,7 +41,12 @@ export function LogoutButton() {
   };
 
   return (
-    <Button color="danger" onPress={logout} variant="light" className="text-large">
+    <Button
+      color="danger"
+      onPress={logout}
+      variant="light"
+      className="text-large px-0 sm:px-4"
+    >
       <LogOutIcon size={16} />
       Logout
     </Button>

@@ -1,6 +1,5 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { Card, CardBody, CardHeader, Divider } from '@heroui/react';
 import { GlobeIcon, NetworkIcon } from 'lucide-react';
 import { Text } from '@/components/text';
 import { configQueryOptions } from '@/integrations/tanstack-query/queries/config';
@@ -27,23 +26,20 @@ function RouteComponent() {
     : null;
 
   return (
-    <div className="min-h-full flex justify-center">
+    <div className="flex justify-center pt-3">
       <div className="max-w-xl w-full">
-        <Card>
-          <CardHeader className="py-3">
-            <Text as="h2" variant="heading-lg">
-              Welcome, {me.username}!
-            </Text>
-          </CardHeader>
-          <Divider />
-          <CardBody className="py-6 flex flex-col gap-4">
-            <Text as="p">Your addon URL{remoteManifestUrl ? 's' : ''}:</Text>
-            <AddonUrl icon={NetworkIcon} url={localManifestUrl} label="Local URL" />
-            {remoteManifestUrl && (
-              <AddonUrl icon={GlobeIcon} url={remoteManifestUrl} label="Remote URL" />
-            )}
-          </CardBody>
-        </Card>
+        <div>
+          <Text as="h2" variant="heading-lg">
+            Welcome, {me.username}!
+          </Text>
+        </div>
+        <div className="py-6 flex flex-col gap-8">
+          <Text as="p">Your addon URL{remoteManifestUrl ? 's' : ''}:</Text>
+          <AddonUrl icon={NetworkIcon} url={localManifestUrl} label="Local URL" />
+          {remoteManifestUrl && (
+            <AddonUrl icon={GlobeIcon} url={remoteManifestUrl} label="Remote URL" />
+          )}
+        </div>
       </div>
     </div>
   );
