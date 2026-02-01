@@ -20,13 +20,13 @@ const commonBuildOptions: Options = {
   sourcemap: true,
   treeshake: true,
   tsconfig: path.resolve(baseDir, 'tsconfig.json'),
-  dts: false,
   splitting: false,
 };
 
 console.log('Building server with tsup...');
 await build({
   ...commonBuildOptions,
+  dts: false,
   entry: [path.resolve(baseDir, 'src/index.ts')],
   platform: 'node',
   target: 'node22',

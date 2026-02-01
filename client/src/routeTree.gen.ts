@@ -14,8 +14,8 @@ import { Route as ConfiguredRouteRouteImport } from './routes/_configured/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ConfiguredLoginRouteImport } from './routes/_configured/login'
 import { Route as ConfiguredAuthenticatedRouteRouteImport } from './routes/_configured/_authenticated/route'
-import { Route as ConfiguredAuthenticatedTorrentsRouteImport } from './routes/_configured/_authenticated/torrents'
 import { Route as ConfiguredAuthenticatedAccountRouteImport } from './routes/_configured/_authenticated/account'
+import { Route as ConfiguredAuthenticatedTorrentsIndexRouteImport } from './routes/_configured/_authenticated/torrents/index'
 import { Route as ConfiguredAuthenticatedSettingsIndexRouteImport } from './routes/_configured/_authenticated/settings/index'
 
 const SetupRoute = SetupRouteImport.update({
@@ -42,16 +42,16 @@ const ConfiguredAuthenticatedRouteRoute =
     id: '/_authenticated',
     getParentRoute: () => ConfiguredRouteRoute,
   } as any)
-const ConfiguredAuthenticatedTorrentsRoute =
-  ConfiguredAuthenticatedTorrentsRouteImport.update({
-    id: '/torrents',
-    path: '/torrents',
-    getParentRoute: () => ConfiguredAuthenticatedRouteRoute,
-  } as any)
 const ConfiguredAuthenticatedAccountRoute =
   ConfiguredAuthenticatedAccountRouteImport.update({
     id: '/account',
     path: '/account',
+    getParentRoute: () => ConfiguredAuthenticatedRouteRoute,
+  } as any)
+const ConfiguredAuthenticatedTorrentsIndexRoute =
+  ConfiguredAuthenticatedTorrentsIndexRouteImport.update({
+    id: '/torrents/',
+    path: '/torrents/',
     getParentRoute: () => ConfiguredAuthenticatedRouteRoute,
   } as any)
 const ConfiguredAuthenticatedSettingsIndexRoute =
@@ -66,16 +66,16 @@ export interface FileRoutesByFullPath {
   '/setup': typeof SetupRoute
   '/login': typeof ConfiguredLoginRoute
   '/account': typeof ConfiguredAuthenticatedAccountRoute
-  '/torrents': typeof ConfiguredAuthenticatedTorrentsRoute
   '/settings': typeof ConfiguredAuthenticatedSettingsIndexRoute
+  '/torrents': typeof ConfiguredAuthenticatedTorrentsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/setup': typeof SetupRoute
   '/login': typeof ConfiguredLoginRoute
   '/account': typeof ConfiguredAuthenticatedAccountRoute
-  '/torrents': typeof ConfiguredAuthenticatedTorrentsRoute
   '/settings': typeof ConfiguredAuthenticatedSettingsIndexRoute
+  '/torrents': typeof ConfiguredAuthenticatedTorrentsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -85,14 +85,14 @@ export interface FileRoutesById {
   '/_configured/_authenticated': typeof ConfiguredAuthenticatedRouteRouteWithChildren
   '/_configured/login': typeof ConfiguredLoginRoute
   '/_configured/_authenticated/account': typeof ConfiguredAuthenticatedAccountRoute
-  '/_configured/_authenticated/torrents': typeof ConfiguredAuthenticatedTorrentsRoute
   '/_configured/_authenticated/settings/': typeof ConfiguredAuthenticatedSettingsIndexRoute
+  '/_configured/_authenticated/torrents/': typeof ConfiguredAuthenticatedTorrentsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/setup' | '/login' | '/account' | '/torrents' | '/settings'
+  fullPaths: '/' | '/setup' | '/login' | '/account' | '/settings' | '/torrents'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/setup' | '/login' | '/account' | '/torrents' | '/settings'
+  to: '/' | '/setup' | '/login' | '/account' | '/settings' | '/torrents'
   id:
     | '__root__'
     | '/'
@@ -101,8 +101,8 @@ export interface FileRouteTypes {
     | '/_configured/_authenticated'
     | '/_configured/login'
     | '/_configured/_authenticated/account'
-    | '/_configured/_authenticated/torrents'
     | '/_configured/_authenticated/settings/'
+    | '/_configured/_authenticated/torrents/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -148,18 +148,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConfiguredAuthenticatedRouteRouteImport
       parentRoute: typeof ConfiguredRouteRoute
     }
-    '/_configured/_authenticated/torrents': {
-      id: '/_configured/_authenticated/torrents'
-      path: '/torrents'
-      fullPath: '/torrents'
-      preLoaderRoute: typeof ConfiguredAuthenticatedTorrentsRouteImport
-      parentRoute: typeof ConfiguredAuthenticatedRouteRoute
-    }
     '/_configured/_authenticated/account': {
       id: '/_configured/_authenticated/account'
       path: '/account'
       fullPath: '/account'
       preLoaderRoute: typeof ConfiguredAuthenticatedAccountRouteImport
+      parentRoute: typeof ConfiguredAuthenticatedRouteRoute
+    }
+    '/_configured/_authenticated/torrents/': {
+      id: '/_configured/_authenticated/torrents/'
+      path: '/torrents'
+      fullPath: '/torrents'
+      preLoaderRoute: typeof ConfiguredAuthenticatedTorrentsIndexRouteImport
       parentRoute: typeof ConfiguredAuthenticatedRouteRoute
     }
     '/_configured/_authenticated/settings/': {
@@ -174,16 +174,17 @@ declare module '@tanstack/react-router' {
 
 interface ConfiguredAuthenticatedRouteRouteChildren {
   ConfiguredAuthenticatedAccountRoute: typeof ConfiguredAuthenticatedAccountRoute
-  ConfiguredAuthenticatedTorrentsRoute: typeof ConfiguredAuthenticatedTorrentsRoute
   ConfiguredAuthenticatedSettingsIndexRoute: typeof ConfiguredAuthenticatedSettingsIndexRoute
+  ConfiguredAuthenticatedTorrentsIndexRoute: typeof ConfiguredAuthenticatedTorrentsIndexRoute
 }
 
 const ConfiguredAuthenticatedRouteRouteChildren: ConfiguredAuthenticatedRouteRouteChildren =
   {
     ConfiguredAuthenticatedAccountRoute: ConfiguredAuthenticatedAccountRoute,
-    ConfiguredAuthenticatedTorrentsRoute: ConfiguredAuthenticatedTorrentsRoute,
     ConfiguredAuthenticatedSettingsIndexRoute:
       ConfiguredAuthenticatedSettingsIndexRoute,
+    ConfiguredAuthenticatedTorrentsIndexRoute:
+      ConfiguredAuthenticatedTorrentsIndexRoute,
   }
 
 const ConfiguredAuthenticatedRouteRouteWithChildren =
