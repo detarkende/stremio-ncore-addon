@@ -23,6 +23,7 @@ const tooltipPropsMap: Record<ButtonState, TooltipProps> = {
 };
 
 export function CopyToClipboard({ text }: { text: string }) {
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
   const [buttonState, setButtonState] = useState<ButtonState>(ButtonState.DEFAULT);
 
   const changeButtonState = (state: ButtonState) => {
@@ -43,7 +44,11 @@ export function CopyToClipboard({ text }: { text: string }) {
   const Icon = iconMap[buttonState];
 
   return (
-    <Tooltip {...tooltipPropsMap[buttonState]}>
+    <Tooltip
+      {...tooltipPropsMap[buttonState]}
+      isOpen={tooltipPropsMap[buttonState].isOpen ?? isTooltipOpen}
+      onOpenChange={(isOpen) => setIsTooltipOpen(isOpen)}
+    >
       <Button
         size="sm"
         className="h-6"
@@ -52,7 +57,7 @@ export function CopyToClipboard({ text }: { text: string }) {
         aria-label="Copy to clipboard"
         variant="light"
       >
-        <Icon size={16} />
+        <Icon size={16} data-testid={`icon-${buttonState}`} />
       </Button>
     </Tooltip>
   );
