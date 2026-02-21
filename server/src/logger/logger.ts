@@ -1,4 +1,4 @@
-import { pino } from 'pino';
+import pino from 'pino';
 
 export const logger = pino(
   {
@@ -16,3 +16,10 @@ export const logger = pino(
     ],
   }),
 );
+
+export const logLevels = [
+  'error',
+  'warn',
+  'info',
+  'debug',
+] as const satisfies readonly (keyof typeof logger)[];

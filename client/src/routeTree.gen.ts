@@ -66,8 +66,8 @@ export interface FileRoutesByFullPath {
   '/setup': typeof SetupRoute
   '/login': typeof ConfiguredLoginRoute
   '/account': typeof ConfiguredAuthenticatedAccountRoute
-  '/settings': typeof ConfiguredAuthenticatedSettingsIndexRoute
-  '/torrents': typeof ConfiguredAuthenticatedTorrentsIndexRoute
+  '/settings/': typeof ConfiguredAuthenticatedSettingsIndexRoute
+  '/torrents/': typeof ConfiguredAuthenticatedTorrentsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -90,7 +90,13 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/setup' | '/login' | '/account' | '/settings' | '/torrents'
+  fullPaths:
+    | '/'
+    | '/setup'
+    | '/login'
+    | '/account'
+    | '/settings/'
+    | '/torrents/'
   fileRoutesByTo: FileRoutesByTo
   to: '/' | '/setup' | '/login' | '/account' | '/settings' | '/torrents'
   id:
@@ -123,7 +129,7 @@ declare module '@tanstack/react-router' {
     '/_configured': {
       id: '/_configured'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof ConfiguredRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -144,7 +150,7 @@ declare module '@tanstack/react-router' {
     '/_configured/_authenticated': {
       id: '/_configured/_authenticated'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof ConfiguredAuthenticatedRouteRouteImport
       parentRoute: typeof ConfiguredRouteRoute
     }
@@ -158,14 +164,14 @@ declare module '@tanstack/react-router' {
     '/_configured/_authenticated/torrents/': {
       id: '/_configured/_authenticated/torrents/'
       path: '/torrents'
-      fullPath: '/torrents'
+      fullPath: '/torrents/'
       preLoaderRoute: typeof ConfiguredAuthenticatedTorrentsIndexRouteImport
       parentRoute: typeof ConfiguredAuthenticatedRouteRoute
     }
     '/_configured/_authenticated/settings/': {
       id: '/_configured/_authenticated/settings/'
       path: '/settings'
-      fullPath: '/settings'
+      fullPath: '/settings/'
       preLoaderRoute: typeof ConfiguredAuthenticatedSettingsIndexRouteImport
       parentRoute: typeof ConfiguredAuthenticatedRouteRoute
     }
