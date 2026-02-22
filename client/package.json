@@ -9,7 +9,8 @@
     "test:watch": "vitest --ui",
     "lint": "eslint",
     "format": "prettier",
-    "check": "prettier --write . && eslint --fix"
+    "check": "prettier --write . && eslint --fix",
+    "postinstall": "playwright install"
   },
   "dependencies": {
     "@heroui/react": "^2.8.9",
