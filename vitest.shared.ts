@@ -6,11 +6,12 @@ export default defineConfig({
     sequence: {
       shuffle: true,
     },
+    reporters: ['default'],
     coverage: {
       include: ['**/src/**/*.ts'],
       provider: 'istanbul',
       reportsDirectory: './coverage',
-      reporter: ['text', 'json-summary', 'html'],
+      reporter: ['text', 'json-summary', 'cobertura'],
       clean: true,
       enabled: true,
       exclude: [
