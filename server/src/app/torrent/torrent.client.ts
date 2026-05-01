@@ -43,6 +43,39 @@ export class TorrentClient {
     };
   }
 
+  private setupVerifiedListener(torrent: WebtorrentTorrent, dbTorrent: DbTorrent): void {
+    torrent.on('verified', () => {
+      db.update(torrentsTable)
+        .set({ bitfield: torrent.bitfield.buffer })
+        .where(eq(torrentsTable.infoHash, dbTorrent.infoHash))
+        .run();
+    });
+  }
+
+  private setupPreloadListeners(torrent: WebtorrentTorrent): void {
+    const selectedFiles = new Set<string>();
+
+    const checkPreload = () => {
+      if (torrent.progress >= env.PRELOAD_TORRENT_THRESHOLD) {
+        torrent.select(0, torrent.pieces.length - 1);
+        torrent.removeListener('download', checkPreload);
+        return;
+      }
+      for (const file of torrent.files) {
+        if (
+          !selectedFiles.has(file.path) &&
+          file.progress >= env.PRELOAD_TORRENT_FILE_THRESHOLD
+        ) {
+          file.select();
+          selectedFiles.add(file.path);
+        }
+      }
+    };
+
+    torrent.on('download', checkPreload);
+    checkPreload();
+  }
+
   public async addTorrent(dbTorrent: DbTorrent, isNewTorrent: boolean): Promise<Torrent> {
     try {
       const torrent = await new Promise<WebtorrentTorrent>((resolve, reject) => {
@@ -64,12 +97,8 @@ export class TorrentClient {
           reject(error);
         }
       });
-      torrent.on('verified', () => {
-        db.update(torrentsTable)
-          .set({ bitfield: torrent.bitfield.buffer })
-          .where(eq(torrentsTable.infoHash, dbTorrent.infoHash))
-          .run();
-      });
+      this.setupVerifiedListener(torrent, dbTorrent);
+      this.setupPreloadListeners(torrent);
       return this.mapToTorrentResponse(torrent);
     } catch (error: unknown) {
       logger.error({ error }, `Failed to add torrent "${dbTorrent.name}"`);
@@ -126,36 +155,42 @@ export class TorrentClient {
 
   public async loadExistingTorrents() {
     const torrents = getExistingTorrents();
-    await Promise.all(
-      torrents.map(async (torrent) => {
-        logger.info(`Loading existing torrent: ${torrent.name} (${torrent.infoHash})`);
-        try {
-          await this.addTorrent(torrent, false);
-          logger.info(
-            `Successfully loaded existing torrent: ${torrent.name} (${torrent.infoHash})`,
-          );
-        } catch (error: unknown) {
-          logger.error(
-            { error, infoHash: torrent.infoHash, name: torrent.name },
-            'Failed to load existing torrent',
-          );
-        }
-      }),
-    );
+
+    for (const torrent of torrents) {
+      logger.info(`Loading existing torrent: ${torrent.name} (${torrent.infoHash})`);
+      try {
+        await this.addTorrent(torrent, false);
+        logger.info(
+          `Successfully loaded existing torrent: ${torrent.name} (${torrent.infoHash})`,
+        );
+      } catch (error: unknown) {
+        logger.error(
+          { error, infoHash: torrent.infoHash, name: torrent.name },
+          'Failed to load existing torrent',
+        );
+      }
+    }
   }
 
   public async deleteUnnecessaryTorrents() {
     const deletableInfoHashes = await ncoreService.getRemovableInfoHashes();
-    for (const infoHash of deletableInfoHashes) {
-      const torrent = await this.getTorrent(infoHash);
-      const error = await this.deleteTorrent(infoHash);
-      if (error) {
-        logger.error(
-          { infoHash, error },
-          `Failed to delete unnecessary torrent: ${torrent?.name || infoHash}`,
+    for (const torrent of this.webtorrent.torrents) {
+      if (!deletableInfoHashes.includes(torrent.infoHash)) {
+        logger.info(
+          `Keeping torrent: ${torrent.name} (${torrent.infoHash}) - not marked for deletion`,
         );
       } else {
-        logger.info(`Deleted unnecessary torrent: ${torrent?.name || infoHash}`);
+        const error = await this.deleteTorrent(torrent.infoHash);
+        if (error) {
+          logger.error(
+            { infoHash: torrent.infoHash, error },
+            `Failed to delete unnecessary torrent: ${torrent?.name || torrent.infoHash}`,
+          );
+        } else {
+          logger.info(
+            `Deleted unnecessary torrent: ${torrent?.name || torrent.infoHash}`,
+          );
+        }
       }
     }
   }

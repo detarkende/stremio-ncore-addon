@@ -3,3 +3,4 @@ packages:
   - 'client'
   - 'server'
 allowBuilds: true
+injectWorkspacePackages: true

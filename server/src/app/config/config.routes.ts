@@ -58,7 +58,7 @@ export const configRoutes = new Hono()
       const config = getConfig();
       deleteOldTorrentsScheduler.schedule(
         config,
-        torrentClient.deleteUnnecessaryTorrents,
+        torrentClient.deleteUnnecessaryTorrents.bind(torrentClient),
       );
     } catch (error) {
       logger.error(error, 'Failed to save configuration or create admin user');
@@ -85,7 +85,7 @@ export const configRoutes = new Hono()
         const updatedConfig = getConfig();
         deleteOldTorrentsScheduler.schedule(
           updatedConfig,
-          torrentClient.deleteUnnecessaryTorrents,
+          torrentClient.deleteUnnecessaryTorrents.bind(torrentClient),
         );
         return c.json(updatedConfig);
       } catch (error) {
