@@ -11,7 +11,7 @@ FROM node-base AS build-base
 RUN npm install -g pnpm
 
 FROM build-base AS prod-deps
-RUN pnpm deploy --filter server --prod server/deps
+RUN pnpm --config.inject-workspace-packages=true deploy --filter server --prod server/deps
 
 FROM build-base AS build-deps
 RUN pnpm install

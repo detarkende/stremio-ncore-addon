@@ -3,7 +3,6 @@ lockfileVersion: '9.0'
 settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
-  injectWorkspacePackages: true
 
 patchedDependencies:
   '@types/parse-torrent':
@@ -68,7 +67,7 @@ importers:
         version: 2.8.9(@types/react@19.2.14)(framer-motion@12.34.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(tailwindcss@4.2.0)
       '@sna/server':
         specifier: workspace:^
-        version: file:server(@libsql/client-wasm@0.14.0)(@types/better-sqlite3@7.6.13)(@types/node@22.19.11)(@types/react@19.2.14)(@vitest/ui@4.0.18)(bufferutil@4.1.0)(lightningcss@1.31.1)(react@19.2.4)(sass-embedded@1.89.1)(typescript@5.9.3)(utf-8-validate@6.0.6)(zod@4.3.6)
+        version: link:../server
       '@tailwindcss/vite':
         specifier: ^4.2.0
         version: 4.2.0(vite@7.3.1(@types/node@22.19.11)(jiti@2.6.1)(lightningcss@1.31.1)(sass-embedded@1.89.1)(tsx@4.21.0)(yaml@2.8.0))
@@ -2783,12 +2782,6 @@ packages:
   '@silentbot1/nat-api@0.4.9':
     resolution: {integrity: sha512-Bm2Fr0sJyGr4B/XgKjQxjGe7Rzs/OlK91OIHsghObxhP3Y4j2y8o7Xjlledu/pxzFEIWaTbZIBSl8ABqoP/WhQ==}
     engines: {node: '>=10.0.0'}
-
-  '@sna/server@file:server':
-    resolution: {directory: server, type: directory}
-    engines: {node: '>=20.6.0'}
-    peerDependencies:
-      typescript: ^5.0.0
 
   '@solid-primitives/event-listener@2.4.3':
     resolution: {integrity: sha512-h4VqkYFv6Gf+L7SQj+Y6puigL/5DIi7x5q07VZET7AWcS+9/G3WfIE9WheniHWJs51OEkRB43w6lDys5YeFceg==}
@@ -10196,81 +10189,6 @@ snapshots:
       xml2js: 0.6.2
     transitivePeerDependencies:
       - supports-color
-
-  '@sna/server@file:server(@libsql/client-wasm@0.14.0)(@types/better-sqlite3@7.6.13)(@types/node@22.19.11)(@types/react@19.2.14)(@vitest/ui@4.0.18)(bufferutil@4.1.0)(lightningcss@1.31.1)(react@19.2.4)(sass-embedded@1.89.1)(typescript@5.9.3)(utf-8-validate@6.0.6)(zod@4.3.6)':
-    dependencies:
-      '@ctrl/video-filename-parser': 5.4.1
-      '@hono/node-server': 1.19.9(hono@4.12.1)
-      '@hono/zod-validator': 0.4.3(hono@4.12.1)(zod@4.3.6)
-      '@libsql/client': 0.15.15(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      '@oslojs/crypto': 1.0.1
-      '@oslojs/encoding': 1.1.0
-      bcryptjs: 3.0.3
-      better-sqlite3: 12.6.2
-      content-disposition: 0.5.4
-      drizzle-orm: 0.38.4(@libsql/client-wasm@0.14.0)(@libsql/client@0.15.15(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/better-sqlite3@7.6.13)(@types/react@19.2.14)(better-sqlite3@12.6.2)(react@19.2.4)
-      hono: 4.12.1
-      jsdom: 25.0.1(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      lru-cache: 11.2.6
-      node-cron: 4.2.1
-      parse-torrent: 11.0.19
-      pino: 9.14.0
-      pino-roll: 3.1.0
-      range-parser: 1.2.1
-      set-cookie-parser: 2.7.2
-      typescript: 5.9.3
-      vitest: 2.1.9(@types/node@22.19.11)(@vitest/ui@4.0.18)(jsdom@25.0.1(bufferutil@4.1.0)(utf-8-validate@6.0.6))(lightningcss@1.31.1)(sass-embedded@1.89.1)
-      webtorrent: 2.8.5(patch_hash=263e41f2dda2c44d06283513019f881c0406396c7ab7af7f87cc0dbfda027ace)(bare-url@2.3.2)
-    transitivePeerDependencies:
-      - '@aws-sdk/client-rds-data'
-      - '@cloudflare/workers-types'
-      - '@edge-runtime/vm'
-      - '@electric-sql/pglite'
-      - '@libsql/client-wasm'
-      - '@neondatabase/serverless'
-      - '@op-engineering/op-sqlite'
-      - '@opentelemetry/api'
-      - '@planetscale/database'
-      - '@prisma/client'
-      - '@tidbcloud/serverless'
-      - '@types/better-sqlite3'
-      - '@types/node'
-      - '@types/pg'
-      - '@types/react'
-      - '@types/sql.js'
-      - '@vercel/postgres'
-      - '@vitest/browser'
-      - '@vitest/ui'
-      - '@xata.io/client'
-      - bare-abort-controller
-      - bare-buffer
-      - bare-url
-      - bufferutil
-      - bun-types
-      - canvas
-      - expo-sqlite
-      - happy-dom
-      - knex
-      - kysely
-      - less
-      - lightningcss
-      - msw
-      - mysql2
-      - pg
-      - postgres
-      - prisma
-      - react
-      - react-native-b4a
-      - sass
-      - sass-embedded
-      - sql.js
-      - sqlite3
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-      - utf-8-validate
-      - zod
 
   '@solid-primitives/event-listener@2.4.3(solid-js@1.9.10)':
     dependencies:
