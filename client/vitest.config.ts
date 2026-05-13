@@ -1,9 +1,10 @@
-import { defineConfig, mergeConfig } from 'vitest/config';
-import sharedConfig from '../vitest.shared';
-import { playwright } from '@vitest/browser-playwright';
+import tailwindcss from '@tailwindcss/vite';
 import { devtools } from '@tanstack/devtools-vite';
 import viteReact from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite';
+import { playwright } from '@vitest/browser-playwright';
+import { defineConfig, mergeConfig } from 'vitest/config';
+
+import sharedConfig from '../vitest.shared';
 import { allowClipboard } from './src/test-utils/commands';
 
 export default mergeConfig(

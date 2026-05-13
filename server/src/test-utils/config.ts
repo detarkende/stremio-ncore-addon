@@ -1,5 +1,5 @@
-import type { Configuration } from 'src/db/schema/configuration';
 import { db } from 'src/db';
+import type { Configuration } from 'src/db/schema/configuration';
 import { configurationTable } from 'src/db/schema/configuration';
 
 const defaultConfig: Configuration = {

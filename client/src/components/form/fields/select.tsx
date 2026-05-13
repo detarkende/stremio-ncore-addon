@@ -1,6 +1,7 @@
 import { Select, SelectItem, type SelectProps } from '@heroui/react';
-import { defaultFieldProps } from '../default-props';
+
 import { useFieldContext } from '..';
+import { defaultFieldProps } from '../default-props';
 
 type DisallowedSelectProps =
   | 'name'

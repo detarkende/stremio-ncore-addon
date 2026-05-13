@@ -1,7 +1,8 @@
-import { torrentsTable, type DbTorrent } from 'src/db/schema/torrents';
-import { db } from 'src/db';
 import { eq } from 'drizzle-orm';
+import { db } from 'src/db';
+import { torrentsTable, type DbTorrent } from 'src/db/schema/torrents';
 import { usersTorrentsTable } from 'src/db/schema/users_torrent_files';
+
 import type { StreamType } from '../stream/stream.constants';
 import type { ParsedTorrentDetails } from './torrent.types';
 

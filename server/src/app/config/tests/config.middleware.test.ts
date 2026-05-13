@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { db } from 'src/db';
+
 import { configurationTable } from '../../../db/schema/configuration';
 import { useIsConfigured } from '../config.middleware';
 

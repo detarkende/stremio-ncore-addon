@@ -1,5 +1,5 @@
-import parseRange from 'range-parser';
 import { HTTPException } from 'hono/http-exception';
+import parseRange from 'range-parser';
 import { HttpStatusCode } from 'src/types/http';
 
 /**

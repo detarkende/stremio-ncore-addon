@@ -1,7 +1,9 @@
 import { queryOptions } from '@tanstack/react-query';
-import { QueryKeys } from '../keys';
+
 import { apiClient } from '@/integrations/api';
 import { handleHttpError } from '@/utils/http';
+
+import { QueryKeys } from '../keys';
 
 export const isConfiguredQueryOptions = queryOptions({
   queryKey: [QueryKeys.IS_CONFIGURED],

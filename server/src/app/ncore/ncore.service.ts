@@ -1,19 +1,13 @@
-import cookieParser from 'set-cookie-parser';
 import { JSDOM } from 'jsdom';
-import { cacheFunction, DEFAULT_MAX, DEFAULT_TTL } from 'src/utils/cache';
-import { logger } from 'src/logger';
+import cookieParser from 'set-cookie-parser';
+import { StreamType } from 'src/app/stream/stream.constants';
 import { env } from 'src/env';
+import { logger } from 'src/logger';
+import { cacheFunction, DEFAULT_MAX, DEFAULT_TTL } from 'src/utils/cache';
 import { getAllPromiseResults } from 'src/utils/get-all-promise-results';
 import { batchAsyncFunctions } from 'src/utils/process-in-batches';
-import { StreamType } from 'src/app/stream/stream.constants';
+
 import { downloadAndParseTorrent } from '../torrent/torrent-file.utils';
-import {
-  NcoreOrderBy,
-  NcoreSearchBy,
-  type NcoreQueryParams,
-  type NcoreTorrent,
-} from './ncore.types';
-import { getAllPages, getNcoreSearchResults } from './ncore.utils';
 import { NcoreTorrentDetails } from './ncore-torrent-details';
 import {
   BATCH_DELAY,
@@ -21,6 +15,13 @@ import {
   MOVIE_CATEGORY_FILTERS,
   SERIES_CATEGORY_FILTERS,
 } from './ncore.constants';
+import {
+  NcoreOrderBy,
+  NcoreSearchBy,
+  type NcoreQueryParams,
+  type NcoreTorrent,
+} from './ncore.types';
+import { getAllPages, getNcoreSearchResults } from './ncore.utils';
 
 export class NcoreService {
   _cookiesCache = {

@@ -2,8 +2,9 @@ import { testClient } from 'hono/testing';
 import nock from 'nock';
 import { env } from 'src/env';
 import { configureApp } from 'src/test-utils/config';
-import { streamRoutes } from '../stream.routes';
+
 import { StreamType } from '../stream.constants';
+import { streamRoutes } from '../stream.routes';
 
 describe('Stream routes', () => {
   const client = testClient(streamRoutes);

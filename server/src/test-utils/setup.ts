@@ -1,6 +1,6 @@
-import { loadEnv } from 'src/env';
-import { createDbInstance } from 'src/db/client';
 import mockFs from 'mock-fs';
+import { createDbInstance } from 'src/db/client';
+import { loadEnv } from 'src/env';
 import { logger, logLevels } from 'src/logger';
 
 function setupTestEnv() {

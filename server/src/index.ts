@@ -1,19 +1,21 @@
 import './init';
 import { createServer } from 'node:https';
-import { Hono } from 'hono';
-import { contextStorage } from 'hono/context-storage';
+
 import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
+import { Hono } from 'hono';
+import { contextStorage } from 'hono/context-storage';
 import { cors } from 'hono/cors';
-import { env } from './env';
-import { logger, requestLogger } from './logger';
+
 import { authRoutes } from './app/auth';
-import { torrentRoutes } from './app/torrent';
-import { streamRoutes } from './app/stream';
-import { userRoutes } from './app/user';
-import { manifestRoutes } from './app/manifest';
 import { configRoutes } from './app/config';
 import { HttpsService } from './app/https';
+import { manifestRoutes } from './app/manifest';
+import { streamRoutes } from './app/stream';
+import { torrentRoutes } from './app/torrent';
+import { userRoutes } from './app/user';
+import { env } from './env';
+import { logger, requestLogger } from './logger';
 
 const app = new Hono();
 app.use(contextStorage()).use(cors()).use(requestLogger);

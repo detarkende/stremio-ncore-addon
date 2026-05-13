@@ -1,6 +1,8 @@
 import { commands } from 'vitest/browser';
-import { CopyToClipboard } from './copy-to-clipboard';
+
 import { render } from '@/test-utils/render';
+
+import { CopyToClipboard } from './copy-to-clipboard';
 
 describe('CopyToClipboard', () => {
   beforeEach(async () => {

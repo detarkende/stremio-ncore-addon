@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { createTestUser } from 'src/test-utils/users';
+
 import { userFromUrlExists } from '../user.middleware';
 
 describe('User middlewares', () => {

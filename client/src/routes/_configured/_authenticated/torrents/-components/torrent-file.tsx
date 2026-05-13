@@ -1,5 +1,6 @@
-import type { Torrent, TorrentFile } from '@sna/server';
 import { Progress } from '@heroui/react';
+import type { Torrent, TorrentFile } from '@sna/server';
+
 import { Text } from '@/components/text';
 
 export function TorrentFile({ torrent, file }: { torrent: Torrent; file: TorrentFile }) {

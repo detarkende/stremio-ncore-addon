@@ -1,16 +1,18 @@
 import { rmSync } from 'node:fs';
 import { join } from 'node:path';
+
+import { eq } from 'drizzle-orm';
+import { db } from 'src/db';
+import { torrentsTable, type DbTorrent } from 'src/db/schema/torrents';
 import { env } from 'src/env';
 import { logger } from 'src/logger';
+import { getHighestCommonDir } from 'src/utils/files';
 import {
   type Torrent as WebtorrentTorrent,
   type Instance as WebtorrentInstance,
 } from 'webtorrent';
 import WebTorrent from 'webtorrent';
-import { torrentsTable, type DbTorrent } from 'src/db/schema/torrents';
-import { db } from 'src/db';
-import { eq } from 'drizzle-orm';
-import { getHighestCommonDir } from 'src/utils/files';
+
 import { ncoreService } from '../ncore';
 import { getExistingTorrents } from './torrent-file.utils';
 import type { Torrent } from './torrent.types';

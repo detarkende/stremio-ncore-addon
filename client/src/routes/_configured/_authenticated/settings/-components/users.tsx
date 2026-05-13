@@ -1,11 +1,13 @@
-import { useQuery } from '@tanstack/react-query';
-import type { PropsWithChildren } from 'react';
 import { Button, Skeleton } from '@heroui/react';
 import type { User } from '@sna/server';
-import { UserCard } from './user-card/user-card';
-import { CreateNewUser } from './create-new-user';
+import { useQuery } from '@tanstack/react-query';
+import type { PropsWithChildren } from 'react';
+
 import { Text } from '@/components/text';
 import { usersQueryOptions } from '@/integrations/tanstack-query/queries/users';
+
+import { CreateNewUser } from './create-new-user';
+import { UserCard } from './user-card/user-card';
 
 function Wrapper({ children }: PropsWithChildren) {
   return (

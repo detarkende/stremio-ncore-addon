@@ -1,5 +1,7 @@
 import fs from 'fs';
+
 import mockFs from 'mock-fs';
+
 import { ensureDirExists, getHighestCommonDir } from './files';
 
 describe('ensureDirExists', () => {

@@ -1,4 +1,5 @@
 import { Resolution } from '@sna/server';
+
 import type { SelectOption } from '@/components/form/fields/select';
 
 export const resolutionLabelMap: Record<Resolution, string> = {

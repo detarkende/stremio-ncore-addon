@@ -1,8 +1,9 @@
 import nock from 'nock';
+import { logger } from 'src/logger';
+import mentalistMock from 'src/mocks/torrents/mentalist';
 import type { NockHandler } from 'src/test-utils/types';
 import type { Mock } from 'vitest';
-import mentalistMock from 'src/mocks/torrents/mentalist';
-import { logger } from 'src/logger';
+
 import { _fetchTorrent, downloadAndParseTorrent } from '../torrent-file.utils';
 
 vi.mock('src/utils/cache', async (importActual) => {

@@ -1,6 +1,7 @@
 import type { MiddlewareHandler } from 'hono';
 import type { Session } from 'src/db/schema/sessions';
 import type { User } from 'src/types/user';
+
 import { logger } from './logger';
 
 type HonoEnv = {

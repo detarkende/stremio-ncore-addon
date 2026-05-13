@@ -1,9 +1,11 @@
-import { useId, useState } from 'react';
 import { Button, Tooltip } from '@heroui/react';
+import { useId, useState } from 'react';
+
+import type { LucideIcon } from '@/types/icons';
+
+import { CopyToClipboard } from './copy-to-clipboard';
 import { Link } from './link';
 import { Text } from './text';
-import { CopyToClipboard } from './copy-to-clipboard';
-import type { LucideIcon } from '@/types/icons';
 
 export function AddonUrl({
   url,

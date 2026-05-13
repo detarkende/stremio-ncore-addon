@@ -6,13 +6,14 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from '@heroui/react';
-import { type User as UserType } from '@sna/server';
 import { User } from '@heroui/react';
+import { type User as UserType } from '@sna/server';
 import { EllipsisVerticalIcon } from 'lucide-react';
 import { useState } from 'react';
-import { EditUserForm } from './edit-user-form';
+
 import { ChangePasswordForm } from './change-password-form';
 import { DeleteUser } from './delete-user-form';
+import { EditUserForm } from './edit-user-form';
 import { Token } from './token';
 
 type UserMenuOption = 'token' | 'edit' | 'change-password' | 'delete';

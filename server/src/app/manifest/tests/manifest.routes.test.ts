@@ -1,6 +1,7 @@
-import { createTestUser } from 'src/test-utils/users';
 import { testClient } from 'hono/testing';
 import { configureApp } from 'src/test-utils/config';
+import { createTestUser } from 'src/test-utils/users';
+
 import { manifestRoutes } from '../manifest.routes';
 
 describe('Manifest routes', () => {

@@ -1,5 +1,6 @@
-import { getAllPromiseResults } from 'src/utils/get-all-promise-results';
 import { logger } from 'src/logger';
+import { getAllPromiseResults } from 'src/utils/get-all-promise-results';
+
 import type { NcoreTorrent, NcorePageResponseJson } from './ncore.types';
 
 export async function getAllPages(

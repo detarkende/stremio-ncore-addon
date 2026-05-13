@@ -1,9 +1,10 @@
-import { configureApp } from 'src/test-utils/config';
+import { eq } from 'drizzle-orm';
 import { db } from 'src/db';
 import { configurationTable } from 'src/db/schema/configuration';
-import { eq } from 'drizzle-orm';
-import { getConfig } from '../config.utils';
+import { configureApp } from 'src/test-utils/config';
+
 import { DeleteOldTorrentsScheduler } from '../config.schedule';
+import { getConfig } from '../config.utils';
 
 describe('DeleteOldTorrentsScheduler', () => {
   let deleteOldTorrentsScheduler: DeleteOldTorrentsScheduler;

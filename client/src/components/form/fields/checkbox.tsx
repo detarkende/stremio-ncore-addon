@@ -1,4 +1,5 @@
 import { Checkbox, type CheckboxProps } from '@heroui/react';
+
 import { useFieldContext } from '..';
 
 type CheckboxFieldProps = Omit<CheckboxProps, 'checked' | 'onChange' | 'onBlur'> & {};

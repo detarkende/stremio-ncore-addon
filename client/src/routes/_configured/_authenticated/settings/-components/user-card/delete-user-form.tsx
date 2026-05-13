@@ -1,10 +1,11 @@
 import { addToast, Button } from '@heroui/react';
 import { type User } from '@sna/server';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { Text } from '@/components/text';
 import { apiClient } from '@/integrations/api';
 import { QueryKeys } from '@/integrations/tanstack-query/keys';
 import { handleHttpError } from '@/utils/http';
-import { Text } from '@/components/text';
 
 export function DeleteUser({ user, onClose }: { user: User; onClose: () => void }) {
   const queryClient = useQueryClient();

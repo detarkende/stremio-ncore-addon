@@ -1,9 +1,10 @@
-import type { Stream } from 'stremio-addon-sdk';
-import { env } from 'src/env';
 import type { Resolution } from 'src/db/schema/users';
 import { Language } from 'src/db/schema/users';
-import { rateList } from 'src/utils/rate-list';
+import { env } from 'src/env';
 import { formatBytes } from 'src/utils/bytes';
+import { rateList } from 'src/utils/rate-list';
+import type { Stream } from 'stremio-addon-sdk';
+
 import type { TorrentDetails, TorrentFileDetails } from '../torrent';
 import type { StreamType } from './stream.constants';
 import { cinemetaResponseSchema, languageEmojiMap } from './stream.constants';

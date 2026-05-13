@@ -1,10 +1,12 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
-import type { PropsWithChildren } from 'react';
 import { Button, Spinner } from '@heroui/react';
-import { TorrentCard } from './-components/torrent-card';
+import { useQuery } from '@tanstack/react-query';
+import { createFileRoute } from '@tanstack/react-router';
+import type { PropsWithChildren } from 'react';
+
 import { Text } from '@/components/text';
 import { torrentsQueryOptions } from '@/integrations/tanstack-query/queries/torrents';
+
+import { TorrentCard } from './-components/torrent-card';
 
 export const Route = createFileRoute('/_configured/_authenticated/torrents/')({
   component: RouteComponent,

@@ -1,4 +1,5 @@
 import { clsx } from 'clsx';
+
 import styles from './text.module.scss';
 
 const variants = {

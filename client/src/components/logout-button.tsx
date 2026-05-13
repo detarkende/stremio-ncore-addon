@@ -1,10 +1,11 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { addToast, Button } from '@heroui/react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { LogOutIcon } from 'lucide-react';
+
 import { apiClient } from '@/integrations/api';
-import { handleHttpError } from '@/utils/http';
 import { QueryKeys } from '@/integrations/tanstack-query/keys';
+import { handleHttpError } from '@/utils/http';
 
 export function LogoutButton() {
   const queryClient = useQueryClient();

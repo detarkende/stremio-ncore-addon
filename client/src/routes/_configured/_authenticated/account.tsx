@@ -1,10 +1,11 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { GlobeIcon, NetworkIcon } from 'lucide-react';
-import { Text } from '@/components/text';
-import { configQueryOptions } from '@/integrations/tanstack-query/queries/config';
-import { apiClient } from '@/integrations/api';
+
 import { AddonUrl } from '@/components/addon-url';
+import { Text } from '@/components/text';
+import { apiClient } from '@/integrations/api';
+import { configQueryOptions } from '@/integrations/tanstack-query/queries/config';
 
 export const Route = createFileRoute('/_configured/_authenticated/account')({
   component: RouteComponent,

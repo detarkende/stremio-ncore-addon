@@ -1,7 +1,9 @@
 import { Language, type UpdateUserRequest } from '@sna/server';
-import { withFieldGroup } from '..';
+
 import { languageOptions } from '@/constants/languages';
 import { resolutionOptions } from '@/constants/resolutions';
+
+import { withFieldGroup } from '..';
 
 const updateUserFormDefaultValues: Partial<UpdateUserRequest> = {
   username: '',

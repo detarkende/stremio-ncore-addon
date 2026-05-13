@@ -1,19 +1,20 @@
 import nock from 'nock';
-import { env } from 'src/env';
-import { getRandomString } from 'src/test-utils/random';
-import { createTestNcoreTorrentResultArray } from 'src/test-utils/ncore';
-import type { Mock, MockInstance } from 'vitest';
 import type { ParsedTorrentDetails } from 'src/app/torrent';
-import type { NockHandler } from 'src/test-utils/types';
+import { env } from 'src/env';
 import { logger } from 'src/logger';
+import { createTestNcoreTorrentResultArray } from 'src/test-utils/ncore';
+import { getRandomString } from 'src/test-utils/random';
+import type { NockHandler } from 'src/test-utils/types';
+import type { Mock, MockInstance } from 'vitest';
+
 import * as torrentFileUtils from '../../torrent/torrent-file.utils';
+import { MOVIE_CATEGORY_FILTERS } from '../ncore.constants';
 import { NcoreService } from '../ncore.service';
 import type { NcorePageResponseJson } from '../ncore.types';
 import { NcoreOrderBy, NcoreSearchBy } from '../ncore.types';
 import * as ncoreUtils from '../ncore.utils';
-import { MOVIE_CATEGORY_FILTERS } from '../ncore.constants';
-import torrentDetailMockHtml from './mocks/torrent-details.html?raw';
 import hitNRunMockHtml from './mocks/hitnrun.html?raw';
+import torrentDetailMockHtml from './mocks/torrent-details.html?raw';
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 

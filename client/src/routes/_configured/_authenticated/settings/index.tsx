@@ -1,8 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router';
 import { UserRole } from '@sna/server';
+import { createFileRoute } from '@tanstack/react-router';
+
 import { ConfigSettings } from './-components/config-settings';
-import { Users } from './-components/users';
 import { MyAccount } from './-components/my-account';
+import { Users } from './-components/users';
 
 export const Route = createFileRoute('/_configured/_authenticated/settings/')({
   component: RouteComponent,

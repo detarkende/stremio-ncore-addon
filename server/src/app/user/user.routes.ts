@@ -1,16 +1,17 @@
-import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { eq } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { db } from 'src/db';
 import { UserRole, usersTable } from 'src/db/schema/users';
-import { User } from 'src/types/user';
+import { logger } from 'src/logger';
 import {
   createUserSchema,
   updatePasswordSchema,
   updateUserSchema,
 } from 'src/schemas/user.schema';
 import { HttpStatusCode } from 'src/types/http';
-import { logger } from 'src/logger';
+import { User } from 'src/types/user';
+
 import { useCookieAuth } from '../auth/auth.middleware';
 import { userFromUrlExists } from './user.middleware';
 import {

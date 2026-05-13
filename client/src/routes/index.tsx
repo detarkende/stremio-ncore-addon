@@ -1,4 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
+
 import { isConfiguredQueryOptions } from '@/integrations/tanstack-query/queries/config';
 
 export const Route = createFileRoute('/')({

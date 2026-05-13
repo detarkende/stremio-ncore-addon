@@ -1,9 +1,10 @@
-import { createTestUser } from 'src/test-utils/users';
-import mentalist from 'src/mocks/torrents/mentalist';
-import { StreamType } from 'src/app/stream/stream.constants';
-import { usersTorrentsTable } from 'src/db/schema/users_torrent_files';
 import { and, eq } from 'drizzle-orm';
+import { StreamType } from 'src/app/stream/stream.constants';
 import { db } from 'src/db';
+import { usersTorrentsTable } from 'src/db/schema/users_torrent_files';
+import mentalist from 'src/mocks/torrents/mentalist';
+import { createTestUser } from 'src/test-utils/users';
+
 import { parseTorrentBuffer } from '../torrent-file.utils';
 import { insertNewTorrent, insertUserTorrentFileRecord } from '../torrent.utils';
 

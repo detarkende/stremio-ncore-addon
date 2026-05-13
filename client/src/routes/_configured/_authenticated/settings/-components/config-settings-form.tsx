@@ -1,15 +1,16 @@
+import { addToast } from '@heroui/react';
 import {
   updateConfigSchema,
   type Configuration,
   type UpdateConfigRequest,
 } from '@sna/server';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { addToast } from '@heroui/react';
+
 import { useAppForm } from '@/components/form';
 import { AddonSettingsFields } from '@/components/form/field-groups/addon-settings-fields';
 import { apiClient } from '@/integrations/api';
-import { handleHttpError } from '@/utils/http';
 import { configQueryOptions } from '@/integrations/tanstack-query/queries/config';
+import { handleHttpError } from '@/utils/http';
 
 export function ConfigSettingsForm({ config }: { config: Configuration }) {
   const queryClient = useQueryClient();

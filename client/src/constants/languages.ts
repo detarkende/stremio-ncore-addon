@@ -1,4 +1,5 @@
 import { Language } from '@sna/server';
+
 import type { SelectOption } from '@/components/form/fields/select';
 
 export const languageLabelMap: Record<Language, string> = {

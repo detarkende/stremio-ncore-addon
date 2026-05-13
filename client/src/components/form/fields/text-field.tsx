@@ -1,6 +1,7 @@
 import { Input, type InputProps } from '@heroui/react';
-import { defaultFieldProps } from '../default-props';
+
 import { useFieldContext } from '..';
+import { defaultFieldProps } from '../default-props';
 
 type TextFieldProps = Omit<
   InputProps,

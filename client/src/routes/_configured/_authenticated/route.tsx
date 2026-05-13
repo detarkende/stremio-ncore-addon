@@ -1,7 +1,8 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
+
 import { Layout } from '@/components/layout';
-import { meOrNullQueryOptions } from '@/integrations/tanstack-query/queries/me';
 import { LoaderScreen } from '@/components/loader-screen';
+import { meOrNullQueryOptions } from '@/integrations/tanstack-query/queries/me';
 
 export const Route = createFileRoute('/_configured/_authenticated')({
   component: RouteComponent,

@@ -1,4 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
+
 import { apiClient } from '@/integrations/api';
 
 export const usersQueryOptions = queryOptions({

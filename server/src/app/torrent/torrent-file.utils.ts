@@ -1,9 +1,10 @@
 import parseTorrent from 'parse-torrent';
-import { cacheFunction, DEFAULT_TTL } from 'src/utils/cache';
-import { logger } from 'src/logger';
 import { db } from 'src/db';
 import type { DbTorrent } from 'src/db/schema/torrents';
 import { torrentsTable } from 'src/db/schema/torrents';
+import { logger } from 'src/logger';
+import { cacheFunction, DEFAULT_TTL } from 'src/utils/cache';
+
 import type { ParsedTorrentDetails } from './torrent.types';
 
 export async function _fetchTorrent(

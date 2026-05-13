@@ -1,11 +1,11 @@
 import { parseResolution } from '@ctrl/video-filename-parser';
 import { Language, Resolution } from 'src/db/schema/users';
+
 import {
   TorrentDetails,
   type ParsedTorrentDetails,
   type TorrentFileDetails,
 } from '../torrent/torrent.types';
-import type { NcoreTorrent } from './ncore.types';
 import type { TorrentCategory } from './ncore.constants';
 import {
   HUNGARIAN_CATEGORIES,
@@ -14,6 +14,7 @@ import {
   ncoreResolutionLabels,
   SeriesCategory,
 } from './ncore.constants';
+import type { NcoreTorrent } from './ncore.types';
 
 export class NcoreTorrentDetails extends TorrentDetails {
   public sourceName = 'ncore';

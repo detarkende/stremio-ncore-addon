@@ -1,5 +1,6 @@
-import type { PropsWithChildren } from 'react';
 import type { UserRole } from '@sna/server';
+import type { PropsWithChildren } from 'react';
+
 import { Header } from './header';
 
 interface LayoutProps extends PropsWithChildren {

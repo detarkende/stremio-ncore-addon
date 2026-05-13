@@ -1,5 +1,6 @@
 import { isValidCron } from 'cron-validator';
 import { z } from 'zod/v4';
+
 import { createUserSchema } from './user.schema';
 
 export const createConfigSchema = z.object({

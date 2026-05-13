@@ -1,12 +1,14 @@
 import { addToast, Button, Card, Progress } from '@heroui/react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { formatBytes, type Torrent } from '@sna/server';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { TorrentFile } from './torrent-file';
+
 import { Text } from '@/components/text';
 import { apiClient } from '@/integrations/api';
 import { QueryKeys } from '@/integrations/tanstack-query/keys';
 import { handleHttpError } from '@/utils/http';
+
+import { TorrentFile } from './torrent-file';
 
 export function TorrentCard({ torrent }: { torrent: Torrent }) {
   const labelId = `torrent-progress-${torrent.infoHash}`;

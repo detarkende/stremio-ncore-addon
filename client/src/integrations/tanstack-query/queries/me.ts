@@ -1,7 +1,9 @@
-import { queryOptions } from '@tanstack/react-query';
 import type { User } from '@sna/server';
-import { QueryKeys } from '../keys';
+import { queryOptions } from '@tanstack/react-query';
+
 import { apiClient } from '@/integrations/api';
+
+import { QueryKeys } from '../keys';
 
 async function fetchMe({ signal }: { signal: AbortSignal }): Promise<User | null> {
   const response = await apiClient.api.users.me.$get({}, { init: { signal } });

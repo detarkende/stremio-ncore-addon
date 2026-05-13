@@ -2,9 +2,10 @@ import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import { HttpStatusCode } from 'src/types/http';
 import { getCurrentRequestUrl } from 'src/utils/url';
-import { getConfig } from '../config/config.utils';
+
 import { useUrlTokenAuth } from '../auth';
 import { useIsConfigured } from '../config';
+import { getConfig } from '../config/config.utils';
 import { getManifest } from './manifest.utils';
 
 export const manifestRoutes = new Hono()

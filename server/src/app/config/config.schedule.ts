@@ -1,6 +1,6 @@
 import type { ScheduledTask } from 'node-cron';
-import type { Configuration } from 'src/db/schema/configuration';
 import nodeCron from 'node-cron';
+import type { Configuration } from 'src/db/schema/configuration';
 
 export class DeleteOldTorrentsScheduler {
   private task: ScheduledTask | null = null;

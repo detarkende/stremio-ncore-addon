@@ -7,13 +7,15 @@ import {
   NavbarMenuItem,
   NavbarMenuToggle,
 } from '@heroui/react';
-import { Fragment, useState } from 'react';
-import { useLocation } from '@tanstack/react-router';
 import { UserRole } from '@sna/server';
-import { Text } from './text';
-import { LogoutButton } from './logout-button';
+import { useLocation } from '@tanstack/react-router';
+import { Fragment, useState } from 'react';
+
 import { Link } from '@/components/link';
 import type { FileRouteTypes } from '@/routeTree.gen';
+
+import { LogoutButton } from './logout-button';
+import { Text } from './text';
 
 interface NavbarItem {
   label: string;

@@ -1,8 +1,9 @@
-import { rm, cp } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import path from 'node:path';
-import { build, type Options } from 'tsup';
+import { rm, cp } from 'node:fs/promises';
 import { builtinModules } from 'node:module';
+import path from 'node:path';
+
+import { build, type Options } from 'tsup';
 
 const baseDir = path.resolve(import.meta.dirname, '..');
 const distPath = path.resolve(baseDir, 'dist');

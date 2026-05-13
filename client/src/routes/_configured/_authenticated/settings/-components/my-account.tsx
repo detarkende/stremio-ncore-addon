@@ -1,6 +1,8 @@
 import type { User } from '@sna/server';
-import { UserCard } from './user-card/user-card';
+
 import { Text } from '@/components/text';
+
+import { UserCard } from './user-card/user-card';
 
 export function MyAccount({ me }: { me: User }) {
   return (

@@ -1,8 +1,9 @@
 import { eq, type InferInsertModel } from 'drizzle-orm';
+import { createSession, generateSessionToken } from 'src/app/auth/auth.utils';
 import { db } from 'src/db';
 import { Language, Resolution, UserRole, usersTable } from 'src/db/schema/users';
-import { createSession, generateSessionToken } from 'src/app/auth/auth.utils';
 import { User } from 'src/types/user';
+
 import { getRandomInt, getRandomString } from './random';
 
 function createDefaultUserData(): InferInsertModel<typeof usersTable> {

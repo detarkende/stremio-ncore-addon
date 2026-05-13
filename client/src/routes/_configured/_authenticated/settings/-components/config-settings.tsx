@@ -1,9 +1,11 @@
 import { Button, Spinner } from '@heroui/react';
 import { useQuery } from '@tanstack/react-query';
 import type { PropsWithChildren } from 'react';
-import { ConfigSettingsForm } from './config-settings-form';
-import { configQueryOptions } from '@/integrations/tanstack-query/queries/config';
+
 import { Text } from '@/components/text';
+import { configQueryOptions } from '@/integrations/tanstack-query/queries/config';
+
+import { ConfigSettingsForm } from './config-settings-form';
 
 function Wrapper({ children }: PropsWithChildren) {
   return (

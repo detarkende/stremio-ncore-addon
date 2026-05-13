@@ -1,6 +1,7 @@
 declare module 'webtorrent' {
-  import type { RequestOptions, Server } from 'http';
   import type { EventEmitter } from 'events';
+  import type { RequestOptions, Server } from 'http';
+
   import type { default as Bitfield } from 'bitfield';
   import type { Wire } from 'bittorrent-protocol';
   import type { Instance as ParseTorrent } from 'parse-torrent';

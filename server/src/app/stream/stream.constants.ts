@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { Language } from 'src/db/schema/users';
+import { z } from 'zod';
 
 export enum StreamType {
   MOVIE = 'movie',

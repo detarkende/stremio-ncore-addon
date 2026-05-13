@@ -1,20 +1,21 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createFileRoute, redirect, useRouter } from '@tanstack/react-router';
+import { addToast, Card, Form } from '@heroui/react';
 import {
   createConfigSchema,
   Language,
   Resolution,
   type CreateConfigRequest,
 } from '@sna/server';
-import { addToast, Card, Form } from '@heroui/react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createFileRoute, redirect, useRouter } from '@tanstack/react-router';
 import { useLayoutEffect, useRef } from 'react';
-import { isConfiguredQueryOptions } from '@/integrations/tanstack-query/queries/config';
+
 import { useAppForm } from '@/components/form';
+import { AddonSettingsFields } from '@/components/form/field-groups/addon-settings-fields';
+import { CreateUserFields } from '@/components/form/field-groups/create-user-fields';
 import { Text } from '@/components/text';
 import { apiClient } from '@/integrations/api';
+import { isConfiguredQueryOptions } from '@/integrations/tanstack-query/queries/config';
 import { handleHttpError } from '@/utils/http';
-import { CreateUserFields } from '@/components/form/field-groups/create-user-fields';
-import { AddonSettingsFields } from '@/components/form/field-groups/addon-settings-fields';
 
 export const Route = createFileRoute('/setup')({
   component: RouteComponent,

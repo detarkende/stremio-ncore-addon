@@ -1,4 +1,5 @@
 import { sqliteTable, integer, text } from 'drizzle-orm/sqlite-core';
+
 import { usersTable } from './users';
 
 export const sessionsTable = sqliteTable('sessions', {

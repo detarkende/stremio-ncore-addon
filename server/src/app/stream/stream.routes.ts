@@ -1,12 +1,14 @@
-import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
+import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import { getMimeType } from 'hono/utils/mime';
 import { logger } from 'src/logger';
 import { HttpStatusCode } from 'src/types/http';
 import { parseRangeHeader } from 'src/utils/parse-range-header';
 import { getCurrentRequestUrl } from 'src/utils/url';
+
 import { useUrlTokenAuth } from '../auth/auth.middleware';
+import { useIsConfigured } from '../config/config.middleware';
 import { ncoreService } from '../ncore';
 import {
   downloadAndParseTorrent,
@@ -14,14 +16,13 @@ import {
   type TorrentFileDetails,
   torrentClient,
 } from '../torrent';
-import { useIsConfigured } from '../config/config.middleware';
 import { insertNewTorrent, insertUserTorrentFileRecord } from '../torrent/torrent.utils';
-import { convertTorrentToStream, getCinemetaData, orderTorrents } from './stream.utils';
 import {
   listStreamsParamsSchema,
   playStreamParamsSchema,
   type CinemetaResponse,
 } from './stream.constants';
+import { convertTorrentToStream, getCinemetaData, orderTorrents } from './stream.utils';
 
 export const streamRoutes = new Hono()
   .basePath('/api')

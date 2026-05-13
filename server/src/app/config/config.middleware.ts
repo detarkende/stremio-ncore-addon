@@ -3,6 +3,7 @@ import { HTTPException } from 'hono/http-exception';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
 import type { ConfigurationResponse } from 'src/db/schema/configuration';
 import { HttpStatusCode } from 'src/types/http';
+
 import { getConfig } from './config.utils';
 
 type ConfigEnv = {

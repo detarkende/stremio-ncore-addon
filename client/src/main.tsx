@@ -1,15 +1,14 @@
+import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
-import { RouterProvider, createRouter } from '@tanstack/react-router';
 
-import * as TanStackQueryProvider from './integrations/tanstack-query/root-provider.tsx';
 import * as HeroUiProvider from './integrations/heroui/root-provider.tsx';
-
-// Import the generated route tree
-import { routeTree } from './routeTree.gen';
+import * as TanStackQueryProvider from './integrations/tanstack-query/root-provider.tsx';
+import reportWebVitals from './reportWebVitals.ts';
 
 import './styles.css';
-import reportWebVitals from './reportWebVitals.ts';
+// Import the generated route tree
+import { routeTree } from './routeTree.gen';
 
 // Create a new router instance
 

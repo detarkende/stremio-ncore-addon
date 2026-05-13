@@ -1,6 +1,7 @@
 import { db } from 'src/db';
 import { configurationTable } from 'src/db/schema/configuration';
 import type { UpdateConfigRequest } from 'src/exports';
+
 import { configRequestToInsertStatement, getConfig } from '../config.utils';
 
 describe('Config Utils', () => {

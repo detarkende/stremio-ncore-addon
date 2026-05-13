@@ -1,14 +1,15 @@
 import { testClient } from 'hono/testing';
-import { configureApp } from 'src/test-utils/config';
-import { createTestUserWithSession } from 'src/test-utils/users';
 import { SESSION_COOKIE_NAME } from 'src/app/auth/auth.constants';
-import type { MockInstance } from 'vitest';
-import { Language, Resolution, UserRole, usersTable } from 'src/db/schema/users';
 import * as userUtils from 'src/app/user/user.utils';
 import { db } from 'src/db';
 import { configurationTable } from 'src/db/schema/configuration';
-import { configRoutes } from '../config.routes';
+import { Language, Resolution, UserRole, usersTable } from 'src/db/schema/users';
+import { configureApp } from 'src/test-utils/config';
+import { createTestUserWithSession } from 'src/test-utils/users';
+import type { MockInstance } from 'vitest';
+
 import { ncoreService } from '../../ncore';
+import { configRoutes } from '../config.routes';
 import { deleteOldTorrentsScheduler } from '../config.schedule';
 
 describe('Config Routes', () => {

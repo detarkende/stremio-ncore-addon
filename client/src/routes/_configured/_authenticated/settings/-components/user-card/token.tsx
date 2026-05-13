@@ -1,12 +1,13 @@
 import { addToast, Button, Tooltip } from '@heroui/react';
 import type { User } from '@sna/server';
-import { CircleQuestionMarkIcon, RotateCwIcon } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { CircleQuestionMarkIcon, RotateCwIcon } from 'lucide-react';
+
 import { CopyToClipboard } from '@/components/copy-to-clipboard';
 import { Text } from '@/components/text';
 import { apiClient } from '@/integrations/api';
-import { handleHttpError } from '@/utils/http';
 import { QueryKeys } from '@/integrations/tanstack-query/keys';
+import { handleHttpError } from '@/utils/http';
 
 export function Token({
   user,

@@ -1,6 +1,7 @@
 import { addToast, Button } from '@heroui/react';
 import { updatePasswordSchema, type UpdatePasswordRequest, type User } from '@sna/server';
 import { useMutation } from '@tanstack/react-query';
+
 import { useAppForm } from '@/components/form';
 import { apiClient } from '@/integrations/api';
 import { handleHttpError } from '@/utils/http';

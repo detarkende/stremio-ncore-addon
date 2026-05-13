@@ -1,7 +1,8 @@
-import { createTestUser } from 'src/test-utils/users';
+import { eq } from 'drizzle-orm';
 import { db } from 'src/db';
 import { sessionsTable } from 'src/db/schema/sessions';
-import { eq } from 'drizzle-orm';
+import { createTestUser } from 'src/test-utils/users';
+
 import { SESSION_MAX_DURATION } from '../auth.constants';
 import {
   createSession,

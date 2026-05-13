@@ -1,20 +1,21 @@
-import { Hono } from 'hono';
-import { HTTPException } from 'hono/http-exception';
 import { zValidator } from '@hono/zod-validator';
 import { eq } from 'drizzle-orm';
-import { usersTable } from 'src/db/schema/users';
-import { HttpStatusCode } from 'src/types/http';
-import { createConfigSchema, updateConfigSchema } from 'src/schemas/config.schema';
+import { Hono } from 'hono';
+import { HTTPException } from 'hono/http-exception';
 import { db } from 'src/db';
 import { configurationTable } from 'src/db/schema/configuration';
+import { usersTable } from 'src/db/schema/users';
 import { logger } from 'src/logger';
-import { ncoreService } from '../ncore';
-import { createUserRequestToInsertStatement } from '../user/user.utils';
+import { createConfigSchema, updateConfigSchema } from 'src/schemas/config.schema';
+import { HttpStatusCode } from 'src/types/http';
+
 import { useCookieAuth } from '../auth/auth.middleware';
+import { ncoreService } from '../ncore';
 import { torrentClient } from '../torrent';
+import { createUserRequestToInsertStatement } from '../user/user.utils';
 import { useIsConfigured } from './config.middleware';
-import { configRequestToInsertStatement, getConfig } from './config.utils';
 import { deleteOldTorrentsScheduler } from './config.schedule';
+import { configRequestToInsertStatement, getConfig } from './config.utils';
 
 export const configRoutes = new Hono()
   .basePath('/api')

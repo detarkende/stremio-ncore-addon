@@ -1,11 +1,12 @@
-import { eq } from 'drizzle-orm';
 import { encodeBase32LowerCaseNoPadding } from '@oslojs/encoding';
 import bcrypt from 'bcryptjs';
+import { eq } from 'drizzle-orm';
 import { db } from 'src/db';
 import { UserRole, usersTable } from 'src/db/schema/users';
+import type { LoginCredentials } from 'src/schemas/login.schema';
 import type { CreateUserRequest, UpdateUserRequest } from 'src/schemas/user.schema';
 import { User } from 'src/types/user';
-import type { LoginCredentials } from 'src/schemas/login.schema';
+
 import { PASSWORD_SALT_ROUNDS } from './user.constants';
 
 export async function getUserByToken(token: string): Promise<User | null> {

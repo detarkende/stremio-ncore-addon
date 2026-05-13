@@ -1,12 +1,13 @@
 import { Hono } from 'hono';
-import type { MockInstance } from 'vitest';
-import { HttpStatusCode } from 'src/types/http';
-import { UserRole, Language, Resolution } from 'src/db/schema/users';
 import mockFs from 'mock-fs';
-import { useCookieAuth, useUrlTokenAuth } from '../auth.middleware';
-import * as AuthUtils from '../auth.utils';
+import { UserRole, Language, Resolution } from 'src/db/schema/users';
+import { HttpStatusCode } from 'src/types/http';
+import type { MockInstance } from 'vitest';
+
 import * as UserUtils from '../../user/user.utils';
 import { SESSION_COOKIE_NAME } from '../auth.constants';
+import { useCookieAuth, useUrlTokenAuth } from '../auth.middleware';
+import * as AuthUtils from '../auth.utils';
 
 vi.mock('src/env', () => ({
   env: {

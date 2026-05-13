@@ -1,4 +1,5 @@
 import { MovieCategory, SeriesCategory, type NcoreTorrent } from 'src/app/ncore';
+
 import { getRandomBoolean, getRandomInt, getRandomString } from './random';
 
 const categoryArray = [...Object.values(MovieCategory), ...Object.values(SeriesCategory)];

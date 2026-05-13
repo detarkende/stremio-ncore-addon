@@ -1,13 +1,14 @@
-import { createTestNcoreTorrentResult } from 'src/test-utils/ncore';
-import { getRandomString } from 'src/test-utils/random';
 import { Resolution } from '@ctrl/video-filename-parser';
+import { StreamType } from 'src/app/stream/stream.constants';
+import { parseTorrentBuffer } from 'src/app/torrent/torrent-file.utils';
 import { Language } from 'src/db/schema/users';
 import mentalist from 'src/mocks/torrents/mentalist';
-import { parseTorrentBuffer } from 'src/app/torrent/torrent-file.utils';
-import { StreamType } from 'src/app/stream/stream.constants';
 import oneBattleAfterAnother from 'src/mocks/torrents/one-battle-after-another';
-import { MovieCategory, SeriesCategory } from '../ncore.constants';
+import { createTestNcoreTorrentResult } from 'src/test-utils/ncore';
+import { getRandomString } from 'src/test-utils/random';
+
 import { NcoreTorrentDetails } from '../ncore-torrent-details';
+import { MovieCategory, SeriesCategory } from '../ncore.constants';
 
 describe('NcoreTorrentDetails', () => {
   describe('displayResolution', () => {

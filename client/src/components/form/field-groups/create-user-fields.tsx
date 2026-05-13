@@ -1,7 +1,9 @@
 import { Language, type CreateUserRequest } from '@sna/server';
-import { withFieldGroup } from '..';
+
 import { languageOptions } from '@/constants/languages';
 import { resolutionOptions } from '@/constants/resolutions';
+
+import { withFieldGroup } from '..';
 
 export const createUserFormDefaultValues: CreateUserRequest = {
   username: '',

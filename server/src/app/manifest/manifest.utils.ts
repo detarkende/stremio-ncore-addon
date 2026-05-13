@@ -1,4 +1,5 @@
 import type { User } from 'src/types/user';
+
 import type { CustomManifest } from './manifest.types';
 
 export function getManifest({ user, addonUrl }: { user?: User; addonUrl: string }) {

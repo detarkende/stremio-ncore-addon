@@ -1,10 +1,11 @@
 import { testClient } from 'hono/testing';
-import { createTestUser, createTestUserWithSession } from 'src/test-utils/users';
-import { UserRole } from 'src/db/schema/users';
 import { hashPassword } from 'src/app/user/user.utils';
+import { UserRole } from 'src/db/schema/users';
 import type { LoginCredentials } from 'src/schemas/login.schema';
-import { authRoutes } from '../auth.routes';
+import { createTestUser, createTestUserWithSession } from 'src/test-utils/users';
+
 import { SESSION_COOKIE_NAME } from '../auth.constants';
+import { authRoutes } from '../auth.routes';
 
 describe('Auth routes', () => {
   const client = testClient(authRoutes);

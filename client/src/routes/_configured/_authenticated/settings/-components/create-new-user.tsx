@@ -1,7 +1,8 @@
-import { useState } from 'react';
 import { addToast, Button, Card } from '@heroui/react';
 import { createUserSchema, type CreateUserRequest } from '@sna/server';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
+
 import { useAppForm } from '@/components/form';
 import {
   CreateUserFields,
@@ -9,8 +10,8 @@ import {
 } from '@/components/form/field-groups/create-user-fields';
 import { Text } from '@/components/text';
 import { apiClient } from '@/integrations/api';
-import { handleHttpError } from '@/utils/http';
 import { QueryKeys } from '@/integrations/tanstack-query/keys';
+import { handleHttpError } from '@/utils/http';
 
 export function CreateNewUser() {
   const [isCreateFormVisible, setIsCreateFormVisible] = useState(false);

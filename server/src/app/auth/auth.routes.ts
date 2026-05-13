@@ -1,13 +1,14 @@
-import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
+import { Hono } from 'hono';
 import { deleteCookie, setCookie } from 'hono/cookie';
+import { HTTPException } from 'hono/http-exception';
 import { loginSchema } from 'src/schemas/login.schema';
 import { HttpStatusCode } from 'src/types/http';
-import { HTTPException } from 'hono/http-exception';
+
 import { getUserByCredentials } from '../user/user.utils';
+import { SESSION_COOKIE_NAME } from './auth.constants';
 import { useCookieAuth } from './auth.middleware';
 import { createSession, generateSessionToken, invalidateSession } from './auth.utils';
-import { SESSION_COOKIE_NAME } from './auth.constants';
 
 export const authRoutes = new Hono()
   .basePath('/api')

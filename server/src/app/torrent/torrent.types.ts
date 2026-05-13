@@ -1,7 +1,7 @@
 import type { ParsedShow } from '@ctrl/video-filename-parser';
 import { filenameParse, parseResolution } from '@ctrl/video-filename-parser';
-import type { Resolution, Language } from 'src/db/schema/users';
 import { StreamType } from 'src/app/stream/stream.constants';
+import type { Resolution, Language } from 'src/db/schema/users';
 import { isSupportedMedia } from 'src/utils/media-file-extensions';
 
 export interface TorrentFileDetails {

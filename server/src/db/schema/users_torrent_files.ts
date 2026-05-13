@@ -1,7 +1,8 @@
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
-import { usersTable } from './users';
+import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+
 import { torrentsTable } from './torrents';
+import { usersTable } from './users';
 
 export const usersTorrentsTable = sqliteTable('users_torrents', {
   id: integer('id').primaryKey({ autoIncrement: true }),

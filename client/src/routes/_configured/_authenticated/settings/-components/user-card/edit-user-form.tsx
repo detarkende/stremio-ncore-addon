@@ -1,6 +1,7 @@
 import { addToast, Button } from '@heroui/react';
 import { updateUserSchema, type UpdateUserRequest, type User } from '@sna/server';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { useAppForm } from '@/components/form';
 import { UpdateUserFields } from '@/components/form/field-groups/update-user-fields';
 import { apiClient } from '@/integrations/api';
