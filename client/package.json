@@ -7,9 +7,9 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest --ui",
-    "lint": "eslint",
-    "format": "prettier",
-    "check": "prettier --write . && eslint --fix",
+    "lint": "oxlint",
+    "format": "oxfmt",
+    "check": "oxfmt && oxlint --fix",
     "postinstall": "playwright install"
   },
   "dependencies": {
@@ -34,10 +34,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@eslint/css": "^0.14.1",
-    "@eslint/js": "^9.39.3",
     "@tanstack/devtools-vite": "^0.3.12",
-    "@tanstack/eslint-config": "^0.3.4",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^22.19.11",
@@ -46,10 +43,7 @@
     "@vitejs/plugin-react": "^5.1.4",
     "@vitest/browser-playwright": "^4.0.18",
     "babel-plugin-react-compiler": "^1.0.0",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-react": "^7.37.5",
     "jsdom": "^27.4.0",
-    "prettier": "^3.8.1",
     "scss": "^0.2.4",
     "typescript": "^5.9.3",
     "vite": "^7.3.1",

@@ -1,4 +1,4 @@
-FROM node:22-alpine3.23 AS node-base
+FROM node:24-alpine AS node-base
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml .npmrc pnpm-workspace.yaml ./

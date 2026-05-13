@@ -9,8 +9,8 @@
     "start": "NODE_ENV=production node server/dist/index.js",
     "preview": "NODE_ENV=production node --env-file .env server/dist/index.js | pino-pretty",
     "ci": "pnpm check-formatting && pnpm lint && pnpm test",
-    "check-formatting": "prettier --check .",
-    "format": "prettier --write .",
+    "check-formatting": "oxfmt --check",
+    "format": "oxfmt",
     "lint": "turbo lint",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -29,8 +29,8 @@
     "@vitest/coverage-istanbul": "^4.0.18",
     "@vitest/ui": "^4.0.18",
     "concurrently": "^9.2.1",
-    "eslint": "^9.39.3",
-    "prettier": "^3.8.1",
+    "oxfmt": "latest",
+    "oxlint": "latest",
     "tsc-alias": "^1.8.16",
     "turbo": "^2.8.10",
     "typescript": "^5.9.3",
@@ -38,6 +38,7 @@
     "vite-tsconfig-paths": "6.0.0-beta.4",
     "vitest": "^4.0.18"
   },
+  "packageManager": "pnpm@10.27.0",
   "pnpm": {
     "allowUnusedPatches": true,
     "patchedDependencies": {
@@ -53,6 +54,5 @@
       "utf-8-validate",
       "utp-native"
     ]
-  },
-  "packageManager": "pnpm@10.27.0"
+  }
 }
