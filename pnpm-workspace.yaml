@@ -8,7 +8,7 @@ patchedDependencies:
   '@types/stremio-addon-sdk': patches/@types__stremio-addon-sdk.patch
   'webtorrent': patches/webtorrent.patch
 allowBuilds:
-  '@heroui/shared-utils': false
+  '@heroui/shared-utils': true
   better-sqlite3: true
   bufferutil: true
   esbuild: true
