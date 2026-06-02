@@ -38,21 +38,5 @@
     "vite-tsconfig-paths": "6.0.0-beta.4",
     "vitest": "^4.0.18"
   },
-  "packageManager": "pnpm@10.27.0",
-  "pnpm": {
-    "allowUnusedPatches": true,
-    "patchedDependencies": {
-      "@types/parse-torrent": "patches/@types__parse-torrent.patch",
-      "@types/stremio-addon-sdk": "patches/@types__stremio-addon-sdk.patch",
-      "webtorrent": "patches/webtorrent.patch"
-    },
-    "onlyBuiltDependencies": [
-      "better-sqlite3",
-      "bufferutil",
-      "esbuild",
-      "node-datachannel",
-      "utf-8-validate",
-      "utp-native"
-    ]
-  }
+  "packageManager": "pnpm@11.5.1"
 }

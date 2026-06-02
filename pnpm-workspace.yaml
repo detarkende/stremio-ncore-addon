@@ -2,4 +2,16 @@ $schema: https://raw.githubusercontent.com/SchemaStore/schemastore/refs/heads/ma
 packages:
   - 'client'
   - 'server'
-allowBuilds: true
+allowUnusedPatches: true
+patchedDependencies:
+  '@types/parse-torrent': patches/@types__parse-torrent.patch
+  '@types/stremio-addon-sdk': patches/@types__stremio-addon-sdk.patch
+  'webtorrent': patches/webtorrent.patch
+allowBuilds:
+  '@heroui/shared-utils': false
+  better-sqlite3: true
+  bufferutil: true
+  esbuild: true
+  node-datachannel: true
+  utf-8-validate: true
+  utp-native: true

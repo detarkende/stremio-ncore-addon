@@ -9,8 +9,7 @@
     "test:watch": "vitest --ui",
     "lint": "oxlint",
     "format": "oxfmt",
-    "check": "oxfmt && oxlint --fix",
-    "postinstall": "playwright install"
+    "check": "oxfmt && oxlint --fix"
   },
   "dependencies": {
     "@heroui/react": "^2.8.9",
