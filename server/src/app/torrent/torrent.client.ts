@@ -196,6 +196,23 @@ export class TorrentClient {
       }
     }
   }
+
+  public async destroy() {
+    await new Promise<void>((resolve, reject) => {
+      try {
+        this.webtorrent.destroy((error) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+
+          resolve();
+        });
+      } catch (error: unknown) {
+        reject(error);
+      }
+    });
+  }
 }
 
 export const torrentClient = new TorrentClient(env.TORRENT_PORT);

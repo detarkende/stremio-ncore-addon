@@ -28,6 +28,10 @@ export function createDbInstance({ isTestDb = false } = {}) {
   migrate(db, { migrationsFolder });
 }
 
+export function closeDbInstance() {
+  db?.$client.close();
+}
+
 export { db };
 
 export type Transaction = SQLiteTransaction<

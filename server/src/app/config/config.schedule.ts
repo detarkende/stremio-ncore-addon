@@ -18,6 +18,15 @@ export class DeleteOldTorrentsScheduler {
       this.task.start();
     }
   }
+
+  public destroy() {
+    if (!this.task) {
+      return;
+    }
+
+    this.task.destroy();
+    this.task = null;
+  }
 }
 
 export const deleteOldTorrentsScheduler = new DeleteOldTorrentsScheduler();

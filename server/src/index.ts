@@ -16,6 +16,7 @@ import { torrentRoutes } from './app/torrent';
 import { userRoutes } from './app/user';
 import { env } from './env';
 import { logger, requestLogger } from './logger';
+import { registerGracefulShutdown } from './shutdown';
 
 const app = new Hono();
 app.use(contextStorage()).use(cors()).use(requestLogger);
@@ -33,19 +34,24 @@ app
   .use('*', serveStatic({ root: './client/dist', path: 'index.html' }));
 
 // HTTP server
-serve({
+const httpServer = serve({
   fetch: app.fetch,
   port: env.PORT,
 });
 logger.info(`HTTP server started on port ${env.PORT}!`);
 
 // HTTPS server
-serve({
+const httpsServer = serve({
   fetch: app.fetch,
   port: env.HTTPS_PORT,
   createServer,
   serverOptions: HttpsService.createServerOptions(),
 });
 logger.info(`HTTPS server started on port ${env.HTTPS_PORT}!`);
+
+registerGracefulShutdown({
+  http: httpServer,
+  https: httpsServer,
+});
 
 logger.debug(`Server running in ${env.NODE_ENV} environment`);
