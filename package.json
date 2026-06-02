@@ -31,6 +31,7 @@
     "concurrently": "^9.2.1",
     "oxfmt": "latest",
     "oxlint": "latest",
+    "playwright": "^1.60.0",
     "tsc-alias": "^1.8.16",
     "turbo": "^2.8.10",
     "typescript": "^5.9.3",

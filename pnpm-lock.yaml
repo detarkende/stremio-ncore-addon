@@ -35,6 +35,9 @@ importers:
       oxlint:
         specifier: latest
         version: 1.67.0
+      playwright:
+        specifier: ^1.60.0
+        version: 1.60.0
       tsc-alias:
         specifier: ^1.8.16
         version: 1.8.16
