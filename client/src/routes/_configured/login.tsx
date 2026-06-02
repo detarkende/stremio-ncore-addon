@@ -76,46 +76,46 @@ function RouteComponent() {
       <div className="max-w-sm w-full flex flex-col gap-4">
         <Text as="h1" variant="heading-lg">
           Log in <span>👋</span>
-          <form.AppForm>
-            <Form
-              className="flex flex-col gap-4 py-4"
-              validationBehavior="native"
-              onSubmit={(e) => {
-                e.preventDefault();
-                form.handleSubmit();
-              }}
-            >
-              <form.AppField name="username">
-                {(field) => (
-                  <field.TextField
-                    isRequired
-                    label="Username"
-                    labelPlacement="outside-top"
-                    variant="bordered"
-                    ref={firstFieldRef}
-                    autoComplete="username"
-                  />
-                )}
-              </form.AppField>
-              <form.AppField name="password">
-                {(field) => (
-                  <field.TextField
-                    isRequired
-                    type="password"
-                    label="Password"
-                    labelPlacement="outside-top"
-                    variant="bordered"
-                    autoComplete="password"
-                  />
-                )}
-              </form.AppField>
-
-              <form.SubmitButton color="primary" className="w-full">
-                Log in
-              </form.SubmitButton>
-            </Form>
-          </form.AppForm>
         </Text>
+        <form.AppForm>
+          <Form
+            className="flex flex-col gap-4 py-4"
+            validationBehavior="native"
+            onSubmit={(e) => {
+              e.preventDefault();
+              form.handleSubmit();
+            }}
+          >
+            <form.AppField name="username">
+              {(field) => (
+                <field.TextField
+                  isRequired
+                  label="Username"
+                  labelPlacement="outside-top"
+                  variant="bordered"
+                  ref={firstFieldRef}
+                  autoComplete="username"
+                />
+              )}
+            </form.AppField>
+            <form.AppField name="password">
+              {(field) => (
+                <field.TextField
+                  isRequired
+                  type="password"
+                  label="Password"
+                  labelPlacement="outside-top"
+                  variant="bordered"
+                  autoComplete="password"
+                />
+              )}
+            </form.AppField>
+
+            <form.SubmitButton color="primary" className="w-full">
+              Log in
+            </form.SubmitButton>
+          </Form>
+        </form.AppForm>
       </div>
     </div>
   );

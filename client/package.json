@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@heroui/react": "^2.8.9",
+    "@heroui/theme": "^2.4.26",
     "@sna/server": "workspace:^",
     "@tailwindcss/vite": "^4.2.0",
     "@tanstack/react-devtools": "^0.7.11",
