@@ -19,7 +19,11 @@ import { logger, requestLogger } from './logger';
 import { registerGracefulShutdown } from './shutdown';
 
 const app = new Hono();
-app.use(contextStorage()).use(cors()).use(requestLogger);
+app
+  .use(contextStorage())
+  .use(cors())
+  // Only log API requests to avoid cluttering the logs with frontend asset requests
+  .use('/api', requestLogger);
 
 export const apiRoutes = app
   .route('/', manifestRoutes)
