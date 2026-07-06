@@ -1,4 +1,4 @@
 #!/bin/sh
 
-pnpm run ci
+pnpm run check
 pnpm run build

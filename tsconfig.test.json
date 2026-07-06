@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.app.json",
+  "exclude": [],
+  "include": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "src/**/test-utils/**/*.ts",
+    "src/**/test-utils/**/*.tsx"
+  ],
+  "compilerOptions": {
+    "types": ["vitest/globals"]
+  }
+}

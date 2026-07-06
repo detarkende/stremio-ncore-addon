@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1734278614837,
+      "tag": "0000_setup-db",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1739982023562,
+      "tag": "0001_make-addon-url-optional",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1742638903233,
+      "tag": "0002_--name=store-local-ip-in-db",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1757860150482,
+      "tag": "0003_remove-device-tokens",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1760376491548,
+      "tag": "0004_update-session-user-cascade-rules",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1764449648125,
+      "tag": "0005_add-torrent-table",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1768160513631,
+      "tag": "0006_config-addon-location-splitting",
+      "breakpoints": true
+    }
+  ]
+}

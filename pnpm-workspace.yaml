@@ -1,7 +1,3 @@
-$schema: https://raw.githubusercontent.com/SchemaStore/schemastore/refs/heads/master/src/schemas/json/pnpm-workspace.json
-packages:
-  - 'client'
-  - 'server'
 allowUnusedPatches: true
 patchedDependencies:
   '@types/parse-torrent': patches/@types__parse-torrent.patch
@@ -9,9 +5,13 @@ patchedDependencies:
   'webtorrent': patches/webtorrent.patch
 allowBuilds:
   '@heroui/shared-utils': true
+  '@parcel/watcher': true
   better-sqlite3: true
   bufferutil: true
   esbuild: true
+  ip-set: true
   node-datachannel: true
   utf-8-validate: true
   utp-native: true
+minimumReleaseAgeExclude:
+  - '@vite-fullstack/plugin@0.3.1'

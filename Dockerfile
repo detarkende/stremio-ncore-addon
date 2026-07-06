@@ -1,33 +1,27 @@
-FROM node:24-alpine AS node-base
+FROM node:24-alpine AS base
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml .npmrc pnpm-workspace.yaml ./
 COPY ./patches ./patches
-COPY ./server/package.json ./server/package.json
-COPY ./client/package.json ./client/package.json
 
-
-FROM node-base AS build-base
 RUN npm install -g pnpm
 
-FROM build-base AS prod-deps
-RUN pnpm --config.inject-workspace-packages=true deploy --filter server --prod server/deps
+FROM base AS build
 
-FROM build-base AS build-deps
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
-FROM build-deps AS build
 COPY . .
-RUN pnpm run build
+RUN pnpm build
 
-FROM node-base AS runtime
-COPY --from=prod-deps /app/server/deps/node_modules ./node_modules
+RUN pnpm prune --prod
 
-COPY --from=build /app/client/dist ./client/dist
-COPY --from=build /app/server/dist ./server/dist
+FROM base AS production
+
+COPY --from=build /app/dist .
+COPY --from=build /app/node_modules ./node_modules
 
 ENV NODE_ENV="production"
 ENV ADDON_DIR="/addon"
-EXPOSE 3000 3443
+EXPOSE 3000 3443 6881
 
-CMD ["node", "./server/dist/index.js"]
+CMD ["node", "./server.js"]
