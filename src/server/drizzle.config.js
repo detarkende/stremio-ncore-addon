@@ -7,7 +7,7 @@ export default defineConfig({
   schema: './src/db/schema',
   dialect: 'sqlite',
   dbCredentials: {
-    url: resolve(process.env.ADDON_DIR, 'config/sna.db'),
+    url: resolve(process.env.ADDON_DIR ?? '', 'config/sna.db'),
   },
   casing: 'snake_case',
 });

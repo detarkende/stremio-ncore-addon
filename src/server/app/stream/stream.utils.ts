@@ -7,8 +7,8 @@ import type { Stream } from 'stremio-addon-sdk';
 
 import type { TorrentDetails, TorrentFileDetails } from '../torrent/index';
 import type { StreamType } from './stream.constants';
-import { cinemetaResponseSchema, languageEmojiMap } from './stream.constants';
-import type { CinemetaResponse } from './stream.constants';
+import { languageEmojiMap } from './stream.constants';
+import { cinemetaResponseSchema, type CinemetaResponse } from './stream.schema';
 
 export async function getCinemetaData(
   type: StreamType,

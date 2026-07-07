@@ -33,10 +33,3 @@ export function closeDbInstance() {
 }
 
 export { db };
-
-export type Transaction = SQLiteTransaction<
-  'sync',
-  SQLite.RunResult,
-  Record<string, never>,
-  ExtractTablesWithRelations<Record<string, never>>
->;

@@ -1,7 +1,7 @@
 import { logger } from '@server/logger';
 import { z } from 'zod/v4';
 
-export const envSchema = z
+const envSchema = z
   .object({
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
     PORT: z.coerce.number().default(3000).meta({
@@ -84,7 +84,7 @@ export const envSchema = z
     };
   });
 
-export type Env = z.infer<typeof envSchema>;
+type Env = z.infer<typeof envSchema>;
 export let env: Env;
 
 export function loadEnv(processEnv: NodeJS.ProcessEnv) {

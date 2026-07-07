@@ -1,7 +1,7 @@
 import type { SelectOption } from '@client/components/form/fields/select';
 import { Resolution } from '@server/exports';
 
-export const resolutionLabelMap: Record<Resolution, string> = {
+const resolutionLabelMap: Record<Resolution, string> = {
   [Resolution.R360P]: '360p',
   [Resolution.R480P]: '480p',
   [Resolution.R540P]: '540p',

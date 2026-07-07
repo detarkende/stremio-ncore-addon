@@ -22,6 +22,7 @@ export default defineConfig({
       target: 'react',
       autoCodeSplitting: true,
       routesDirectory: './routes',
+      generatedRouteTree: './routeTree.gen.ts',
     }),
     react(),
     babel({

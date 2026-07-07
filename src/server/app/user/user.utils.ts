@@ -46,8 +46,8 @@ export function hashPassword(password: string): string {
   return bcrypt.hashSync(password, PASSWORD_SALT_ROUNDS);
 }
 
-export function verifyPassword(password: string, hash: string): Promise<boolean> {
-  return bcrypt.compare(password, hash);
+async function verifyPassword(password: string, hash: string): Promise<boolean> {
+  return await bcrypt.compare(password, hash);
 }
 
 export function updateUserRequestToUpdateStatement(user: UpdateUserRequest) {

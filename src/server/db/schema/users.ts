@@ -11,7 +11,7 @@ export enum Language {
   HU = 'hu',
 }
 
-export const userRoleValues = [UserRole.ADMIN, UserRole.USER] as const;
+const userRoleValues = [UserRole.ADMIN, UserRole.USER] as const;
 export const resolutionValues: Resolution[] = [
   Resolution.R480P,
   Resolution.R540P,

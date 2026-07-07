@@ -21,7 +21,7 @@ import {
   listStreamsParamsSchema,
   playStreamParamsSchema,
   type CinemetaResponse,
-} from './stream.constants';
+} from './stream.schema';
 import { convertTorrentToStream, getCinemetaData, orderTorrents } from './stream.utils';
 
 export const streamRoutes = new Hono()

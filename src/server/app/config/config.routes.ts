@@ -9,7 +9,7 @@ import { eq } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 
-import { useCookieAuth } from '../auth/auth.middleware';
+import { useCookieAuth } from '../auth';
 import { ncoreService } from '../ncore/index';
 import { torrentClient } from '../torrent/index';
 import { createUserRequestToInsertStatement } from '../user/user.utils';

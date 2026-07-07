@@ -12,7 +12,7 @@ import { User } from '@server/types/user';
 import { eq } from 'drizzle-orm';
 import { Hono } from 'hono';
 
-import { useCookieAuth } from '../auth/auth.middleware';
+import { useCookieAuth } from '../auth';
 import { userFromUrlExists } from './user.middleware';
 import {
   createUserRequestToInsertStatement,

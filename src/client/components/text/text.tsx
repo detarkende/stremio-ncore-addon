@@ -12,7 +12,7 @@ const variants = {
   caption: styles['caption'],
 } as const satisfies Record<string, string>;
 
-export type TextVariant = keyof typeof variants;
+type TextVariant = keyof typeof variants;
 
 type TextProps<C extends React.ElementType> = {
   as: C;

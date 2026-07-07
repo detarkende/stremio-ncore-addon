@@ -24,7 +24,7 @@ export async function _fetchTorrent(
   }
 }
 
-export const _cachedFetchTorrent = cacheFunction(
+const _cachedFetchTorrent = cacheFunction(
   {
     max: 1_000,
     ttl: DEFAULT_TTL,

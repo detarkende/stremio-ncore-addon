@@ -1,6 +1,6 @@
 {
   "name": "stremio-ncore-addon",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -20,7 +20,8 @@
     "release": "docker buildx build --platform linux/amd64,linux/arm64 -t detarkende/stremio-ncore-addon:$npm_config_name . --push",
     "clean:deps": "rm -rf node_modules",
     "clean:dist": "rm -rf dist",
-    "clean:all": "pnpm clean:deps & pnpm clean:dist"
+    "clean:all": "pnpm clean:deps & pnpm clean:dist",
+    "knip": "knip"
   },
   "dependencies": {
     "@ctrl/video-filename-parser": "^5.11.0",
@@ -59,11 +60,8 @@
     "@tanstack/react-router": "^1.170.17",
     "@tanstack/react-router-devtools": "^1.167.0",
     "@tanstack/router-plugin": "^1.168.19",
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/react": "^16.3.2",
     "@types/better-sqlite3": "^7.6.13",
     "@types/bittorrent-protocol": "^3.1.7",
-    "@types/content-disposition": "^0.5.9",
     "@types/jsdom": "^28.0.3",
     "@types/mock-fs": "^4.13.4",
     "@types/node": "^26.1.0",
@@ -71,7 +69,6 @@
     "@types/range-parser": "^1.2.7",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "@types/set-cookie-parser": "^2.4.10",
     "@types/simple-peer": "^9.11.9",
     "@types/stremio-addon-sdk": "^1.6.12",
     "@vite-fullstack/plugin": "^0.3.1",
@@ -85,6 +82,7 @@
     "clsx": "^2.1.1",
     "drizzle-kit": "^0.31.10",
     "framer-motion": "^12.42.2",
+    "knip": "^6.24.0",
     "lucide-react": "^1.23.0",
     "mock-fs": "^5.5.0",
     "nock": "^14.0.16",
@@ -96,7 +94,6 @@
     "react-dom": "^19.2.7",
     "sass-embedded": "^1.100.0",
     "scss": "^0.2.4",
-    "simple-peer": "^9.11.1",
     "stremio-addon-sdk": "^1.6.10",
     "tailwindcss": "^4.3.2",
     "tsx": "^4.23.0",

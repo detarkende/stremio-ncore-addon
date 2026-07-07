@@ -5,10 +5,10 @@ import { MultiSelectField, SelectField } from './fields/select';
 import { TextField } from './fields/text-field';
 import { SubmitButton } from './submit-button';
 
-export const { fieldContext, formContext, useFieldContext, useFormContext } =
+const { fieldContext, formContext, useFieldContext, useFormContext } =
   createFormHookContexts();
 
-export const { useAppForm, withFieldGroup, withForm } = createFormHook({
+const { useAppForm, withFieldGroup } = createFormHook({
   fieldComponents: {
     TextField,
     SelectField,
@@ -21,3 +21,5 @@ export const { useAppForm, withFieldGroup, withForm } = createFormHook({
   fieldContext,
   formContext,
 });
+
+export { useAppForm, withFieldGroup, useFieldContext, useFormContext };

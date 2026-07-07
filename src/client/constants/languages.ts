@@ -1,7 +1,7 @@
 import type { SelectOption } from '@client/components/form/fields/select';
 import { Language } from '@server/exports';
 
-export const languageLabelMap: Record<Language, string> = {
+const languageLabelMap: Record<Language, string> = {
   [Language.EN]: 'English',
   [Language.HU]: 'Hungarian',
 };

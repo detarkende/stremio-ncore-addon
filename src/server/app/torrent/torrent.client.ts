@@ -17,6 +17,7 @@ import { ncoreService } from '../ncore/index';
 import { getExistingTorrents } from './torrent-file.utils';
 import type { Torrent } from './torrent.types';
 
+/* @lintignore */
 export class TorrentClient {
   private webtorrent: WebtorrentInstance;
 

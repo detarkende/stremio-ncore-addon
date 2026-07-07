@@ -1,0 +1,31 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "tags": ["-lintignore"],
+  "entry": [
+    "src/server/exports.ts",
+    "src/client/main.tsx",
+    "src/client/index.html",
+    "src/server/typings/webtorrent.d.ts"
+  ],
+  "ignoreDependencies": [
+    "@heroui/theme",
+    "scss",
+    "bitfield",
+    "@types/bittorrent-protocol",
+    "@types/simple-peer"
+  ],
+  "ignore": ["src/server/types/http.ts", "src/server/app/ncore/ncore.types.ts"],
+  "vite": {
+    "config": "vite.config.ts"
+  },
+  "vitest": {
+    "config": "vitest.config.ts",
+    "entry": ["**/*.test.ts", "**/test-utils/**/*.ts"]
+  },
+  "drizzle": {
+    "config": "src/server/drizzle.config.js"
+  },
+  "tanstack-router": {
+    "entry": ["src/client/routeTree.gen.ts"]
+  }
+}
