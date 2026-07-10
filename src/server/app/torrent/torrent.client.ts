@@ -21,6 +21,9 @@ import type { Torrent } from './torrent.types';
 export class TorrentClient {
   private webtorrent: WebtorrentInstance;
 
+  // Torrents that are currently being added to the client. This is used to prevent adding the same torrent multiple times concurrently.
+  private pendingTorrents: Map<string, Promise<WebtorrentTorrent>> = new Map();
+
   constructor(port?: number) {
     this.webtorrent = new WebTorrent({
       torrentPort: port,
@@ -81,7 +84,7 @@ export class TorrentClient {
 
   public async addTorrent(dbTorrent: DbTorrent, isNewTorrent: boolean): Promise<Torrent> {
     try {
-      const torrent = await new Promise<WebtorrentTorrent>((resolve, reject) => {
+      const torrentPromise = new Promise<WebtorrentTorrent>((resolve, reject) => {
         try {
           this.webtorrent.add(
             dbTorrent.torrentFile,
@@ -90,7 +93,6 @@ export class TorrentClient {
               deselect: true,
               storeCacheSlots: 0,
               bitfield: isNewTorrent ? undefined : dbTorrent.bitfield,
-              // skipVerify,
             },
             (torrent: WebtorrentTorrent) => {
               resolve(torrent);
@@ -100,6 +102,10 @@ export class TorrentClient {
           reject(error);
         }
       });
+      this.pendingTorrents.set(dbTorrent.infoHash, torrentPromise);
+      const torrent = await torrentPromise.finally(() =>
+        this.pendingTorrents.delete(dbTorrent.infoHash),
+      );
       this.setupVerifiedListener(torrent, dbTorrent);
       this.setupPreloadListeners(torrent);
       return this.mapToTorrentResponse(torrent);
@@ -112,7 +118,14 @@ export class TorrentClient {
   }
 
   public async getTorrent(infoHash: string): Promise<Torrent | null> {
-    const torrent = await this.webtorrent.get(infoHash);
+    let torrent: WebtorrentTorrent | null = null;
+
+    const pendingTorrentPromise = this.pendingTorrents.get(infoHash);
+    if (pendingTorrentPromise) {
+      torrent = await pendingTorrentPromise;
+    } else {
+      torrent = await this.webtorrent.get(infoHash);
+    }
     if (!torrent) {
       return null;
     }
