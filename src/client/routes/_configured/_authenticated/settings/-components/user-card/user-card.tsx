@@ -27,7 +27,12 @@ export function UserCard({ user, isMe }: { user: UserType; isMe: boolean }) {
   return (
     <Card className="rounded-xl flex flex-col gap-4 p-4">
       <div className="flex items-center justify-between gap-2">
-        <User name={username} />
+        <User
+          name={username}
+          avatarProps={{
+            name: user.username,
+          }}
+        />
         <Dropdown>
           <DropdownTrigger asChild>
             <Button isIconOnly>

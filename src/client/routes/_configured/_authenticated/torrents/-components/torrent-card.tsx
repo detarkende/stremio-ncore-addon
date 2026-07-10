@@ -47,16 +47,24 @@ export function TorrentCard({ torrent }: { torrent: Torrent }) {
     }
   };
 
+  const downloadedLabelId = `downloaded-label-${torrent.infoHash}`;
+
   return (
     <Card as="article" className="p-5 flex flex-col gap-4" aria-labelledby={labelId}>
       <div className="flex flex-col gap-2">
         <Text as="h2" id={labelId} className="break-all">
           {torrent.name}
         </Text>
-        <Text as="p" variant="body-sm" className="text-default-500">
+        <Text
+          as="p"
+          id={downloadedLabelId}
+          variant="body-sm"
+          className="text-default-500"
+        >
           Downloaded: {formatBytes(torrent.downloaded)} / {formatBytes(torrent.size)}
         </Text>
         <Progress
+          aria-labelledby={downloadedLabelId}
           className="max-w-xl text-default-500"
           value={torrent.progress * 100}
           showValueLabel
