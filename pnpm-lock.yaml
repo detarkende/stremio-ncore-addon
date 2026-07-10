@@ -71,8 +71,8 @@ importers:
         specifier: ^3.1.1
         version: 3.1.1
       webtorrent:
-        specifier: ^3.0.16
-        version: 3.0.16(patch_hash=263e41f2dda2c44d06283513019f881c0406396c7ab7af7f87cc0dbfda027ace)(bare-url@2.4.5)
+        specifier: ^2.8.5
+        version: 2.8.5(patch_hash=263e41f2dda2c44d06283513019f881c0406396c7ab7af7f87cc0dbfda027ace)(bare-url@2.4.5)
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -3858,6 +3858,10 @@ packages:
   bindings@1.5.0:
     resolution: {integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==}
 
+  bitfield@4.2.0:
+    resolution: {integrity: sha512-kUTatQb/mBd8uhvdLrUkouGDBUQiJaIOvPlptUwOWp6MFqih4d1MiVf0m3ATxfZSzu+LjW/awFeABltYa62uIA==}
+    engines: {node: '>=8'}
+
   bitfield@5.0.1:
     resolution: {integrity: sha512-81mvFHCa0L1HsDdKVCTkPKZZ6KFdyXgfQNoneFT7Qk5/PZeBWdPkTFa4KttbR8uHszfjiqOJbeahLOPfCqw4cw==}
     engines: {node: '>=20.19.0'}
@@ -3874,9 +3878,9 @@ packages:
     resolution: {integrity: sha512-V2iUvbtv31uLA8XFxbhB3f/fKTxWGaa6FI/3wSm93YAS/DS8IkeRWCyYGQ13Xbc9ajR40nsxNjGtVt7OHB3VOQ==}
     engines: {node: '>=12.20.0'}
 
-  bittorrent-protocol@5.0.6:
-    resolution: {integrity: sha512-qI0PeZpMBQyhvMGvsw0aJjUSMJwMNc6lLzD1TX3Q1MmzA3s3fNZrk/PKHpzrjyR9xNGBZeQ5ZuT3Stym6AUq+Q==}
-    engines: {node: '>=18'}
+  bittorrent-protocol@4.1.21:
+    resolution: {integrity: sha512-CcuPt6BL7gXa8BF+0GckYcQmr44ARfSPM0rYwMeYgWg+jftekWgy5vuxX6wJDpC5bKFvqNG+74bPBjyM7Swxrw==}
+    engines: {node: '>=12.20.0'}
 
   bittorrent-tracker@11.2.3:
     resolution: {integrity: sha512-i9pWOf1YAQWyTjDnpWwcTfEYDi5XwqD6f48pKmIHByb7x2XU86CqK+IsyMy1buKkDZ3rDKht2jIeKCZf1Dmd8g==}
@@ -5235,6 +5239,10 @@ packages:
     resolution: {integrity: sha512-s4VSOf6yN0rvbRZGxs8Om5CWj6seneMwK3oDb4lWDH0UPhWcxwOWw5+qk24bxq87szX1ydrwylIOp2uG1ojUpA==}
     engines: {node: '>= 0.8'}
 
+  rc4@0.1.5:
+    resolution: {integrity: sha512-xdDTNV90z5x5u25Oc871Xnvu7yAr4tV7Eluh0VSvrhUkry39q1k+zkz7xroqHbRq+8PiazySHJPArqifUvz9VA==}
+    engines: {node: '>=0.10.0'}
+
   rc@1.2.8:
     resolution: {integrity: sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw==}
     hasBin: true
@@ -5632,8 +5640,8 @@ packages:
   std-env@4.1.0:
     resolution: {integrity: sha512-Rq7ybcX2RuC55r9oaPVEW7/xu3tj8u4GeBYHBWCychFtzMIr86A7e3PPEBPT37sHStKX3+TiX/Fr/ACmJLVlLQ==}
 
-  streamx@2.25.0:
-    resolution: {integrity: sha512-0nQuG6jf1w+wddNEEXCF4nTg3LtufWINB5eFEN+5TNZW7KWJp6x87+JFL43vaAUPyCfH1wID+mNVyW6OHtFamg==}
+  streamx@2.22.1:
+    resolution: {integrity: sha512-znKXEBxfatz2GBNK02kRnCXjV+AA4kjZIUxeWSr3UGirZMJfTE9uiwKHobnbgxWyL/JWro8tTq+vOqAK1/qbSA==}
 
   streamx@2.28.0:
     resolution: {integrity: sha512-1Yowhzjf0ivGMrTIkY9hav5TxobO9qIVqUE41fiCGMGgc3CLlf4MY+9AHmZqBWgDTue0fY9zWjYFVyf6Diuobw==}
@@ -5793,8 +5801,8 @@ packages:
     resolution: {integrity: sha512-x+RGu60qJp2u4S7B7XglyYCrfDJWKB0RIexODlA5dpBpMh94q4MbmRjusdbvxN+XD4NHhpwEfub/CRA9pUXjEQ==}
     engines: {node: '>=16.0.0'}
 
-  torrent-piece@4.0.1:
-    resolution: {integrity: sha512-bL5lLm0CknuXMJ3c8Xw+27etPTH7P1vLXwEASQ3bktZlWV2ZEkCW1l0ssV6Y9EHpcUlf0aqB9x49bkgMA4JrHw==}
+  torrent-piece@3.0.2:
+    resolution: {integrity: sha512-K1A5tZ3BolFrUtnBpk9iDg8av1na0OgQ7E0IlA9tj0bcsPhLhzvln+oMtMmtkqAwmUsbNCilRm2ymUdZg0rVbQ==}
     engines: {node: '>=12.20.0'}
 
   totalist@3.0.1:
@@ -5933,12 +5941,12 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  ut_metadata@5.0.1:
-    resolution: {integrity: sha512-V+6jKXXvkH8YQDFeSpvjSkn7Yiz7Juz3LhIkA1QhxuvOjhrqwlZKJfRMOjVSEW/mPa9Bpk4hvFOCim98tzR04w==}
-    engines: {node: '>=22'}
+  ut_metadata@4.0.3:
+    resolution: {integrity: sha512-2tovup0VDYpT8t8+EhhhKBmbgIyiYyJQZ+Hf+/61+SvjuRS2MEeA5CiSARP4q+9/83Wu09OsGrUre/Zv6OI5NA==}
+    engines: {node: '>=12.20.0'}
 
-  ut_pex@5.0.2:
-    resolution: {integrity: sha512-tPWnEmFIpn47IgZ3CyMzA4onr6zGtBrR+DVtRGoyCpC59OgqELvj9jkzLuisCwIH5FdUQiwqtXtsiAWwpUfrKw==}
+  ut_pex@4.0.4:
+    resolution: {integrity: sha512-isVTbp2TKGoMOu+4Zh/i6ijpYr0VG83xjRPgCXaUjKzgXXndjCMWg32/9kZjubD+kxEXcmXMkoS8IttS9FZE8g==}
     engines: {node: '>=12.20.0'}
 
   utf-8-validate@6.0.6:
@@ -6097,9 +6105,9 @@ packages:
     resolution: {integrity: sha512-t/H2OySa7lZSq2f5j4whmr+IWCl5TqF4daGotE8VhPP7U+E4x5x8MK1wqOkqlb4xxRlag4kBB9enU4oxNk//+g==}
     engines: {node: '>=16.0.0'}
 
-  webtorrent@3.0.16:
-    resolution: {integrity: sha512-oryVor+AGWiNbI4zBT58CKw5MrUYz2GxP5fleHyIhucqwTYAl6pjGkDTjCPGiY5VZCPnVhhhlt+eFov85ZgZKg==}
-    engines: {node: '>=22'}
+  webtorrent@2.8.5:
+    resolution: {integrity: sha512-oIjpuBrypApJ+RCZ8RRaHEncVSkt2cd25/I4Trb2sk9nlaEF92Dg1u8BCwqA4eJR7wIZQM95GyO7Wo4QTbrUUA==}
+    engines: {node: '>=16'}
 
   whatwg-mimetype@5.0.0:
     resolution: {integrity: sha512-sXcNcHOC51uPGF0P/D4NVtrkjSU2fNsm9iog4ZvZJsL3rjoDAzXZhkm2MWt1y+PUdggKAYVoMAIYcs78wJ51Cw==}
@@ -9890,7 +9898,7 @@ snapshots:
     dependencies:
       debug: 4.4.3
       err-code: 3.0.1
-      streamx: 2.25.0
+      streamx: 2.28.0
       uint8-util: 2.2.6
       webrtc-polyfill: 1.2.2
     transitivePeerDependencies:
@@ -9902,7 +9910,7 @@ snapshots:
     dependencies:
       debug: 4.4.3
       queue-microtask: 1.2.3
-      streamx: 2.25.0
+      streamx: 2.28.0
       uint8-util: 2.2.6
       ws: 8.21.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
     transitivePeerDependencies:
@@ -10232,7 +10240,7 @@ snapshots:
   bare-stream@2.13.3(bare-events@2.9.1):
     dependencies:
       b4a: 1.8.1
-      streamx: 2.25.0
+      streamx: 2.28.0
       teex: 1.0.1
     optionalDependencies:
       bare-events: 2.9.1
@@ -10274,6 +10282,8 @@ snapshots:
     dependencies:
       file-uri-to-path: 1.0.0
 
+  bitfield@4.2.0: {}
+
   bitfield@5.0.1: {}
 
   bittorrent-dht@11.0.12:
@@ -10299,11 +10309,12 @@ snapshots:
 
   bittorrent-peerid@2.0.2: {}
 
-  bittorrent-protocol@5.0.6:
+  bittorrent-protocol@4.1.21:
     dependencies:
       bencode: 4.0.1
-      bitfield: 5.0.1
+      bitfield: 4.2.0
       debug: 4.4.3
+      rc4: 0.1.5
       streamx: 2.28.0
       throughput: 1.0.2
       uint8-util: 2.2.6
@@ -11751,6 +11762,8 @@ snapshots:
       iconv-lite: 0.4.24
       unpipe: 1.0.0
 
+  rc4@0.1.5: {}
+
   rc@1.2.8:
     dependencies:
       deep-extend: 0.6.0
@@ -12163,7 +12176,7 @@ snapshots:
   speed-limiter@1.0.2:
     dependencies:
       limiter: 1.1.5
-      streamx: 2.25.0
+      streamx: 2.28.0
     transitivePeerDependencies:
       - bare-abort-controller
       - react-native-b4a
@@ -12180,11 +12193,12 @@ snapshots:
 
   std-env@4.1.0: {}
 
-  streamx@2.25.0:
+  streamx@2.22.1:
     dependencies:
-      events-universal: 1.0.1
       fast-fifo: 1.3.2
       text-decoder: 1.2.7
+    optionalDependencies:
+      bare-events: 2.9.1
     transitivePeerDependencies:
       - bare-abort-controller
       - react-native-b4a
@@ -12296,7 +12310,7 @@ snapshots:
 
   teex@1.0.1:
     dependencies:
-      streamx: 2.25.0
+      streamx: 2.28.0
     transitivePeerDependencies:
       - bare-abort-controller
       - react-native-b4a
@@ -12361,7 +12375,7 @@ snapshots:
       - react-native-b4a
       - supports-color
 
-  torrent-piece@4.0.1:
+  torrent-piece@3.0.2:
     dependencies:
       uint8-util: 2.2.6
 
@@ -12456,16 +12470,16 @@ snapshots:
     dependencies:
       react: 19.2.7
 
-  ut_metadata@5.0.1:
+  ut_metadata@4.0.3:
     dependencies:
       bencode: 4.0.1
-      bitfield: 5.0.1
+      bitfield: 4.2.0
       debug: 4.4.3
       uint8-util: 2.2.6
     transitivePeerDependencies:
       - supports-color
 
-  ut_pex@5.0.2:
+  ut_pex@4.0.4:
     dependencies:
       bencode: 4.0.1
       compact2string: 1.4.1
@@ -12579,15 +12593,15 @@ snapshots:
     dependencies:
       node-datachannel: 0.32.3
 
-  webtorrent@3.0.16(patch_hash=263e41f2dda2c44d06283513019f881c0406396c7ab7af7f87cc0dbfda027ace)(bare-url@2.4.5):
+  webtorrent@2.8.5(patch_hash=263e41f2dda2c44d06283513019f881c0406396c7ab7af7f87cc0dbfda027ace)(bare-url@2.4.5):
     dependencies:
       '@silentbot1/nat-api': 0.4.9
       '@thaunknown/simple-peer': 10.1.1
       '@webtorrent/http-node': 1.3.0
       addr-to-ip-port: 2.0.0
-      bitfield: 5.0.1
+      bitfield: 4.2.0
       bittorrent-dht: 11.0.12
-      bittorrent-protocol: 5.0.6
+      bittorrent-protocol: 4.1.21
       cache-chunk-store: 3.2.2
       chunk-store-iterator: 1.0.4
       cpus: 1.0.3
@@ -12612,14 +12626,14 @@ snapshots:
       run-parallel: 1.2.0
       run-parallel-limit: 1.1.0
       speed-limiter: 1.0.2
-      streamx: 2.25.0
+      streamx: 2.22.1
       throughput: 1.0.2
       torrent-discovery: 11.0.21
-      torrent-piece: 4.0.1
+      torrent-piece: 3.0.2
       uint8-util: 2.2.6
       unordered-array-remove: 1.0.2
-      ut_metadata: 5.0.1
-      ut_pex: 5.0.2
+      ut_metadata: 4.0.3
+      ut_pex: 4.0.4
     optionalDependencies:
       utp-native: 2.5.3
     transitivePeerDependencies:

@@ -43,7 +43,7 @@
     "pino": "^10.3.1",
     "range-parser": "^1.3.0",
     "set-cookie-parser": "^3.1.1",
-    "webtorrent": "^3.0.16",
+    "webtorrent": "^2.8.5",
     "zod": "^4.4.3"
   },
   "devDependencies": {
