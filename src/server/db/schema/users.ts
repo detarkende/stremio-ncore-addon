@@ -1,15 +1,18 @@
 import { Resolution } from '@ctrl/video-filename-parser';
 import { sqliteTable, integer, text } from 'drizzle-orm/sqlite-core';
 
-export enum UserRole {
-  USER = 'user',
-  ADMIN = 'admin',
-}
+export const UserRole = {
+  USER: 'user',
+  ADMIN: 'admin',
+} as const;
+export type UserRole = (typeof UserRole)[keyof typeof UserRole];
+
 export { Resolution };
-export enum Language {
-  EN = 'en',
-  HU = 'hu',
-}
+export const Language = {
+  EN: 'en',
+  HU: 'hu',
+} as const;
+export type Language = (typeof Language)[keyof typeof Language];
 
 const userRoleValues = [UserRole.ADMIN, UserRole.USER] as const;
 export const resolutionValues: Resolution[] = [

@@ -1,9 +1,10 @@
 import { Language } from '@server/db/schema/users';
 
-export enum StreamType {
-  MOVIE = 'movie',
-  TV_SHOW = 'series',
-}
+export const StreamType = {
+  MOVIE: 'movie',
+  TV_SHOW: 'series',
+} as const;
+export type StreamType = (typeof StreamType)[keyof typeof StreamType];
 
 export const streamTypeValues = [StreamType.MOVIE, StreamType.TV_SHOW] as const;
 

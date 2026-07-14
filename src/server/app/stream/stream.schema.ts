@@ -4,7 +4,7 @@ import { StreamType } from './stream.constants';
 
 export const listStreamsParamsSchema = z.object({
   token: z.string(),
-  type: z.nativeEnum(StreamType),
+  type: z.enum(StreamType),
   imdbId: z
     .string()
     .startsWith('tt')
@@ -24,7 +24,7 @@ export const cinemetaResponseSchema = z.object({
   meta: z.object({
     imdb_id: z.string(),
     name: z.string(),
-    type: z.nativeEnum(StreamType),
+    type: z.enum(StreamType),
   }),
 });
 

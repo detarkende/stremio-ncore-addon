@@ -8,7 +8,7 @@ export const createUserSchema = z.object({
     error: 'Preferred language is required',
   }),
   preferredResolutions: z
-    .array(z.nativeEnum(Resolution))
+    .array(z.enum(Resolution))
     .min(1, 'At least one resolution is required'),
 });
 
