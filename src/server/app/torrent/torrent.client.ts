@@ -2,7 +2,7 @@ import { rmSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { db } from '@server/db';
-import { torrentsTable, type DbTorrent } from '@server/db/schema/torrents';
+import { torrentsTable } from '@server/db/schema';
 import { env } from '@server/env';
 import { logger } from '@server/logger';
 import { getHighestCommonDir } from '@server/utils/files';
@@ -15,7 +15,7 @@ import WebTorrent from 'webtorrent';
 
 import { ncoreService } from '../ncore/index';
 import { getExistingTorrents } from './torrent-file.utils';
-import type { Torrent } from './torrent.types';
+import type { DbTorrent, Torrent } from './torrent.types';
 
 /* @lintignore */
 export class TorrentClient {

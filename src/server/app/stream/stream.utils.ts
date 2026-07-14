@@ -1,5 +1,5 @@
-import type { Resolution } from '@server/db/schema/users';
-import { Language } from '@server/db/schema/users';
+import type { Resolution } from '@server/app/user/user.types';
+import { Language } from '@server/app/user/user.types';
 import { env } from '@server/env';
 import { formatBytes } from '@server/utils/bytes';
 import { rateList } from '@server/utils/rate-list';

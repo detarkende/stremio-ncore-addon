@@ -1,5 +1,5 @@
 import { db } from '@server/db';
-import { configurationTable } from '@server/db/schema/configuration';
+import { configurationTable } from '@server/db/schema';
 import type { UpdateConfigRequest } from '@server/exports';
 
 import { configRequestToInsertStatement, getConfig } from '../config.utils';

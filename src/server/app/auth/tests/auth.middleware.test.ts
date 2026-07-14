@@ -1,4 +1,4 @@
-import { UserRole, Language, Resolution } from '@server/db/schema/users';
+import { UserRole, Language, Resolution } from '@server/app/user/user.types';
 import { HttpStatusCode } from '@server/types/http';
 import { Hono } from 'hono';
 import mockFs from 'mock-fs';

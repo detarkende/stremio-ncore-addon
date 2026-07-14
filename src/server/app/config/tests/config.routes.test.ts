@@ -1,8 +1,8 @@
 import { SESSION_COOKIE_NAME } from '@server/app/auth/auth.constants';
+import { Language, Resolution, UserRole } from '@server/app/user/user.types';
 import * as userUtils from '@server/app/user/user.utils';
 import { db } from '@server/db';
-import { configurationTable } from '@server/db/schema/configuration';
-import { Language, Resolution, UserRole, usersTable } from '@server/db/schema/users';
+import { configurationTable, usersTable } from '@server/db/schema';
 import { configureApp } from '@server/test-utils/config';
 import { createTestUserWithSession } from '@server/test-utils/users';
 import { testClient } from 'hono/testing';

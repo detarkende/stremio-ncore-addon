@@ -1,6 +1,7 @@
 import { encodeBase32LowerCaseNoPadding } from '@oslojs/encoding';
+import { UserRole } from '@server/app/user/user.types';
 import { db } from '@server/db';
-import { UserRole, usersTable } from '@server/db/schema/users';
+import { usersTable } from '@server/db/schema';
 import type { LoginCredentials } from '@server/schemas/login.schema';
 import type { CreateUserRequest, UpdateUserRequest } from '@server/schemas/user.schema';
 import { User } from '@server/types/user';

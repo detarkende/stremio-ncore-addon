@@ -1,7 +1,7 @@
 import { zValidator } from '@hono/zod-validator';
 import { db } from '@server/db';
-import { configurationTable } from '@server/db/schema/configuration';
-import { usersTable } from '@server/db/schema/users';
+import { usersTable } from '@server/db/schema';
+import { configurationTable } from '@server/db/schema';
 import { logger } from '@server/logger';
 import { createConfigSchema, updateConfigSchema } from '@server/schemas/config.schema';
 import { HttpStatusCode } from '@server/types/http';

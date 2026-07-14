@@ -1,7 +1,7 @@
 import { Resolution } from '@ctrl/video-filename-parser';
 import { StreamType } from '@server/app/stream/stream.constants';
 import { parseTorrentBuffer } from '@server/app/torrent/torrent-file.utils';
-import { Language } from '@server/db/schema/users';
+import { Language } from '@server/app/user/user.types';
 import mentalist from '@server/mocks/torrents/mentalist';
 import oneBattleAfterAnother from '@server/mocks/torrents/one-battle-after-another';
 import { createTestNcoreTorrentResult } from '@server/test-utils/ncore';

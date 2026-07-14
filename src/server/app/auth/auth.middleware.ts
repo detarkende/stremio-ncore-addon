@@ -1,5 +1,4 @@
-import type { Session } from '@server/db/schema/sessions';
-import { UserRole } from '@server/db/schema/users';
+import { UserRole } from '@server/app/user/user.types';
 import { HttpStatusCode } from '@server/types/http';
 import type { User } from '@server/types/user';
 import type { MiddlewareHandler } from 'hono';
@@ -9,6 +8,7 @@ import { HTTPException } from 'hono/http-exception';
 
 import { getUserByToken } from '../user/user.utils';
 import { SESSION_COOKIE_NAME } from './auth.constants';
+import type { Session } from './auth.types';
 import { validateSessionToken } from './auth.utils';
 
 type CookieAuthEnv = {

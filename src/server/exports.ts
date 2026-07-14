@@ -1,13 +1,8 @@
 import type { apiRoutes } from './index';
-export {
-  UserRole,
-  Language,
-  Resolution,
-  languageValues,
-  resolutionValues,
-} from './db/schema/users';
+export { UserRole, Language, Resolution } from './app/user/user.types';
+export { languageValues, resolutionValues } from './app/user/user.constants';
 export type { User } from './types/user';
-export type { Configuration } from './db/schema/configuration';
+export type { Configuration } from './app/config/config.types';
 export {
   type CreateConfigRequest,
   type UpdateConfigRequest,

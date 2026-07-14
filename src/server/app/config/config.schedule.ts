@@ -1,4 +1,4 @@
-import type { Configuration } from '@server/db/schema/configuration';
+import type { Configuration } from '@server/app/config/config.types';
 import type { ScheduledTask } from 'node-cron';
 import nodeCron from 'node-cron';
 

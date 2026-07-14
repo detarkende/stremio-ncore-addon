@@ -1,11 +1,11 @@
-import { Language } from '@server/db/schema/users';
+import { Language } from '@server/app/user/user.types';
 import { env } from '@server/env';
 import type { NockHandler } from '@server/test-utils/types';
 import nock from 'nock';
 import type { Mock } from 'vitest';
 
-import type { CinemetaResponse } from '../stream.constants';
 import { StreamType } from '../stream.constants';
+import type { CinemetaResponse } from '../stream.schema';
 import { getCinemetaData, getStreamDescription } from '../stream.utils';
 
 describe('Stream utils', () => {

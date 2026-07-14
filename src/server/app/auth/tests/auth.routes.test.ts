@@ -1,5 +1,5 @@
+import { UserRole } from '@server/app/user/user.types';
 import { hashPassword } from '@server/app/user/user.utils';
-import { UserRole } from '@server/db/schema/users';
 import type { LoginCredentials } from '@server/schemas/login.schema';
 import { createTestUser, createTestUserWithSession } from '@server/test-utils/users';
 import { testClient } from 'hono/testing';

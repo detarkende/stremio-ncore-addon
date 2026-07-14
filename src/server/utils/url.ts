@@ -1,4 +1,4 @@
-import type { ConfigurationResponse } from '@server/db/schema/configuration';
+import type { ConfigurationResponse } from '@server/app/config/config.types';
 
 export function getCurrentRequestUrl(url: string, config: ConfigurationResponse): string {
   const { remoteUrl, localUrl } = config;

@@ -1,6 +1,7 @@
 import { createSession, generateSessionToken } from '@server/app/auth/auth.utils';
+import { Language, Resolution, UserRole } from '@server/app/user/user.types';
 import { db } from '@server/db';
-import { Language, Resolution, UserRole, usersTable } from '@server/db/schema/users';
+import { usersTable } from '@server/db/schema';
 import { User } from '@server/types/user';
 import { eq, type InferInsertModel } from 'drizzle-orm';
 

@@ -1,5 +1,5 @@
 import { db } from '@server/db';
-import { sessionsTable } from '@server/db/schema/sessions';
+import { sessionsTable } from '@server/db/schema';
 import { createTestUser } from '@server/test-utils/users';
 import { eq } from 'drizzle-orm';
 

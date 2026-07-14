@@ -1,4 +1,4 @@
-import { Language } from '@server/db/schema/users';
+import { Language } from '@server/app/user/user.types';
 
 export const StreamType = {
   MOVIE: 'movie',

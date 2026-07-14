@@ -3,13 +3,14 @@ import { resolve } from 'path';
 import { env } from '@server/env';
 import { ensureDirExists } from '@server/utils/files';
 import SQLite, { type Database as SQLiteDatabase } from 'better-sqlite3';
-import { type ExtractTablesWithRelations } from 'drizzle-orm';
-import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
-import type { SQLiteTransaction } from 'drizzle-orm/sqlite-core';
 
-let db: BetterSQLite3Database<Record<string, never>> & { $client: SQLiteDatabase };
+function setupClient(sqlite: SQLiteDatabase) {
+  return drizzle({ client: sqlite });
+}
+
+let db: ReturnType<typeof setupClient>;
 
 export function createDbInstance({ isTestDb = false } = {}) {
   let sqlite: SQLiteDatabase;
@@ -22,7 +23,7 @@ export function createDbInstance({ isTestDb = false } = {}) {
     sqlite = new SQLite(resolve(configDir, 'sna.db'));
   }
 
-  db = drizzle({ client: sqlite, casing: 'snake_case' });
+  db = setupClient(sqlite);
 
   const migrationsFolder = resolve(import.meta.dirname, './migrations');
   migrate(db, { migrationsFolder });

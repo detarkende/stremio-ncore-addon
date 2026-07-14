@@ -1,9 +1,9 @@
-import type { ConfigurationResponse } from '@server/db/schema/configuration';
 import { HttpStatusCode } from '@server/types/http';
 import { createMiddleware } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
 
+import type { ConfigurationResponse } from './config.types';
 import { getConfig } from './config.utils';
 
 type ConfigEnv = {

@@ -1,5 +1,5 @@
 import { parseResolution } from '@ctrl/video-filename-parser';
-import { Language, Resolution } from '@server/db/schema/users';
+import { Language, Resolution } from '@server/app/user/user.types';
 
 import {
   TorrentDetails,

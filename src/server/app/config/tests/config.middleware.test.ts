@@ -1,7 +1,7 @@
 import { db } from '@server/db';
+import { configurationTable } from '@server/db/schema';
 import { Hono } from 'hono';
 
-import { configurationTable } from '../../../db/schema/configuration';
 import { useIsConfigured } from '../config.middleware';
 
 describe('Config Middleware', () => {

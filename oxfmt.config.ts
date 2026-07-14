@@ -12,7 +12,7 @@ export default defineConfig({
   sortImports: {},
   ignorePatterns: [
     'pnpm-lock.yaml',
-    'server/src/db/migrations/meta',
+    'src/server/db/migrations',
     '**/mocks/**',
     '**/*.gen.ts',
   ],

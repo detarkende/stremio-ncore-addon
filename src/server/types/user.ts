@@ -1,4 +1,5 @@
-import type { Language, Resolution, UserRole, usersTable } from '@server/db/schema/users';
+import type { UserRole, Language, Resolution } from '@server/app/user/user.types';
+import type { usersTable } from '@server/db/schema';
 import type { InferSelectModel } from 'drizzle-orm';
 
 export class User {

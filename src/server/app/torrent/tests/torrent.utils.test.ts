@@ -1,6 +1,6 @@
 import { StreamType } from '@server/app/stream/stream.constants';
 import { db } from '@server/db';
-import { usersTorrentsTable } from '@server/db/schema/users_torrent_files';
+import { usersTorrentsTable } from '@server/db/schema';
 import mentalist from '@server/mocks/torrents/mentalist';
 import { createTestUser } from '@server/test-utils/users';
 import { and, eq } from 'drizzle-orm';

@@ -1,5 +1,5 @@
 import { db } from '@server/db';
-import { usersTable } from '@server/db/schema/users';
+import { usersTable } from '@server/db/schema';
 import { HttpStatusCode } from '@server/types/http';
 import { User } from '@server/types/user';
 import { eq } from 'drizzle-orm';

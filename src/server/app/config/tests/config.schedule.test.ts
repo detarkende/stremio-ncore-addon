@@ -1,5 +1,5 @@
 import { db } from '@server/db';
-import { configurationTable } from '@server/db/schema/configuration';
+import { configurationTable } from '@server/db/schema';
 import { configureApp } from '@server/test-utils/config';
 import { eq } from 'drizzle-orm';
 

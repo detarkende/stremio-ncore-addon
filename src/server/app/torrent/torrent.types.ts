@@ -1,8 +1,11 @@
 import type { ParsedShow } from '@ctrl/video-filename-parser';
 import { filenameParse, parseResolution } from '@ctrl/video-filename-parser';
 import { StreamType } from '@server/app/stream/stream.constants';
-import type { Resolution, Language } from '@server/db/schema/users';
+import type { Resolution, Language } from '@server/app/user/user.types';
+import type { torrentsTable } from '@server/db/schema';
 import { isSupportedMedia } from '@server/utils/media-file-extensions';
+
+export type DbTorrent = typeof torrentsTable.$inferSelect;
 
 export interface TorrentFileDetails {
   name: string;

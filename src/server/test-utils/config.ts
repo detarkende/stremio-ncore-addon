@@ -1,6 +1,9 @@
+import type {
+  Configuration,
+  ConfigurationResponse,
+} from '@server/app/config/config.types';
 import { db } from '@server/db';
-import type { Configuration } from '@server/db/schema/configuration';
-import { configurationTable } from '@server/db/schema/configuration';
+import { configurationTable } from '@server/db/schema';
 
 const defaultConfig: Configuration = {
   id: 1,
@@ -11,7 +14,7 @@ const defaultConfig: Configuration = {
 };
 
 export function configureApp(
-  config: Partial<Omit<Configuration, 'id'>> = {},
+  config: Partial<Omit<ConfigurationResponse, 'id'>> = {},
 ): Configuration {
   const configToInsert = { ...defaultConfig, ...config };
 

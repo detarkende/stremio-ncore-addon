@@ -1,4 +1,4 @@
-import { Language, Resolution } from '@server/db/schema/users';
+import { Language, Resolution } from '@server/app/user/user.types';
 import { z } from 'zod';
 
 export const createUserSchema = z.object({

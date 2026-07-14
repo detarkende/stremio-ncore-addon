@@ -1,7 +1,6 @@
-import type { Session } from '@server/db/schema/sessions';
+import type { Session } from '@server/app/auth/auth.types';
 import type { User } from '@server/types/user';
 import type { MiddlewareHandler } from 'hono';
-import { createMiddleware } from 'hono/factory';
 
 import { requestLogger } from './logger';
 
@@ -21,7 +20,7 @@ export const requestLoggerMiddleware: MiddlewareHandler<HonoEnv> = async (c, nex
   const startTime = Date.now();
   await next();
   const duration = Date.now() - startTime;
-  requestLogger.info({
+  requestLogger.info('Request', {
     method: c.req.method,
     url: c.req.url,
     status: c.res.status,

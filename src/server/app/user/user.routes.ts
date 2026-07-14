@@ -1,6 +1,6 @@
 import { zValidator } from '@hono/zod-validator';
 import { db } from '@server/db';
-import { UserRole, usersTable } from '@server/db/schema/users';
+import { usersTable } from '@server/db/schema';
 import { logger } from '@server/logger';
 import {
   createUserSchema,
@@ -14,6 +14,7 @@ import { Hono } from 'hono';
 
 import { useCookieAuth } from '../auth';
 import { userFromUrlExists } from './user.middleware';
+import { UserRole } from './user.types';
 import {
   createUserRequestToInsertStatement,
   generateRandomToken,

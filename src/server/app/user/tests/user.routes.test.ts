@@ -1,5 +1,5 @@
 import { SESSION_COOKIE_NAME } from '@server/app/auth/auth.constants';
-import { Language, Resolution, UserRole } from '@server/db/schema/users';
+import { Language, Resolution, UserRole } from '@server/app/user/user.types';
 import type { CreateUserRequest } from '@server/schemas/user.schema';
 import { getRandomString } from '@server/test-utils/random';
 import {
