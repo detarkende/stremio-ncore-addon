@@ -62,7 +62,7 @@ export const configRoutes = new Hono()
         torrentClient.deleteUnnecessaryTorrents.bind(torrentClient),
       );
     } catch (error) {
-      logger.error(error, 'Failed to save configuration or create admin user');
+      logger.error('Failed to save configuration or create admin user', { error });
       throw new HTTPException(HttpStatusCode.INTERNAL_SERVER_ERROR, {
         message: 'An error occurred during setup.',
       });
@@ -90,7 +90,7 @@ export const configRoutes = new Hono()
         );
         return c.json(updatedConfig);
       } catch (error) {
-        logger.error(error, 'Failed to update configuration');
+        logger.error('Failed to update configuration', { error });
         throw new HTTPException(HttpStatusCode.INTERNAL_SERVER_ERROR, {
           message: 'An error occurred while updating configuration.',
         });

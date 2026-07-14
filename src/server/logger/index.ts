@@ -1,2 +1,2 @@
 export { logger, logLevels } from './logger';
-export { requestLogger } from './request-logger.middleware';
+export { requestLoggerMiddleware } from './request-logger.middleware';

@@ -56,11 +56,11 @@ export class NcoreService {
         const setCookieHeader = resp.headers.get('set-cookie');
         if (!setCookieHeader) {
           logger.error(
+            `No Set-Cookie header received when logging in to nCore for user "${username}"`,
             {
               status: resp.status,
               headers: resp.headers,
             },
-            `No Set-Cookie header received when logging in to nCore for user "${username}"`,
           );
           throw new Error('No Set-Cookie header received', {
             cause: { status: resp.status, headers: resp.headers, username },
@@ -72,13 +72,10 @@ export class NcoreService {
         const passCookie = allCookies.find(({ name }) => name === 'pass');
 
         if (!passCookie || passCookie.value === 'deleted') {
-          logger.error(
-            {
-              status: resp.status,
-              headers: resp.headers,
-            },
-            `Failed to log in to nCore for user "${username}"`,
-          );
+          logger.error(`Failed to log in to nCore for user "${username}"`, {
+            status: resp.status,
+            headers: resp.headers,
+          });
           throw new Error('No pass cookie found', {
             cause: { passCookie, status: resp.status, headers: resp.headers, username },
           });
@@ -93,7 +90,7 @@ export class NcoreService {
         logger.info(`Successfully fetched cookies for nCore user "${username}"`);
         return fullCookieString;
       } catch (error) {
-        logger.error({ error }, 'Failed to get cookies from nCore');
+        logger.error('Failed to get cookies from nCore', { error });
         throw new Error('Failed to get cookies from nCore', { cause: error });
       }
     }
@@ -140,12 +137,9 @@ export class NcoreService {
 
     const [ncoreTorrentDetails, errors] = await getAllPromiseResults(batchedPromises);
     if (errors.length > 0) {
-      logger.warn(
-        {
-          errors,
-        },
-        'Encountered errors while fetching torrent details',
-      );
+      logger.warning('Encountered errors while fetching torrent details', {
+        errors,
+      });
     }
     return ncoreTorrentDetails;
   }
@@ -215,33 +209,27 @@ export class NcoreService {
         },
       );
       if (!response.ok) {
-        logger.error(
-          {
-            status: response.status,
-            ncoreId,
-          },
-          `Failed to fetch torrent details page`,
-        );
+        logger.error(`Failed to fetch torrent details page`, {
+          status: response.status,
+          ncoreId,
+        });
         throw new Error('Failed to fetch torrent details page', {
           cause: { status: response.status, ncoreId },
         });
       }
       const html = await response.text();
-      logger.info({ ncoreId }, `Successfully fetched torrent details page`);
+      logger.info(`Successfully fetched torrent details page`, { ncoreId });
       const { document } = new JSDOM(html).window;
       const downloadLink = `${env.NCORE_URL}/${document
         .querySelector('.download > a')
         ?.getAttribute('href')}`;
-      logger.info(
-        {
-          ncoreId,
-          downloadLink,
-        },
-        `Successfully extracted torrent download URL`,
-      );
+      logger.info(`Successfully extracted torrent download URL`, {
+        ncoreId,
+        downloadLink,
+      });
       return downloadLink;
     } catch (error) {
-      logger.error({ error, ncoreId }, `Failed to get torrent URL from nCore`);
+      logger.error(`Failed to get torrent URL from nCore`, { error, ncoreId });
       throw new Error('Failed to get torrent URL from nCore', { cause: error });
     }
   }
@@ -278,16 +266,16 @@ export class NcoreService {
       );
       if (errors.length > 0) {
         logger.warn(
+          'Encountered errors while fetching torrent URLs for deletable torrents',
           {
             errors,
           },
-          'Encountered errors while fetching torrent URLs for deletable torrents',
         );
       }
 
       return deletableInfoHashes;
     } catch (error) {
-      logger.error({ error }, 'Failed to get removable torrents from nCore');
+      logger.error('Failed to get removable torrents from nCore', { error });
       throw new Error('Failed to get removable torrents from nCore', { cause: error });
     }
   }
@@ -302,18 +290,15 @@ export class NcoreService {
         signal: AbortSignal.timeout(5_000),
       });
       if (!response.ok) {
-        logger.warn(
-          {
-            status: response.status,
-          },
-          `nCore is not accessible`,
-        );
+        logger.warn(`nCore is not accessible`, {
+          status: response.status,
+        });
         return false;
       }
       logger.info(`nCore is accessible`);
       return true;
     } catch (error) {
-      logger.error({ error }, 'Failed to access nCore');
+      logger.error('Failed to access nCore', { error });
       return false;
     }
   }

@@ -292,7 +292,7 @@ describe('nCore service', () => {
       const torrentDetailsArray =
         await ncoreService['_convertNcoreTorrentToTorrentDetails'](mockNcoreTorrents);
       expect(downloadAndParseTorrentSpy).toHaveBeenCalledTimes(3);
-      expect(vi.mocked(logger).warn).toHaveBeenCalledOnce();
+      expect(vi.mocked(logger).warning).toHaveBeenCalledOnce();
       expect(torrentDetailsArray.length).toBe(2);
       expect(torrentDetailsArray[0].infoHash).toBe(mockNcoreTorrents[0].torrent_id);
       expect(torrentDetailsArray[1].infoHash).toBe(mockNcoreTorrents[2].torrent_id);

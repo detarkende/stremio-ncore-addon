@@ -1,25 +1,33 @@
-import pino from 'pino';
+import {
+  configure,
+  getConsoleSink,
+  getLogger,
+  getLogLevels,
+  jsonLinesFormatter,
+} from '@logtape/logtape';
+import { getPrettyFormatter } from '@logtape/pretty';
 
-export const logger = pino(
-  {
-    serializers: {
-      error: pino.stdSerializers.err,
-      errors: pino.stdSerializers.err,
-    },
+const isDev = process.env.NODE_ENV === 'development';
+
+await configure({
+  sinks: {
+    console: getConsoleSink({
+      formatter: isDev
+        ? getPrettyFormatter({ timestamp: 'date-time', properties: true })
+        : jsonLinesFormatter,
+    }),
   },
-  pino.transport({
-    targets: [
-      {
-        target: 'pino/file',
-        options: { destination: 1 },
-      },
-    ],
-  }),
-);
+  loggers: [
+    { category: 'sna.server', sinks: ['console'], lowestLevel: isDev ? 'debug' : 'info' },
+    {
+      category: 'sna.request',
+      sinks: ['console'],
+      lowestLevel: isDev ? 'debug' : 'info',
+    },
+  ],
+});
 
-export const logLevels = [
-  'error',
-  'warn',
-  'info',
-  'debug',
-] as const satisfies readonly (keyof typeof logger)[];
+export const logger = getLogger(['sna.server']);
+export const requestLogger = getLogger(['sna.request']);
+
+export const logLevels = getLogLevels();

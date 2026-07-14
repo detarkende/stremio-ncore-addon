@@ -57,7 +57,7 @@ export const userRoutes = new Hono()
           .returning();
         return c.json(new User(createdUser), HttpStatusCode.CREATED);
       } catch (error) {
-        logger.error(error, 'Error creating user');
+        logger.error('Error creating user', { error });
         return c.json(
           { success: false, message: 'Failed to create user.' },
           HttpStatusCode.INTERNAL_SERVER_ERROR,
@@ -81,7 +81,7 @@ export const userRoutes = new Hono()
           .returning();
         return c.json(new User(updatedUser));
       } catch (error) {
-        logger.error(error, 'Error updating user');
+        logger.error('Error updating user', { error });
         return c.json(
           { message: 'Failed to update user.' },
           HttpStatusCode.INTERNAL_SERVER_ERROR,
@@ -106,7 +106,7 @@ export const userRoutes = new Hono()
           .where(eq(usersTable.id, userFromUrl.id));
         return c.json({ message: 'Password updated successfully' });
       } catch (error) {
-        logger.error(error, 'Error updating user password');
+        logger.error('Error updating user password', { error });
         return c.json(
           { message: 'Failed to update password.' },
           HttpStatusCode.INTERNAL_SERVER_ERROR,
@@ -131,7 +131,7 @@ export const userRoutes = new Hono()
           .where(eq(usersTable.id, userFromUrl.id));
         return c.json({ apiToken: newToken });
       } catch (error) {
-        logger.error(error, 'Error rotating user token');
+        logger.error('Error rotating user token', { error });
         return c.json(
           { message: 'Failed to rotate user token.' },
           HttpStatusCode.INTERNAL_SERVER_ERROR,
@@ -153,7 +153,7 @@ export const userRoutes = new Hono()
       await db.delete(usersTable).where(eq(usersTable.id, userFromUrl.id));
       return c.json({ message: 'User deleted successfully' });
     } catch (error) {
-      logger.error(error, 'Error deleting user');
+      logger.error('Error deleting user', { error });
       return c.json(
         { message: 'Failed to delete user.' },
         HttpStatusCode.INTERNAL_SERVER_ERROR,

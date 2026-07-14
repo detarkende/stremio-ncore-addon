@@ -18,9 +18,9 @@ export async function _fetchTorrent(
       );
     }
     return { torrentBuffer: Buffer.from(await response.arrayBuffer()) };
-  } catch (e) {
-    logger.error({ error: e }, `Failed to fetch torrent from URL ${torrentUrl}`);
-    throw new Error(`Failed to fetch torrent from URL ${torrentUrl}`, { cause: e });
+  } catch (error) {
+    logger.error(`Failed to fetch torrent from URL ${torrentUrl}`, { error });
+    throw new Error(`Failed to fetch torrent from URL ${torrentUrl}`, { cause: error });
   }
 }
 
@@ -64,9 +64,9 @@ export async function downloadAndParseTorrent(torrentUrl: string): Promise<{
       torrentBuffer,
       torrentFileData,
     };
-  } catch (e) {
-    logger.error({ error: e }, 'Failed to fetch and parse torrent');
-    throw new Error('Failed to fetch and parse torrent', { cause: e });
+  } catch (error) {
+    logger.error('Failed to fetch and parse torrent', { error });
+    throw new Error('Failed to fetch and parse torrent', { cause: error });
   }
 }
 

@@ -8,6 +8,6 @@
     "src/**/test-utils/**/*.tsx"
   ],
   "compilerOptions": {
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals", "vite/client"]
   }
 }

@@ -110,7 +110,7 @@ export class TorrentClient {
       this.setupPreloadListeners(torrent);
       return this.mapToTorrentResponse(torrent);
     } catch (error: unknown) {
-      logger.error({ error }, `Failed to add torrent "${dbTorrent.name}"`);
+      logger.error(`Failed to add torrent "${dbTorrent.name}"`, { error });
       throw new Error(`Failed to add torrent "${dbTorrent.name}"`, {
         cause: error,
       });
@@ -136,15 +136,15 @@ export class TorrentClient {
     try {
       const torrent = await this.webtorrent.get(infoHash);
       if (!torrent) {
-        logger.warn({ infoHash }, 'Torrent not found when trying to delete');
+        logger.warn('Torrent not found when trying to delete', { infoHash });
         return new Error('Torrent not found');
       }
       const torrentRootPath = getHighestCommonDir(torrent.files.map((file) => file.path));
       if (!torrentRootPath) {
-        logger.warn(
-          { infoHash, name: torrent.name },
-          'Could not determine torrent root path',
-        );
+        logger.warn('Could not determine torrent root path', {
+          infoHash,
+          name: torrent.name,
+        });
         return new Error('Could not determine torrent root path');
       }
       db.transaction((tx) => {
@@ -154,7 +154,7 @@ export class TorrentClient {
       });
       return;
     } catch (error: unknown) {
-      logger.error({ error, infoHash }, 'Failed to delete torrent');
+      logger.error('Failed to delete torrent', { error, infoHash });
       return new Error('Error while deleting torrent', { cause: error });
     }
   }
@@ -164,7 +164,7 @@ export class TorrentClient {
       const stats = this.webtorrent.torrents.map(this.mapToTorrentResponse.bind(this));
       return stats.sort((a, z) => a.name.localeCompare(z.name));
     } catch (error: unknown) {
-      logger.error({ error }, 'Failed to get store stats');
+      logger.error('Failed to get store stats', { error });
       throw new Error('Failed to get store stats', { cause: error });
     }
   }
@@ -180,10 +180,11 @@ export class TorrentClient {
           `Successfully loaded existing torrent: ${torrent.name} (${torrent.infoHash})`,
         );
       } catch (error: unknown) {
-        logger.error(
-          { error, infoHash: torrent.infoHash, name: torrent.name },
-          'Failed to load existing torrent',
-        );
+        logger.error('Failed to load existing torrent', {
+          error,
+          infoHash: torrent.infoHash,
+          name: torrent.name,
+        });
       }
     }
   }
@@ -199,8 +200,11 @@ export class TorrentClient {
         const error = await this.deleteTorrent(torrent.infoHash);
         if (error) {
           logger.error(
-            { infoHash: torrent.infoHash, error },
             `Failed to delete unnecessary torrent: ${torrent?.name || torrent.infoHash}`,
+            {
+              infoHash: torrent.infoHash,
+              error,
+            },
           );
         } else {
           logger.info(

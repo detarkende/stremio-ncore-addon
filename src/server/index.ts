@@ -15,18 +15,15 @@ import { streamRoutes } from './app/stream';
 import { torrentRoutes } from './app/torrent';
 import { userRoutes } from './app/user';
 import { env } from './env';
-import { logger, requestLogger } from './logger';
+import { logger, requestLoggerMiddleware } from './logger';
 import { registerGracefulShutdown } from './shutdown';
-import { HttpStatusCode } from './types/http';
 
 const app = new Hono();
-app
-  .use(contextStorage())
-  .use(cors())
-  // Only log API requests to avoid cluttering the logs with frontend asset requests
-  .use('/api', requestLogger);
+app.use(contextStorage()).use(cors());
+// Only log API requests to avoid cluttering the logs with frontend asset requests
 
 export const apiRoutes = app
+  .use('/api/*', requestLoggerMiddleware)
   .route('/', manifestRoutes)
   .route('/', userRoutes)
   .route('/', authRoutes)

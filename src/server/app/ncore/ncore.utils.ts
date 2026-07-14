@@ -20,7 +20,7 @@ export async function getAllPages(
     }
     const [pages, errors] = await getAllPromiseResults(pageRequests);
     if (errors.length) {
-      logger.warn({ errors }, 'Some pages failed to fetch when getting all nCore pages');
+      logger.warn('Some pages failed to fetch when getting all nCore pages', { errors });
     }
     results.push(...pages.flatMap((p) => p.results));
   }

@@ -1,8 +1,9 @@
 import type { Session } from '@server/db/schema/sessions';
 import type { User } from '@server/types/user';
 import type { MiddlewareHandler } from 'hono';
+import { createMiddleware } from 'hono/factory';
 
-import { logger } from './logger';
+import { requestLogger } from './logger';
 
 type HonoEnv = {
   Variables:
@@ -16,23 +17,15 @@ type HonoEnv = {
       };
 };
 
-export const requestLogger: MiddlewareHandler<HonoEnv> = async (c, next) => {
-  const start = Date.now();
-  const { method, path } = c.req;
+export const requestLoggerMiddleware: MiddlewareHandler<HonoEnv> = async (c, next) => {
+  const startTime = Date.now();
   await next();
-  const end = Date.now();
-  const duration = end - start;
-  const status = c.res.status;
-  const user = c.get('user');
-
-  logger.info(
-    {
-      method,
-      path,
-      userId: user?.id ?? 'Unknown',
-      duration,
-      status,
-    },
-    'Request completed',
-  );
+  const duration = Date.now() - startTime;
+  requestLogger.info({
+    method: c.req.method,
+    url: c.req.url,
+    status: c.res.status,
+    user: c.var.user?.id ?? null,
+    duration,
+  });
 };

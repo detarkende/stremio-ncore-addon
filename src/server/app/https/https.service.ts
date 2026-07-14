@@ -44,14 +44,14 @@ export class HttpsService {
       const json = await req.json();
       const parseResult = localIpResponseSchema.safeParse(json);
       if (!parseResult.success) {
-        logger.error({ error: parseResult.error }, `Failed to parse local IP keys`);
+        logger.error('Failed to parse local IP keys', { error: parseResult.error });
         return null;
       }
       logger.info('Found local-ip keys');
       this.localIpDetails = parseResult.data;
       return parseResult.data;
     } catch (error) {
-      logger.error({ error: this.formatError(error) }, 'Failed to fetch local IP keys:');
+      logger.error('Failed to fetch local IP keys:', { error: this.formatError(error) });
     }
     return null;
   }

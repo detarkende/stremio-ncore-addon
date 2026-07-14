@@ -21,7 +21,7 @@ const shutdownSignalReasons: Partial<Record<NodeJS.Signals, string>> = {
 
 function closeServer(server: ShutdownServer, serverName: string) {
   return new Promise<void>((resolve, reject) => {
-    logger.info({ serverName }, `Closing ${serverName} server listener...`);
+    logger.info(`Closing ${serverName} server listener...`, { serverName });
     server.closeIdleConnections?.();
     server.close((error) => {
       if (error) {
@@ -29,7 +29,7 @@ function closeServer(server: ShutdownServer, serverName: string) {
         return;
       }
 
-      logger.info({ serverName }, `${serverName} server listener closed.`);
+      logger.info(`${serverName} server listener closed.`, { serverName });
       resolve();
     });
   });
@@ -44,7 +44,7 @@ async function destroyBackgroundWork() {
     logger.info('Scheduled background work stopped.');
   } catch (error: unknown) {
     errors.push(error);
-    logger.error({ error }, 'Failed to stop scheduled background work.');
+    logger.error('Failed to stop scheduled background work.', { error });
   }
 
   try {
@@ -53,7 +53,7 @@ async function destroyBackgroundWork() {
     logger.info('Torrent client stopped.');
   } catch (error: unknown) {
     errors.push(error);
-    logger.error({ error }, 'Failed to stop torrent client.');
+    logger.error('Failed to stop torrent client.', { error });
   }
 
   try {
@@ -62,7 +62,7 @@ async function destroyBackgroundWork() {
     logger.info('Database connection closed.');
   } catch (error: unknown) {
     errors.push(error);
-    logger.error({ error }, 'Failed to close database connection.');
+    logger.error('Failed to close database connection.', { error });
   }
 
   return errors;
@@ -77,10 +77,10 @@ async function gracefulShutdown(
 ) {
   const reason = shutdownSignalReasons[signal] ?? 'shutdown requested';
 
-  logger.info(
-    { signal, reason },
-    'Received shutdown signal; beginning graceful shutdown.',
-  );
+  logger.info('Received shutdown signal; beginning graceful shutdown.', {
+    signal,
+    reason,
+  });
 
   const cleanup = (async () => {
     const errors: unknown[] = [];
@@ -92,10 +92,10 @@ async function gracefulShutdown(
           await closeServer(server, serverName);
         } catch (error) {
           errors.push(error);
-          logger.error(
-            { error, serverName },
-            `Failed to close ${serverName} server listener.`,
-          );
+          logger.error(`Failed to close ${serverName} server listener.`, {
+            error,
+            serverName,
+          });
         }
       }),
     );
@@ -114,20 +114,20 @@ async function gracefulShutdown(
     const cleanupErrors = await Promise.race([cleanup, timeout]);
 
     if (cleanupErrors.length > 0) {
-      logger.error(
+      logger.fatal(
+        `Graceful shutdown finished with cleanup errors; exiting process with failure.`,
         { signal, errorCount: cleanupErrors.length },
-        'Graceful shutdown finished with cleanup errors; exiting process with failure.',
       );
       process.exit(1);
     }
 
-    logger.info({ signal }, 'Graceful shutdown complete. Exiting process.');
+    logger.info(`Graceful shutdown complete. Exiting process.`, { signal });
     process.exit(0);
   } catch (error) {
-    logger.error(
-      { error, signal },
-      'Graceful shutdown did not complete cleanly; forcing process exit.',
-    );
+    logger.fatal(`Graceful shutdown did not complete cleanly; forcing process exit.`, {
+      error,
+      signal,
+    });
 
     for (const server of [servers.http, servers.https]) {
       server.closeAllConnections?.();

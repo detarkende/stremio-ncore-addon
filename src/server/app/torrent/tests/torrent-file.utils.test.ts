@@ -53,12 +53,14 @@ describe('Torrent file utils', () => {
       );
       const loggerErrorMock = vi.mocked(logger.error);
       expect(loggerErrorMock).toHaveBeenCalledTimes(1);
-      expect(loggerErrorMock.mock.calls[0]).toMatchInlineSnapshot(`[
-  {
-    "error": [Error: Failed to fetch torrent from URL http://example.com/test.torrent. Status: 404],
-  },
-  "Failed to fetch torrent from URL http://example.com/test.torrent",
-]`);
+      expect(loggerErrorMock.mock.calls[0]).toMatchInlineSnapshot(`
+        [
+          "Failed to fetch torrent from URL http://example.com/test.torrent",
+          {
+            "error": [Error: Failed to fetch torrent from URL http://example.com/test.torrent. Status: 404],
+          },
+        ]
+      `);
     });
   });
 

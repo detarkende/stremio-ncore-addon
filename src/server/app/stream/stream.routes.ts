@@ -48,7 +48,7 @@ export const streamRoutes = new Hono()
         try {
           cinemetaData = await getCinemetaData(type, imdbId);
         } catch (error) {
-          logger.warn({ error }, 'Failed to fetch metadata from Cinemeta');
+          logger.warn('Failed to fetch metadata from Cinemeta', { error });
         }
         if (cinemetaData) {
           try {
@@ -60,7 +60,7 @@ export const streamRoutes = new Hono()
               (torrent) => torrent.getSearchedFile({ type, season, episode }) !== null,
             );
           } catch (error) {
-            logger.warn({ error }, 'Failed to fetch torrents by title');
+            logger.warn('Failed to fetch torrents by title', { error });
           }
         }
       }
@@ -123,10 +123,11 @@ export const streamRoutes = new Hono()
       const file = torrent.files.find((f) => f.path === filePath);
 
       if (!file) {
-        logger.error(
-          { infoHash, torrentName: torrent.name, filePath },
-          `File not found in torrent when trying to play`,
-        );
+        logger.error(`File not found in torrent when trying to play`, {
+          infoHash,
+          torrentName: torrent.name,
+          filePath,
+        });
         throw new HTTPException(HttpStatusCode.NOT_FOUND);
       }
       const fileType = getMimeType(file.path) || 'application/octet-stream';
