@@ -12,7 +12,7 @@ export const isConfiguredQueryOptions = queryOptions({
       { init: { signal: context.signal } },
     );
     if (!response.ok) {
-      handleHttpError(response);
+      await handleHttpError(response);
     }
     const data: { isConfigured: boolean } = await response.json();
     return data.isConfigured;
@@ -29,7 +29,7 @@ export const configQueryOptions = queryOptions({
       },
     );
     if (!response.ok) {
-      handleHttpError(response);
+      await handleHttpError(response);
     }
     const data = await response.json();
     return data;

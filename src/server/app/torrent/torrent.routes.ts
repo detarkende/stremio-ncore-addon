@@ -1,15 +1,16 @@
 import { HttpStatusCode } from '@server/types/http';
 import { Hono } from 'hono';
 
+import { useCookieAuth } from '../auth';
 import { torrentClient } from './torrent.client';
 
 export const torrentRoutes = new Hono()
   .basePath('/api')
-  .get('/torrents', async (c) => {
+  .get('/torrents', useCookieAuth('adminOnly'), async (c) => {
     const torrents = await torrentClient.getStoreStats();
     return c.json(torrents);
   })
-  .delete('/torrents/:infoHash', async (c) => {
+  .delete('/torrents/:infoHash', useCookieAuth('adminOnly'), async (c) => {
     const { infoHash } = c.req.param();
     const deleteError = await torrentClient.deleteTorrent(infoHash);
     if (deleteError) {
