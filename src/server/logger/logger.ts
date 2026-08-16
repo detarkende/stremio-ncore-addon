@@ -18,7 +18,7 @@ await configure({
     }),
   },
   loggers: [
-    { category: 'meta', sinks: [] },
+    { category: ['logtape', 'meta'], sinks: ['console'], lowestLevel: 'error' },
     { category: 'sna.server', sinks: ['console'], lowestLevel: isDev ? 'debug' : 'info' },
     {
       category: 'sna.request',

@@ -5,7 +5,7 @@ import mockFs from 'mock-fs';
 
 function setupTestEnv() {
   for (const level of logLevels) {
-    vi.spyOn(logger, level);
+    vi.spyOn(logger, level).mockImplementation(() => {});
   }
   loadEnv({
     NODE_ENV: 'test',

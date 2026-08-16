@@ -90,8 +90,7 @@ export let env: Env;
 export function loadEnv(processEnv: NodeJS.ProcessEnv) {
   const envParseResult = envSchema.safeParse(processEnv);
   if (!envParseResult.success) {
-    // eslint-disable-next-line no-console
-    console.error(
+    logger.error(
       `\nEnvironment variables validation failed:\n\n` +
         z.prettifyError(envParseResult.error) +
         '\n\n',
@@ -99,5 +98,6 @@ export function loadEnv(processEnv: NodeJS.ProcessEnv) {
     process.exit(1);
   }
   env = envParseResult.data;
+
   logger.info('Environment variables parsed and loaded successfully.');
 }
