@@ -5,7 +5,8 @@
     "**/*.test.ts",
     "**/*.test.tsx",
     "src/**/test-utils/**/*.ts",
-    "src/**/test-utils/**/*.tsx"
+    "src/**/test-utils/**/*.tsx",
+    "src/server/typings/**/*.ts"
   ],
   "compilerOptions": {
     "types": ["vitest/globals", "vite/client"]
