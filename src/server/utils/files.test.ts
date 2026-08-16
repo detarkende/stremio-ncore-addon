@@ -47,13 +47,12 @@ describe('getHighestCommonDir', () => {
     expect(result).toBe('projects/app/src');
   });
 
-  it('should return null if there is no common prefix', () => {
+  it('should throw an error if there is no common prefix', () => {
     const paths = [
       '/user/downloads/MovieTitle/video1.mp4',
       '/var/media/OtherMovie/video2.mp4',
     ];
-    const result = getHighestCommonDir(paths);
-    expect(result).toBe(null);
+    expect(() => getHighestCommonDir(paths)).toThrow('No common directory found');
   });
 
   it('should return the full path for single path', () => {
@@ -62,9 +61,10 @@ describe('getHighestCommonDir', () => {
     expect(result).toBe('/user/downloads/movie.mp4');
   });
 
-  it('should return null for empty array', () => {
+  it('should throw an error for empty array', () => {
     const paths: string[] = [];
-    const result = getHighestCommonDir(paths);
-    expect(result).toBe(null);
+    expect(() => getHighestCommonDir(paths)).toThrow(
+      'No file paths provided, cannot determine highest common directory',
+    );
   });
 });

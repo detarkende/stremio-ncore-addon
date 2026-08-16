@@ -150,6 +150,29 @@ describe('User routes', () => {
       ]);
       expect(body).not.toHaveProperty('passwordHash');
     });
+
+    it('should not allow creating a user with an existing username', async () => {
+      const { token: adminToken } = await createTestUserWithSession({
+        role: UserRole.ADMIN,
+      });
+      const existingUser = await createTestUser({ username: 'existing-user' });
+
+      const response = await client.api.users.$post(
+        {
+          json: {
+            username: existingUser.username,
+            password: 'example-password',
+            preferredLanguage: Language.EN,
+            preferredResolutions: [Resolution.R720P, Resolution.R1080P],
+          },
+        },
+        { headers: { Cookie: `${SESSION_COOKIE_NAME}=${adminToken}` } },
+      );
+
+      expect(response.status).toBe(400);
+      const body = await response.json();
+      expect(body).toHaveProperty('message', 'Username is already taken.');
+    });
   });
 
   describe('PUT /api/users/:userId', () => {
@@ -397,6 +420,25 @@ describe('User routes', () => {
         { headers: { Cookie: `${SESSION_COOKIE_NAME}=${deleterUserToken}` } },
       );
       expect(response.status).toBe(403);
+    });
+
+    it('should not delete an admin user', async () => {
+      const { token: adminToken } = await createTestUserWithSession({
+        role: UserRole.ADMIN,
+      });
+      const { user: adminUserToBeDeleted } = await createTestUserWithSession({
+        role: UserRole.ADMIN,
+      });
+
+      const response = await client.api.users[':userId'].$delete(
+        {
+          param: { userId: `${adminUserToBeDeleted.id}` },
+        },
+        { headers: { Cookie: `${SESSION_COOKIE_NAME}=${adminToken}` } },
+      );
+      expect(response.status).toBe(400);
+      const body = await response.json();
+      expect(body).toHaveProperty('message', 'Cannot delete an admin user.');
     });
   });
 });

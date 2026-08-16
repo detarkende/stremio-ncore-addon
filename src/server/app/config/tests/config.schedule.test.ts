@@ -86,4 +86,24 @@ describe('DeleteOldTorrentsScheduler', () => {
     expect(deleteOldTorrentsScheduler['task']).toBeNull();
     expect(secondTask).not.toHaveBeenCalled();
   });
+
+  it('should destroy the cron task when destroy is called', async () => {
+    const deleteAfterHitnrunCron = '*/1 * * * * *'; // Every second for testing
+    configureApp({
+      deleteAfterHitnrun: true,
+      deleteAfterHitnrunCron,
+    });
+    const config = getConfig();
+
+    const task = vi.fn();
+
+    deleteOldTorrentsScheduler.schedule(config, task);
+
+    deleteOldTorrentsScheduler.destroy();
+
+    await vi.advanceTimersByTimeAsync(2000);
+
+    expect(deleteOldTorrentsScheduler['task']).toBeNull();
+    expect(task).not.toHaveBeenCalled();
+  });
 });

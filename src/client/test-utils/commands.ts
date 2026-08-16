@@ -1,3 +1,4 @@
+import '@vitest/browser-playwright';
 import type { BrowserCommand } from 'vitest/node';
 
 export const allowClipboard: BrowserCommand = async (ctx) => {

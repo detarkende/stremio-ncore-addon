@@ -1,12 +1,21 @@
-import { Language } from '@server/app/user/user.types';
+import { Language, type Resolution } from '@server/app/user/user.types';
 import { env } from '@server/env';
 import type { NockHandler } from '@server/test-utils/types';
 import nock from 'nock';
 import type { Mock } from 'vitest';
 
+import type {
+  TorrentDetails,
+  ParsedTorrentFileDetails,
+} from '../../torrent/torrent.types';
 import { StreamType } from '../stream.constants';
 import type { CinemetaResponse } from '../stream.schema';
-import { getCinemetaData, getStreamDescription } from '../stream.utils';
+import {
+  convertTorrentToStream,
+  getCinemetaData,
+  getStreamDescription,
+  orderTorrents,
+} from '../stream.utils';
 
 describe('Stream utils', () => {
   describe('getCinemetaData', () => {
@@ -91,6 +100,85 @@ describe('Stream utils', () => {
           });
         },
       );
+    });
+  });
+
+  describe('orderTorrents', () => {
+    it('should prefer matching language and resolution', () => {
+      const preferredResolution = 'HD (720p)' as Resolution;
+      const file = {
+        name: 'movie.mkv',
+        path: 'movie.mkv',
+        length: 1,
+        offset: 0,
+      } satisfies ParsedTorrentFileDetails;
+      const createTorrent = (language: Language, resolution: Resolution) =>
+        ({
+          getLanguage: () => language,
+          getSearchedFile: () => file,
+          getFileResolution: () => resolution,
+        }) as unknown as TorrentDetails;
+      const preferredTorrent = createTorrent(Language.EN, preferredResolution);
+      const otherTorrent = createTorrent(Language.HU, 'SD' as Resolution);
+
+      expect(
+        orderTorrents({
+          torrents: [otherTorrent, preferredTorrent],
+          preferences: {
+            preferredLanguage: Language.EN,
+            preferredResolutions: [preferredResolution],
+          },
+          type: StreamType.MOVIE,
+          season: '',
+          episode: '',
+        }),
+      ).toEqual([preferredTorrent, otherTorrent]);
+    });
+  });
+
+  describe('convertTorrentToStream', () => {
+    it('should return a stream with playback metadata and URL', () => {
+      const file = {
+        name: 'Movie.720p.mkv',
+        path: 'Movie.720p.mkv',
+        length: 1024,
+        offset: 0,
+      } satisfies ParsedTorrentFileDetails;
+      const torrent = {
+        infoHash: 'abc123',
+        sourceId: 'source-1',
+        sourceName: 'ncore',
+        files: [file],
+        isSpeculated: false,
+        getLanguage: () => Language.EN,
+        getFileResolution: () => 'HD (720p)' as Resolution,
+        displayResolution: (resolution: Resolution) => resolution,
+        getSeeders: () => 42,
+      };
+
+      const stream = convertTorrentToStream({
+        torrent: torrent as unknown as TorrentDetails,
+        token: 'token',
+        file,
+        isRecommended: true,
+        addonUrl: 'https://addon.example',
+        preferredLanguage: Language.EN,
+        type: StreamType.MOVIE,
+        imdbId: 'tt1234567',
+      });
+
+      expect(stream).toMatchObject({
+        infoHash: 'abc123',
+        fileIdx: 0,
+        name: 'stremio-ncore-addon',
+        behaviorHints: {
+          filename: file.name,
+          videoSize: file.length,
+        },
+      });
+      expect(stream.url).toContain('/api/auth/token/stream');
+      expect(stream.url).toContain('torrentSourceId=source-1');
+      expect(stream.description).toContain('Recommended');
     });
   });
 });
