@@ -234,49 +234,46 @@ export class NcoreService {
     }
   }
 
-  public async getRemovableInfoHashes(): Promise<string[]> {
-    logger.info(`Getting removable torrents from nCore`);
+  public async getSeedRequiredNcoreInfoHashes(): Promise<string[]> {
+    const infoHashes: string[] = [];
+    const seedRequiredNcoreIds = await this.getSeedRequiredNcoreIds();
+    for (const ncoreId of seedRequiredNcoreIds) {
+      const torrentUrl = await this.getTorrentUrlByNcoreId(ncoreId);
+      const { torrentFileData } = await downloadAndParseTorrent(torrentUrl);
+      infoHashes.push(torrentFileData.infoHash);
+    }
+    return infoHashes;
+  }
+
+  public async getSeedRequiredNcoreIds(): Promise<string[]> {
+    logger.info(`Getting seed-required nCore IDs`);
     const cookie = await this._getCookies();
 
     try {
-      const request = await fetch(`${env.NCORE_URL}/hitnrun.php?showall=true`, {
+      const request = await fetch(`${env.NCORE_URL}/hitnrun.php?showall=false`, {
         headers: { cookie },
       });
       const html = await request.text();
       const { document } = new JSDOM(html).window;
 
-      const rows = Array.from(document.querySelectorAll('.hnr_all, .hnr_all2'));
-      const deletableRows = rows.filter(
-        (row) => row.querySelector('.hnr_ttimespent')?.textContent === '-',
+      const rows = Array.from(document.querySelectorAll('.hnr_all, .hnr_all2')).filter(
+        (row) => {
+          const timeRemainingCell = row.querySelector('.hnr_ttimespent');
+          return timeRemainingCell?.textContent?.trim() !== '-';
+        },
       );
 
-      const deletableNcoreIds = deletableRows.map((row) => {
+      const seedRequiredNcoreIds = rows.map((row) => {
         const detailsUrl = row.querySelector('.hnr_tname a')?.getAttribute('href') ?? '';
         const searchParams = new URLSearchParams(detailsUrl.split('?')[1] ?? '');
         const ncoreId = searchParams.get('id') ?? '';
         return ncoreId;
       });
 
-      const [deletableInfoHashes, errors] = await getAllPromiseResults(
-        deletableNcoreIds.map(async (ncoreId): Promise<string> => {
-          const downloadUrl = await this.getTorrentUrlByNcoreId(ncoreId);
-          const { torrentFileData } = await downloadAndParseTorrent(downloadUrl);
-          return torrentFileData.infoHash;
-        }),
-      );
-      if (errors.length > 0) {
-        logger.warn(
-          'Encountered errors while fetching torrent URLs for deletable torrents',
-          {
-            errors,
-          },
-        );
-      }
-
-      return deletableInfoHashes;
+      return seedRequiredNcoreIds;
     } catch (error) {
-      logger.error('Failed to get removable torrents from nCore', { error });
-      throw new Error('Failed to get removable torrents from nCore', { cause: error });
+      logger.error('Failed to get seed-required nCore IDs', { error });
+      throw new Error('Failed to get seed-required nCore IDs', { cause: error });
     }
   }
 

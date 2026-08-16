@@ -161,7 +161,7 @@ declare module 'webtorrent' {
     rootDir: FileSystemDirectoryHandle;
   }
 
-  class ChunkStore {
+  export class ChunkStore {
     constructor(chunkLength: number, options?: ChunkStoreOptions);
     public readonly chunkLength: number;
     public put(
@@ -228,7 +228,7 @@ declare module 'webtorrent' {
     /**
      * Custom chunk store
      */
-    store?: ChunkStore;
+    store?: typeof ChunkStore;
     /**
      * Custom, pre-loaded chunk store
      */
@@ -367,6 +367,8 @@ declare module 'webtorrent' {
       opts?: BrowserServerOptions | NodeServerOptions,
       force?: 'browser' | 'node',
     ): NodeServer | BrowserServer;
+
+    address(): ServerAddress;
 
     readonly torrents: Torrent[];
 

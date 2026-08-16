@@ -1,4 +1,3 @@
-import type { ParsedTorrentDetails } from '@server/app/torrent';
 import { env } from '@server/env';
 import { logger } from '@server/logger';
 import { createTestNcoreTorrentResultArray } from '@server/test-utils/ncore';
@@ -315,88 +314,23 @@ describe('nCore service', () => {
     });
   });
 
-  describe('getRemovableInfoHashes', () => {
-    it('should return info hashes that are not required to seed anymore', async () => {
+  describe('getSeedRequiredNcoreIds', () => {
+    it('should return nCore IDs that are required to seed', async () => {
       vi.spyOn(ncoreService, '_getCookies').mockResolvedValue(
         'nick=test-user; pass=valid_cookie_value; nyelv=hu',
       );
       hitnrunRequestSpy.mockImplementation(() => [200, hitNRunMockHtml]);
-      vi.spyOn(ncoreService, 'getTorrentUrlByNcoreId').mockImplementation(
-        async (ncoreId) => {
-          return `${env.NCORE_URL}/torrents.php?action=download&id=${ncoreId}&key=mockkey`;
-        },
-      );
-      downloadAndParseTorrentSpy.mockImplementation(async (downloadUrl: string) => {
-        const ncoreId = new URL(downloadUrl).searchParams.get('id')!;
-        const idToInfohashMap: Record<string, string> = {
-          '4038421': '1234567890abcdef1234567890abcdef12345678',
-          '2218906': '1234567890abcdef1234567890abcdef12345678',
-          '3924062': '1234567890abcdef1234567890abcdef12345678',
-          '3110978': '1234567890abcdef1234567890abcdef12345678',
-          '1020578': '1234567890abcdef1234567890abcdef12345678',
-          '1251007': '1234567890abcdef1234567890abcdef12345678',
-          '3248015': '1234567890abcdef1234567890abcdef12345678',
-          '4046786': '1234567890abcdef1234567890abcdef12345678',
-          '4046789': '1234567890abcdef1234567890abcdef12345678',
-          '4046791': '1234567890abcdef1234567890abcdef12345678',
-          '4051126': '1234567890abcdef1234567890abcdef12345678',
-          '4050710': '1234567890abcdef1234567890abcdef12345678',
-          '4040794': '1234567890abcdef1234567890abcdef12345678',
-          '4031621': '1234567890abcdef1234567890abcdef12345678',
-          '4031620': '1234567890abcdef1234567890abcdef12345678',
-          '1496568': '1234567890abcdef1234567890abcdef12345678',
-          '965327': '1234567890abcdef1234567890abcdef12345678',
-          '1496569': '1234567890abcdef1234567890abcdef12345678',
-          '4046776': '1234567890abcdef1234567890abcdef12345678',
-          '4046778': '1234567890abcdef1234567890abcdef12345678',
-          '4050994': '1234567890abcdef1234567890abcdef12345678',
-          '3037290': '1234567890abcdef1234567890abcdef12345678',
-          '3037289': '1234567890abcdef1234567890abcdef12345678',
-          '3868339': '1234567890abcdef1234567890abcdef12345678',
-          '3868344': '1234567890abcdef1234567890abcdef12345678',
-        };
-        return {
-          torrentFileData: { infoHash: idToInfohashMap[ncoreId] } as ParsedTorrentDetails,
-          torrentBuffer: Buffer.from([]),
-        };
-      });
 
-      const removableInfoHashes = await ncoreService.getRemovableInfoHashes();
+      const seedRequiredNcoreIds = await ncoreService.getSeedRequiredNcoreIds();
 
       expect(hitnrunRequestSpy).toHaveBeenCalledOnce();
       expect(hitnrunRequestSpy).toHaveBeenCalledWith(
         expect.objectContaining({
-          uri: expect.stringContaining(`/hitnrun.php?showall=true`),
+          uri: expect.stringContaining(`/hitnrun.php?showall=false`),
         }),
       );
 
-      expect(removableInfoHashes).toEqual([
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-        '1234567890abcdef1234567890abcdef12345678',
-      ]);
+      expect(seedRequiredNcoreIds).toEqual(['4054824']);
     });
   });
 });

@@ -329,12 +329,15 @@ describe('TorrentClient', async () => {
     });
 
     describe('deleteUnnecessaryTorrents', () => {
-      const getRemovableInfoHashesSpy = vi.spyOn(ncoreService, 'getRemovableInfoHashes');
+      const getSeedRequiredInfoHashesSpy = vi.spyOn(
+        ncoreService,
+        'getSeedRequiredNcoreInfoHashes',
+      );
 
       it('should delete torrents that are no longer needed', async () => {
         const deleteTorrentSpy = vi.spyOn(torrentClient, 'deleteTorrent');
         await torrentClient.addTorrent(dbTorrent, true);
-        getRemovableInfoHashesSpy.mockResolvedValueOnce([seededTorrent.infoHash]);
+        getSeedRequiredInfoHashesSpy.mockResolvedValueOnce([]);
 
         await torrentClient.deleteUnnecessaryTorrents();
 
@@ -356,7 +359,7 @@ describe('TorrentClient', async () => {
       it('should log an error if deleting a torrent fails', async () => {
         const deleteTorrentSpy = vi.spyOn(torrentClient, 'deleteTorrent');
         await torrentClient.addTorrent(dbTorrent, true);
-        getRemovableInfoHashesSpy.mockResolvedValueOnce([seededTorrent.infoHash]);
+        getSeedRequiredInfoHashesSpy.mockResolvedValueOnce([]);
         deleteTorrentSpy.mockResolvedValueOnce(new Error('Failed to delete torrent'));
 
         await torrentClient.deleteUnnecessaryTorrents();
@@ -374,7 +377,7 @@ describe('TorrentClient', async () => {
       it('should keep torrents that are still needed', async () => {
         const deleteTorrentSpy = vi.spyOn(torrentClient, 'deleteTorrent');
         await torrentClient.addTorrent(dbTorrent, true);
-        getRemovableInfoHashesSpy.mockResolvedValueOnce([]);
+        getSeedRequiredInfoHashesSpy.mockResolvedValueOnce([seededTorrent.infoHash]);
 
         await torrentClient.deleteUnnecessaryTorrents();
 

@@ -14,10 +14,10 @@ import {
 import WebTorrent from 'webtorrent';
 
 import { ncoreService } from '../ncore/index';
+import { FsChunkStore } from './fs-chunk-store';
 import { getExistingTorrents } from './torrent-file.utils';
 import type { DbTorrent, Torrent } from './torrent.types';
 
-/* @lintignore */
 export class TorrentClient {
   private webtorrent: WebtorrentInstance;
 
@@ -93,6 +93,7 @@ export class TorrentClient {
               deselect: true,
               storeCacheSlots: 0,
               bitfield: isNewTorrent ? undefined : dbTorrent.bitfield,
+              store: FsChunkStore,
             },
             (torrent: WebtorrentTorrent) => {
               resolve(torrent);
@@ -140,13 +141,6 @@ export class TorrentClient {
         return new Error('Torrent not found');
       }
       const torrentRootPath = getHighestCommonDir(torrent.files.map((file) => file.path));
-      if (!torrentRootPath) {
-        logger.warn('Could not determine torrent root path', {
-          infoHash,
-          name: torrent.name,
-        });
-        return new Error('Could not determine torrent root path');
-      }
       db.transaction((tx) => {
         tx.delete(torrentsTable).where(eq(torrentsTable.infoHash, infoHash)).run();
         rmSync(join(env.DOWNLOADS_DIR, torrentRootPath), { recursive: true });
@@ -190,9 +184,11 @@ export class TorrentClient {
   }
 
   public async deleteUnnecessaryTorrents() {
-    const deletableInfoHashes = await ncoreService.getRemovableInfoHashes();
+    const seedRequiredNcoreInfohashes =
+      await ncoreService.getSeedRequiredNcoreInfoHashes();
+
     for (const torrent of this.webtorrent.torrents) {
-      if (!deletableInfoHashes.includes(torrent.infoHash)) {
+      if (seedRequiredNcoreInfohashes.includes(torrent.infoHash)) {
         logger.info(
           `Keeping torrent: ${torrent.name} (${torrent.infoHash}) - not marked for deletion`,
         );
