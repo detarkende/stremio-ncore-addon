@@ -13,7 +13,7 @@ import { ncoreService } from '../ncore/index';
 import {
   downloadAndParseTorrent,
   type TorrentDetails,
-  type TorrentFileDetails,
+  type ParsedTorrentFileDetails,
   torrentClient,
 } from '../torrent/index';
 import { insertNewTorrent, insertUserTorrentFileRecord } from '../torrent/torrent.utils';
@@ -79,7 +79,11 @@ export const streamRoutes = new Hono()
         convertTorrentToStream({
           torrent,
           token,
-          file: torrent.getSearchedFile({ type, season, episode }) as TorrentFileDetails,
+          file: torrent.getSearchedFile({
+            type,
+            season,
+            episode,
+          }) as ParsedTorrentFileDetails,
           isRecommended: i === 0,
           addonUrl,
           preferredLanguage: c.var.user.preferredLanguage,

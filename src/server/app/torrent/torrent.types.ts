@@ -7,14 +7,7 @@ import { isSupportedMedia } from '@server/utils/media-file-extensions';
 
 export type DbTorrent = typeof torrentsTable.$inferSelect;
 
-export interface TorrentFileDetails {
-  name: string;
-  path: string;
-  length: number;
-  offset: number;
-}
-
-export interface TorrentFileDetails {
+export interface ParsedTorrentFileDetails {
   name: string;
   path: string;
   length: number;
@@ -24,13 +17,13 @@ export interface TorrentFileDetails {
 export interface ParsedTorrentDetails {
   infoHash: string;
   name: string;
-  files: TorrentFileDetails[];
+  files: ParsedTorrentFileDetails[];
 }
 
 export abstract class TorrentDetails implements ParsedTorrentDetails {
   abstract name: string;
   abstract infoHash: string;
-  abstract files: TorrentFileDetails[];
+  abstract files: ParsedTorrentFileDetails[];
   abstract sourceName: string;
   /**
    * An identifier that can be used to fetch the details of the torrent.
@@ -65,7 +58,7 @@ export abstract class TorrentDetails implements ParsedTorrentDetails {
     type: StreamType;
     season: string;
     episode: string;
-  }): TorrentFileDetails | null {
+  }): ParsedTorrentFileDetails | null {
     const fileSizes = this.files.map((file) => file.length);
     const biggestFileSize = Math.max(...fileSizes);
     const biggestFileIndex = fileSizes.indexOf(biggestFileSize);

@@ -5,7 +5,7 @@ import { formatBytes } from '@server/utils/bytes';
 import { rateList } from '@server/utils/rate-list';
 import type { Stream } from 'stremio-addon-sdk';
 
-import type { TorrentDetails, TorrentFileDetails } from '../torrent/index';
+import type { TorrentDetails, ParsedTorrentFileDetails } from '../torrent/index';
 import type { StreamType } from './stream.constants';
 import { languageEmojiMap } from './stream.constants';
 import { cinemetaResponseSchema, type CinemetaResponse } from './stream.schema';
@@ -55,7 +55,7 @@ export function orderTorrents<T extends TorrentDetails>({
         season,
         episode,
         type,
-      }) as TorrentFileDetails;
+      }) as ParsedTorrentFileDetails;
       const resolution = torrent.getFileResolution(file.name);
       return preferredResolutions.includes(resolution) ? 2 : 0;
     },
@@ -74,7 +74,7 @@ export function convertTorrentToStream({
 }: {
   torrent: TorrentDetails;
   token: string;
-  file: TorrentFileDetails;
+  file: ParsedTorrentFileDetails;
   isRecommended: boolean;
   preferredLanguage: Language;
   addonUrl: string;

@@ -4,7 +4,7 @@ import { Language, Resolution } from '@server/app/user/user.types';
 import {
   TorrentDetails,
   type ParsedTorrentDetails,
-  type TorrentFileDetails,
+  type ParsedTorrentFileDetails,
 } from '../torrent/torrent.types';
 import type { TorrentCategory } from './ncore.constants';
 import {
@@ -22,7 +22,7 @@ export class NcoreTorrentDetails extends TorrentDetails {
   public sourceId: string;
   public infoHash: string;
   public fallbackResolution: Resolution;
-  public files: TorrentFileDetails[];
+  public files: ParsedTorrentFileDetails[];
   /** If true, then this torrent might not belong to the searched movie/show. */
   public isSpeculated?: boolean = false;
 
