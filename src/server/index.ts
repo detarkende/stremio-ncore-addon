@@ -50,7 +50,7 @@ const httpsServer = serve({
   fetch: app.fetch,
   port: env.HTTPS_PORT,
   createServer,
-  serverOptions: HttpsService.createServerOptions(),
+  serverOptions: new HttpsService().createServerOptions(),
 });
 logger.info(`HTTPS server started on port ${env.HTTPS_PORT}!`);
 

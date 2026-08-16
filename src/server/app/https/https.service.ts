@@ -7,10 +7,10 @@ import { logger } from '@server/logger';
 import { localIpResponseSchema, ONE_HOUR, type LocalIpResponse } from './https.constants';
 
 export class HttpsService {
-  private static localIpDetails: LocalIpResponse | null = null;
-  private static localIpDetailsFetchedAt: number | null = null;
+  private localIpDetails: LocalIpResponse | null = null;
+  private localIpDetailsFetchedAt: number | null = null;
 
-  public static createServerOptions(): ServerOptions {
+  public createServerOptions(): ServerOptions {
     return {
       SNICallback: async (serverName, cb) => {
         if (serverName.includes(env.LOCAL_IP_HOSTNAME)) {
@@ -29,7 +29,7 @@ export class HttpsService {
     };
   }
 
-  private static async fetchLocalIpKeys(): Promise<LocalIpResponse | null> {
+  private async fetchLocalIpKeys(): Promise<LocalIpResponse | null> {
     try {
       if (
         this.localIpDetails &&
@@ -51,12 +51,14 @@ export class HttpsService {
       this.localIpDetails = parseResult.data;
       return parseResult.data;
     } catch (error) {
-      logger.error('Failed to fetch local IP keys:', { error: this.formatError(error) });
+      logger.error('Failed to fetch local IP keys:', {
+        error: this.formatError(error),
+      });
     }
     return null;
   }
 
-  private static formatError(error: unknown): string {
+  private formatError(error: unknown): string {
     if (error instanceof TypeError) {
       if ('hostname' in error) {
         return `Failed to fetch: ${error.hostname} ${error.message}`;
