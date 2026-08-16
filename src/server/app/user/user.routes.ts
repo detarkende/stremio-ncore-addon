@@ -52,9 +52,7 @@ export const userRoutes = new Hono()
       try {
         const [createdUser] = await db
           .insert(usersTable)
-          .values(
-            await createUserRequestToInsertStatement({ user: userData, isAdmin: false }),
-          )
+          .values(createUserRequestToInsertStatement({ user: userData, isAdmin: false }))
           .returning();
         return c.json(new User(createdUser), HttpStatusCode.CREATED);
       } catch (error) {

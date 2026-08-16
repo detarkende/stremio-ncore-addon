@@ -24,4 +24,4 @@ ENV NODE_ENV="production"
 ENV ADDON_DIR="/addon"
 EXPOSE 3000 3443 6881
 
-CMD ["node", "./server.js"]
+CMD ["node", "--enable-source-maps", "./server.js"]
