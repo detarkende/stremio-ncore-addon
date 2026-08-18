@@ -21,7 +21,9 @@
     "clean:deps": "rm -rf node_modules",
     "clean:dist": "rm -rf dist",
     "clean:all": "pnpm clean:deps & pnpm clean:dist",
-    "knip": "knip"
+    "knip": "knip",
+    "studio": "source .env && drizzle-kit studio",
+    "migration:generate": "source .env && drizzle-kit generate"
   },
   "dependencies": {
     "@ctrl/video-filename-parser": "^5.11.0",
