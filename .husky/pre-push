@@ -1,4 +1,5 @@
 #!/bin/sh
 
 pnpm run check
+pnpm run test
 pnpm run build

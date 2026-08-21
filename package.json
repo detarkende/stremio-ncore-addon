@@ -9,7 +9,7 @@
     "dev": "NODE_ENV=development node --import tsx --env-file .env src/server/index.ts",
     "preview": "NODE_ENV=production node --env-file .env --enable-source-maps dist/server.js",
     "start": "NODE_ENV=production node dist/server.js",
-    "check": "pnpm fmt:check && pnpm lint:check && pnpm test",
+    "check": "pnpm fmt:check && pnpm lint:check && pnpm typecheck",
     "fmt:fix": "oxfmt",
     "fmt:check": "oxfmt --check",
     "lint:fix": "oxlint . --fix",
