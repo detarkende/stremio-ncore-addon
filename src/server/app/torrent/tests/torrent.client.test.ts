@@ -188,7 +188,7 @@ describe('TorrentClient', async () => {
 
       const fileStream = torrent.files[0].getStream({
         start: 0,
-        end: files[0].size * 0.6 - 1, // 60% of the file
+        end: Math.floor(files[0].size * 0.6) - 1, // 60% of the file
       });
       for await (const _chunk of fileStream) {
         // Consume the stream to trigger the download

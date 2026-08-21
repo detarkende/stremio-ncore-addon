@@ -14,7 +14,6 @@ import {
 import WebTorrent from 'webtorrent';
 
 import { ncoreService } from '../ncore/index';
-import { FsChunkStore } from './fs-chunk-store';
 import { getExistingTorrents } from './torrent-file.utils';
 import type { DbTorrent, Torrent } from './torrent.types';
 
@@ -93,7 +92,6 @@ export class TorrentClient {
               deselect: true,
               storeCacheSlots: 0,
               bitfield: isNewTorrent ? undefined : dbTorrent.bitfield,
-              store: FsChunkStore,
             },
             (torrent: WebtorrentTorrent) => {
               resolve(torrent);
