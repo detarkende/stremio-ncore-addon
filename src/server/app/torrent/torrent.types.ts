@@ -105,3 +105,15 @@ export interface Torrent {
   path: string;
   files: TorrentFile[];
 }
+
+export interface TorrentDeletionFailure {
+  torrent: Torrent;
+  error: {
+    message: string;
+  };
+}
+
+export interface DeleteUnnecessaryTorrentsResponse {
+  deleted: Torrent[];
+  failed: TorrentDeletionFailure[];
+}

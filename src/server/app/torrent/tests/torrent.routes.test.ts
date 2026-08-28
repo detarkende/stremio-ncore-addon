@@ -120,4 +120,34 @@ describe('Torrent routes', () => {
       expect(await response.json()).toEqual({ message: 'Torrent not found' });
     });
   });
+
+  describe('DELETE /api/torrents/unnecessary', () => {
+    it('should return the deletion results with failure messages for admin users', async () => {
+      const { token } = await createTestUserWithSession({ role: UserRole.ADMIN });
+      const failedTorrent = { ...torrents[0], infoHash: 'failed-info-hash' };
+      const deleteUnnecessaryTorrentsSpy = vi
+        .spyOn(torrentClient, 'deleteUnnecessaryTorrents')
+        .mockResolvedValue({
+          deleted: torrents,
+          failed: [{ torrent: failedTorrent, error: new Error('Torrent is locked') }],
+        });
+
+      const response = await client.api.torrents.unnecessary.$delete(
+        {},
+        { headers: { Cookie: `${SESSION_COOKIE_NAME}=${token}` } },
+      );
+
+      expect(response.status).toBe(500);
+      expect(await response.json()).toEqual({
+        deleted: torrents,
+        failed: [
+          {
+            torrent: failedTorrent,
+            error: { message: 'Torrent is locked' },
+          },
+        ],
+      });
+      expect(deleteUnnecessaryTorrentsSpy).toHaveBeenCalledOnce();
+    });
+  });
 });

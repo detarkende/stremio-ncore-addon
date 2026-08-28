@@ -181,32 +181,42 @@ export class TorrentClient {
     }
   }
 
-  public async deleteUnnecessaryTorrents() {
+  public async getUnnecessaryTorrents(): Promise<Torrent[]> {
     const seedRequiredNcoreInfohashes =
       await ncoreService.getSeedRequiredNcoreInfoHashes();
 
+    const unnecessaryTorrents: Torrent[] = [];
     for (const torrent of this.webtorrent.torrents) {
-      if (seedRequiredNcoreInfohashes.includes(torrent.infoHash)) {
-        logger.info(
-          `Keeping torrent: ${torrent.name} (${torrent.infoHash}) - not marked for deletion`,
-        );
-      } else {
-        const error = await this.deleteTorrent(torrent.infoHash);
-        if (error) {
-          logger.error(
-            `Failed to delete unnecessary torrent: ${torrent?.name || torrent.infoHash}`,
-            {
-              infoHash: torrent.infoHash,
-              error,
-            },
-          );
-        } else {
-          logger.info(
-            `Deleted unnecessary torrent: ${torrent?.name || torrent.infoHash}`,
-          );
-        }
+      if (!seedRequiredNcoreInfohashes.includes(torrent.infoHash)) {
+        unnecessaryTorrents.push(this.mapToTorrentResponse(torrent));
       }
     }
+    return unnecessaryTorrents;
+  }
+
+  public async deleteUnnecessaryTorrents() {
+    const unnecessaryTorrents = await this.getUnnecessaryTorrents();
+    let results: { deleted: Torrent[]; failed: { torrent: Torrent; error: Error }[] } = {
+      deleted: [],
+      failed: [],
+    };
+    for (const torrent of unnecessaryTorrents) {
+      const error = await this.deleteTorrent(torrent.infoHash);
+      if (error) {
+        logger.error(
+          `Failed to delete unnecessary torrent: ${torrent.name || torrent.infoHash}`,
+          {
+            infoHash: torrent.infoHash,
+            error,
+          },
+        );
+        results.failed.push({ torrent, error });
+      } else {
+        logger.info(`Deleted unnecessary torrent: ${torrent.name || torrent.infoHash}`);
+        results.deleted.push(torrent);
+      }
+    }
+    return results;
   }
 
   public async destroy() {

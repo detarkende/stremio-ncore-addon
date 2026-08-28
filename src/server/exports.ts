@@ -17,7 +17,11 @@ export {
   type UpdateUserRequest,
   type UpdatePasswordRequest,
 } from './schemas/user.schema';
-export type { Torrent, TorrentFile } from './app/torrent';
+export type {
+  DeleteUnnecessaryTorrentsResponse,
+  Torrent,
+  TorrentFile,
+} from './app/torrent';
 export { loginSchema, type LoginCredentials } from './schemas/login.schema';
 export { formatBytes } from './utils/bytes';
 export type ApiRoutes = typeof apiRoutes;
