@@ -5,5 +5,7 @@
   "js/ts.tsdk.path": "node_modules/typescript/lib",
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit"
-  }
+  },
+  "oxc.path.oxfmt": "node_modules/oxfmt/dist/cli.js",
+  "oxc.path.oxlint": "node_modules/oxlint/dist/cli.js"
 }

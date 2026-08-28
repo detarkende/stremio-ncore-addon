@@ -23,12 +23,7 @@ export const torrentRoutes = new Hono()
         error: { message: error.message },
       })),
     };
-    return c.json(response, {
-      status:
-        results.failed.length > 0
-          ? HttpStatusCode.INTERNAL_SERVER_ERROR
-          : HttpStatusCode.OK,
-    });
+    return c.json(response);
   })
   .delete('/torrents/:infoHash', useCookieAuth('adminOnly'), async (c) => {
     const { infoHash } = c.req.param();

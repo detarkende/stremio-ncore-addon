@@ -2,14 +2,20 @@ import { Text } from '@client/components/text';
 import { apiClient } from '@client/integrations/api';
 import { QueryKeys } from '@client/integrations/tanstack-query/keys';
 import { handleHttpError } from '@client/utils/http';
-import { addToast, Button, Card, Progress } from '@heroui/react';
+import { addToast, Button, Card, Chip, Progress } from '@heroui/react';
 import { formatBytes, type Torrent } from '@server/exports';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { TorrentFile } from './torrent-file';
 
-export function TorrentCard({ torrent }: { torrent: Torrent }) {
+export function TorrentCard({
+  torrent,
+  isUnnecessary = false,
+}: {
+  torrent: Torrent;
+  isUnnecessary?: boolean;
+}) {
   const labelId = `torrent-progress-${torrent.infoHash}`;
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
@@ -49,7 +55,7 @@ export function TorrentCard({ torrent }: { torrent: Torrent }) {
 
   const downloadedLabelId = `downloaded-label-${torrent.infoHash}`;
 
-  return (
+  const card = (
     <Card as="article" className="p-5 flex flex-col gap-4" aria-labelledby={labelId}>
       <div className="flex flex-col gap-2">
         <Text as="h2" id={labelId} className="break-all">
@@ -83,15 +89,22 @@ export function TorrentCard({ torrent }: { torrent: Torrent }) {
         >
           Files ({torrent.files.length}){isOpen ? ' ▲' : ' ▼'}
         </Text>
-        <Button
-          size="sm"
-          color="danger"
-          variant="flat"
-          onPress={handleDelete}
-          isLoading={isPending}
-        >
-          Delete
-        </Button>
+        <div className="flex items-center gap-2">
+          {isUnnecessary && (
+            <Chip size="sm" color="warning" variant="flat">
+              Unnecessary
+            </Chip>
+          )}
+          <Button
+            size="sm"
+            color="danger"
+            variant="flat"
+            onPress={handleDelete}
+            isLoading={isPending}
+          >
+            Delete
+          </Button>
+        </div>
       </div>
 
       {isOpen && (
@@ -106,4 +119,6 @@ export function TorrentCard({ torrent }: { torrent: Torrent }) {
       )}
     </Card>
   );
+
+  return card;
 }

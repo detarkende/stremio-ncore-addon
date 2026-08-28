@@ -4,4 +4,5 @@ export const QueryKeys = {
   CONFIG: 'config',
   USERS: 'users',
   TORRENTS: 'torrents',
+  UNNECESSARY_TORRENTS: 'unnecessary-torrents',
 };

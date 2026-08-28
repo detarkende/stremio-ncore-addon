@@ -4,6 +4,7 @@ const mocks = vi.hoisted(() => ({
   me: vi.fn(),
   users: vi.fn(),
   torrents: vi.fn(),
+  unnecessaryTorrents: vi.fn(),
 }));
 
 vi.mock('@client/integrations/api', () => ({
@@ -11,14 +12,17 @@ vi.mock('@client/integrations/api', () => ({
     api: {
       config: { $get: mocks.config, 'is-configured': { $get: mocks.isConfigured } },
       users: { $get: mocks.users, me: { $get: mocks.me } },
-      torrents: { $get: mocks.torrents },
+      torrents: {
+        $get: mocks.torrents,
+        unnecessary: { $get: mocks.unnecessaryTorrents },
+      },
     },
   },
 }));
 
 import { configQueryOptions, isConfiguredQueryOptions } from './config';
 import { meOrNullQueryOptions } from './me';
-import { torrentsQueryOptions } from './torrents';
+import { torrentsQueryOptions, unnecessaryTorrentsQueryOptions } from './torrents';
 import { usersQueryOptions } from './users';
 
 describe('TanStack query options', () => {
@@ -43,10 +47,16 @@ describe('TanStack query options', () => {
     mocks.torrents.mockResolvedValueOnce(
       new Response(JSON.stringify([{ id: 'torrent' }])),
     );
+    mocks.unnecessaryTorrents.mockResolvedValueOnce(
+      new Response(JSON.stringify([{ id: 'unnecessary-torrent' }])),
+    );
 
     await expect(usersQueryOptions.queryFn?.(context)).resolves.toEqual([{ id: 1 }]);
     await expect(torrentsQueryOptions.queryFn?.(context)).resolves.toEqual([
       { id: 'torrent' },
+    ]);
+    await expect(unnecessaryTorrentsQueryOptions.queryFn?.(context)).resolves.toEqual([
+      { id: 'unnecessary-torrent' },
     ]);
   });
 
@@ -60,6 +70,9 @@ describe('TanStack query options', () => {
     mocks.me.mockResolvedValueOnce(new Response(null, { status: 500 }));
     mocks.users.mockResolvedValueOnce(new Response('failed', { status: 500 }));
     mocks.torrents.mockResolvedValueOnce(new Response('failed', { status: 500 }));
+    mocks.unnecessaryTorrents.mockResolvedValueOnce(
+      new Response('failed unnecessary', { status: 500 }),
+    );
 
     await expect(meOrNullQueryOptions.queryFn?.(context)).rejects.toThrow(
       'Failed to fetch user profile',
@@ -68,5 +81,8 @@ describe('TanStack query options', () => {
       'Failed to fetch users',
     );
     await expect(torrentsQueryOptions.queryFn?.(context)).rejects.toThrow('failed');
+    await expect(unnecessaryTorrentsQueryOptions.queryFn?.(context)).rejects.toThrow(
+      'failed unnecessary',
+    );
   });
 });

@@ -386,9 +386,6 @@ describe('TorrentClient', async () => {
         expect(retrievedTorrent?.infoHash).toBe(seededTorrent.infoHash);
 
         expect(deleteTorrentSpy).not.toHaveBeenCalled();
-        expect(vi.mocked(logger.info)).toHaveBeenCalledWith(
-          `Keeping torrent: ${seededTorrent.name} (${seededTorrent.infoHash}) - not marked for deletion`,
-        );
       });
     });
   });

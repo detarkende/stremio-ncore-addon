@@ -137,7 +137,7 @@ describe('Torrent routes', () => {
         { headers: { Cookie: `${SESSION_COOKIE_NAME}=${token}` } },
       );
 
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(200);
       expect(await response.json()).toEqual({
         deleted: torrents,
         failed: [

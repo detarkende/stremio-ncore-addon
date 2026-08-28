@@ -14,3 +14,14 @@ export const torrentsQueryOptions = queryOptions({
     return await response.json();
   },
 });
+
+export const unnecessaryTorrentsQueryOptions = queryOptions({
+  queryKey: [QueryKeys.TORRENTS, QueryKeys.UNNECESSARY_TORRENTS],
+  queryFn: async () => {
+    const response = await apiClient.api.torrents.unnecessary.$get();
+    if (!response.ok) {
+      await handleHttpError(response);
+    }
+    return await response.json();
+  },
+});

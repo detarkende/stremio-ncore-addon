@@ -1,10 +1,14 @@
 import { Text } from '@client/components/text';
-import { torrentsQueryOptions } from '@client/integrations/tanstack-query/queries/torrents';
+import {
+  torrentsQueryOptions,
+  unnecessaryTorrentsQueryOptions,
+} from '@client/integrations/tanstack-query/queries/torrents';
 import { Button, Spinner } from '@heroui/react';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import type { PropsWithChildren } from 'react';
+import { useMemo, type PropsWithChildren } from 'react';
 
+import { DeleteUnnecessaryTorrents } from './-components/delete-unnecessary-torrents';
 import { TorrentCard } from './-components/torrent-card';
 
 export const Route = createFileRoute('/_configured/_authenticated/torrents/')({
@@ -25,6 +29,11 @@ function Wrapper({ children }: PropsWithChildren) {
 
 function RouteComponent() {
   const query = useQuery({ ...torrentsQueryOptions, refetchInterval: 1000 * 5 });
+  const unnecessaryTorrentsQuery = useQuery(unnecessaryTorrentsQueryOptions);
+  const unnecessaryInfoHashes = useMemo(
+    () => new Set(unnecessaryTorrentsQuery.data?.map((torrent) => torrent.infoHash)),
+    [unnecessaryTorrentsQuery.data],
+  );
 
   if (query.isPending) {
     return (
@@ -60,14 +69,21 @@ function RouteComponent() {
 
   return (
     <Wrapper>
-      <Text as="p">
-        Last updated at: {new Date(query.dataUpdatedAt).toLocaleTimeString()}
-      </Text>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Text as="p">
+          Last updated at: {new Date(query.dataUpdatedAt).toLocaleTimeString()}
+        </Text>
+        <DeleteUnnecessaryTorrents isDisabled={torrents.length === 0} />
+      </div>
       {torrents.length === 0 ? (
         <Text as="p">No torrents found.</Text>
       ) : (
         torrents.map((torrent) => (
-          <TorrentCard key={torrent.infoHash} torrent={torrent} />
+          <TorrentCard
+            key={torrent.infoHash}
+            torrent={torrent}
+            isUnnecessary={unnecessaryInfoHashes.has(torrent.infoHash)}
+          />
         ))
       )}
     </Wrapper>
