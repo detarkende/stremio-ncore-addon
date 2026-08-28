@@ -1,0 +1,35 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["./src/**/*.ts", "./src/**/*.tsx"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/**/test-utils/**/*.ts",
+    "src/**/test-utils/**/*.tsx"
+  ],
+  "compilerOptions": {
+    "erasableSyntaxOnly": true,
+    "lib": [
+      "es2024",
+      "ESNext.Array",
+      "ESNext.Collection",
+      "ESNext.Error",
+      "ESNext.Iterator",
+      "ESNext.Promise",
+      "DOM"
+    ],
+    "types": ["node", "vite/client"],
+    "module": "esnext",
+    "target": "es2024",
+
+    "jsx": "react-jsx",
+
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "resolvePackageJsonImports": true
+  }
+}

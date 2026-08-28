@@ -1,0 +1,896 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Language" content="hu">
+  <link rel="icon" href="https://static.ncore.pro/styles/ncore.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="https://static.ncore.pro/styles/ncore.ico" type="image/x-icon">
+  <link rel="stylesheet" href="https://static.ncore.pro/styles/brutecore/style_sslv11.css" type="text/css">
+  <!--		<link rel="alternate" href="/rss/rss.xml" type="application/rss+xml" title="nCORE Torrentek">-->
+  <!--		<link rel="alternate" href="/rss/rssdd.xml" type="application/rss+xml" title="nCORE Torrentek Közvetlen Letöltéssel">-->
+  <link rel="alternate" href="/rss.php?key=mockkey" title="nCore Torrentek közvetlen letöltéssel" />
+  <title>nCore | Torrent részletek</title>
+  <!--[if lt IE 7.]>
+		<script defer type="text/javascript" src="https://static.ncore.pro/static/js/pngfix.js"></script>
+		<![endif]-->
+  <link rel="stylesheet" href="https://static.ncore.pro/static/js/fancybox/fancybox.css" type="text/css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.2.1/jquery-migrate.min.js"></script>
+  <script language="JavaScript" type="text/javascript"
+    src="https://static.ncore.pro/static/js/jquery_stuff2.js?v=1"></script>
+  <script language="JavaScript" type="text/javascript"
+    src="https://static.ncore.pro/static/js/ncorev12.js?v=1"></script>
+</head>
+
+<body>
+  <input type="hidden" id="confg" data-uid="1754263" data-unique="jkdfkusjgbsuodkjbskjdfnbsukjdgf" />
+  <!--
+	<div style="position:fixed;left:10px;bottom:10px;z-index:2000;" id="ape-container"></div>
+	<script type="text/javaScript" src="https://static.ncore.pro/static/js/push.js"></script>
+	<script type="text/javaScript">
+		var myCats = ["xvid_hun","xvid","dvd_hun","dvd","dvd9_hun","dvd9","hd_hun","hd","xvidser_hun","xvidser","dvdser_hun","dvdser","hdser_hun","hdser","xxx_xvid","xxx_dvd","xxx_imageset","xxx_hd","mp3_hun","mp3","lossless_hun","lossless","clip","game_iso","game_rip","console","ebook_hun","ebook","iso","misc","mobil"];
+		var catsName = {"xvid_hun":"Film SD\/HU","xvid":"Film SD\/EN","dvd_hun":"Film DVDR\/HU","dvd":"Film DVDR\/EN","dvd9_hun":"Film DVD9\/HU","dvd9":"Film DVD9\/EN","hd_hun":"Film HD\/HU","hd":"Film HD\/EN","xvidser_hun":"Sorozat SD\/HU","xvidser":"Sorozat SD\/EN","dvdser_hun":"Sorozat DVDR\/HU","dvdser":"Sorozat DVDR\/EN","hdser_hun":"Sorozat HD\/HU","hdser":"Sorozat HD\/EN","mp3_hun":"MP3\/HU","mp3":"MP3\/EN","lossless_hun":"Lossless\/HU","lossless":"Lossless\/EN","clip":"Klip","game_iso":"J\u00e1t\u00e9k PC\/ISO","game_rip":"J\u00e1t\u00e9k PC\/RIP","console":"Konzol","ebook_hun":"eBook\/HU","ebook":"eBook\/EN","iso":"APP\/ISO","misc":"APP\/RIP","mobil":"APP\/Mobil","xxx_xvid":"XXX SD","xxx_dvd":"XXX DVDR\/DVD9","xxx_imageset":"XXX Imageset","xxx_hd":"XXX HD"};
+		function stripslashes (str) {
+			return (str + '').replace(/\\(.?)/g, function (s, n1) {switch (n1){case '\\':return '\\';case '0':return '\u0000';case '':return '';default:return n1;}});
+		}
+		// <![CDATA[
+		function messageReceived(text, id, channel) {
+			var d=$.parseJSON(text);
+			var pid = d.id;
+			var pcat = d.cat;
+			var pname = stripslashes(decodeURIComponent(d.name));
+			pname = pname.replace(/\+/g," ",pname);
+			if($.inArray(pcat, myCats)>=0){
+				$("#ape-container").prepend('<div id="apeT'+pid+'" class="ape-popup"><span class="comment">Új torrent!</span><span onclick="$(\'#apeT'+pid+'\').fadeOut(\'slow\', function(){$(\'#apeT'+pid+'\').remove()});" class="ape-close">X</span><br /><a href="/torrents.php?action=details&id='+pid+'">' + pname + '</a><br /><span class="comment">' + catsName[pcat] + '</span></div>');
+				setInterval("$(\'#apeT"+pid+"\').fadeOut(\'slow\', function(){$(\'#apeT"+pid+"\').remove()});", 15000);
+			}
+		};
+		var pushstream = new PushStream({
+			host: 'push.ncore.pro',
+			port: window.location.port,
+			useSSL: true,
+			modes: "websocket|eventsource|longpolling",
+			longPollingByHeaders: false,
+			longPollingTagArgument: 'tag',
+			longPollingTimeArgument: 'time',
+			longPollingUseJSONP: false,
+			longPollingTimeout: 30000
+		});
+		pushstream.onmessage = messageReceived;
+		pushstream.addChannel('live_torrents');
+		pushstream.connect();
+
+		// ]]>
+	</script>
+-->
+  <div id="container">
+    <div id="container_in">
+      <div id="div_body">
+        <div id="fej_csik_felso"></div>
+        <div id="fej_fejlec_bg">
+          <div id="fej_fejlec"></div>
+        </div>
+        <div id="menu_bg">
+          <div id="menu_all">
+            <div id="menu_left"></div>
+            <div id="menu_center">
+              <a href="index.php" title="Új hír!">
+                <div class="topnews_alert">!</div>
+              </a>
+              <div class="menu_arrow"></div>
+              <div class="menu_text"><a href="index.php" id="menu_1" class="menu_link">Főoldal</a></div>
+              <div class="menu_arrow"></div>
+              <div class="menu_text"><a href="torrents.php" id="menu_2" class="menu_link">Letöltés</a></div>
+              <div class="menu_arrow"></div>
+              <div class="menu_text"><a href="upload.php" id="menu_3" class="menu_link">Feltöltés</a></div>
+              <div class="menu_arrow"></div>
+              <div class="menu_text"><a href="requests.php" id="menu_4" class="menu_link">Kérések</a></div>
+              <div class="menu_arrow"></div>
+              <div class="menu_text"><a href="recommended.php" id="menu_5" class="menu_link">Ajánló</a></div>
+              <div class="menu_arrow"></div>
+              <div class="menu_text"><a href="forum.php" id="menu_6" class="menu_link">Fórum</a></div>
+              <div class="menu_arrow"></div>
+              <div class="menu_text"><a href="wiki.php" id="menu_7" class="menu_link">Wiki</a></div>
+              <div class="menu_arrow"></div>
+              <div class="menu_text"><a href="users.php" id="menu_8" class="menu_link">Felhasználók</a></div>
+              <div class="menu_arrow"></div>
+              <div class="menu_text"><a href="helpdesk.php" id="menu_9" class="menu_link">HelpDesk</a></div>
+              <div class="menu_arrow"></div>
+              <div class="menu_text"><a href="exit.php?q=06bf626d08680a8dc62ab8d09ce9280b" id="menu_11"
+                  class="menu_link">Kilépés</a></div>
+            </div>
+            <div id="menu_right"></div>
+          </div>
+        </div>
+        <div id="infosav">
+          <div class="infosav_l"></div>
+          <div class="infosav_c">
+            <div id="infosav_adatok">
+              <a href="profile.php">username</a>
+              (Felhasználó),
+              Pontok: <a href="wiki.php?action=read&id=33">1088</a>
+              Fel: <span class="list_alert">12.18 GiB</span>
+              Helyezés:
+              <a class="list_alert" href="wiki.php?action=read&id=581">155664</a>.
+              [<a class="list_alert" href="hitnrun.php">Aktivitás</a>]
+              [<a class="premium" href="/shop">Prémium</a>]
+
+              <!--[<a class="premium" href="nyeremenyjatek.php">Játék</a>]-->
+              <!--[<a class="premium" href="kviz.php">Kvíz</a>]-->
+            </div>
+            <div id="infosav_extra">
+              <div id="i_e_log"><a href="log.php" title="Torrentek naplózása"><img
+                    src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"
+                    class="i_e_link"></a></div>
+              <div class="i_e_vonal"></div>
+              <div id="i_e_baratok"><a href="profile.php?action=friends" title="Barátok"><img
+                    src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"
+                    class="i_e_link"></a></div>
+              <div class="i_e_vonal"></div>
+              <div id="i_e_konyvjelzo"><a id="konyvjelzo" href="bookmarks.php" title="Könyvjelző"><img
+                    src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"
+                    class="i_e_link"></a></div>
+              <div class="i_e_vonal"></div>
+              <div id="i_e_beallitasok"><a href="profile.php?action=config" title="Profil beállítása"><img
+                    src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"
+                    class="i_e_link"></a></div>
+              <div class="i_e_vonal"></div>
+              <div id="i_e_level"><a href="inbox.php" title="Üzeneteim"><img
+                    src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"
+                    class="i_e_link"></a></div>
+              <div class="i_e_vonal"></div>
+              <div id="i_e_meghivo"><a href="invites" title="Meghívó"><img
+                    src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"
+                    class="i_e_link"></a></div>
+            </div>
+          </div>
+          <div class="infosav_r"></div>
+        </div>
+        <div id="main_all">
+          <div id="main">
+            <div class="infocsik" style="background:#BB0000;"><a href="index.php" style="color:#fff;">Új hír van a
+                főoldalon!</a> / <a href='promo.php' style='color:#fff;'>Új promóciós hír lett kiírva</a></div>
+            <div id="main_tartalom">
+              <script type="text/javascript">
+                function fads() {
+                  return '<iframe src="http://www.google.hu/intl/hu/privacy/" style="width:650px;height:70px;overflow:hidden;border:none;"></iframe>';
+                }
+                $(document).ready(function () {
+                  $('a.fancy_groups').fancybox({
+                    'type': 'image'
+                  });
+                  $('a.fancy_trailer').fancybox({
+                    'autoScale': false,
+                    'width': 655,
+                    'height': 500,
+                    'type': 'iframe'
+                  });
+                });
+                function toggle_modpanel(obj) {
+                  if (document.getElementById('modpanel_div').style.display == '') {
+                    document.getElementById('modpanel_div').style.display = 'none';
+                    obj.innerHTML = "Moderátor panel mutatása";
+                  } else {
+                    document.getElementById('modpanel_div').style.display = '';
+                    obj.innerHTML = "Moderátor panel elrejtése";
+                  }
+                }
+                function komment_torol(id, id2, uni) {
+                  if (confirm('Biztosan törlöd ezt a kommentet?')) {
+                    window.location.href = 'torrents.php?action=comments&a=torol&id=' + id + '&next_comment_id=' + id2 + '&getunique=' + uni;
+                  } else {
+                    return false;
+                  }
+                }
+                function komment_all_torol(id, uni) {
+                  if (confirm('Biztosan törlöd az ÖSSZES kommentet?')) {
+                    window.location.href = 'torrents.php?action=comments&a=torol_all&id=' + id + '&getunique=' + uni;
+                  } else {
+                    return false;
+                  }
+                }
+                function nCoreKep(cim, meretek) {
+                  var url = cim;
+                  var meret = meretek.split("x", 2);
+                  var width = ((parseInt(meret[0]) + 25) > 455 ? (parseInt(meret[0]) + 25) : 455);
+                  var height = parseInt(meret[1]) + 170;
+                  window.open('/showimage.php?link=' + url, '_blank', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=' + width + ', height=' + height);
+                }
+                function nCoreTrailer(cim) {
+                  var url = cim;
+                  window.open('/showtrailer.php?link=' + url, '_blank', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=675, height=520');
+                }
+              </script>
+              <div class="fobox_all" id="details1">
+                <div class="fobox_fej_t"></div>
+                <div class="fobox_fej">Torrent adatai</div>
+                <div class="fobox_fej_b"></div>
+                <div class="fobox_tartalom_t"></div>
+                <div class="fobox_tartalom">
+                  <div class="torrent_reszletek_cim">
+                    The.Mentalist.S01-S07.COMPLETE.1080p.AMZN.WEB-DL.DDP5.1.H.264.HUN.ENG-pcroland</div>
+                  <div class="torrent_reszletek_konyvjelzo">
+                    <a style="font-weight:normal;" id="konyvjelzo_ajax" href="javascript:void(0);"
+                      onclick="konyvjelzo('3037290');" title="Hozzáadás a könyvjelzőkhöz">[könyvjelzőkhöz adás]</a>
+                    <a style="font-weight:normal;"
+                      href="torrents.php?action=addnews&id=3037290&getunique=jkdfkusjgbsuodkjbskjdfnbsukjdgf"
+                      title="A torrent ajánlása a hírfolyamon!">[hírfolyamra]</a>
+                    <a style="font-weight:normal;" href="torrents.php?action=notification&id=3037290">[bejelentés]</a>
+                  </div>
+                  <center>
+                    <table border="0" cellspacing="5">
+                      <tr>
+                        <td> <a class="fancy_groups" rel="g3037290"
+                            href="https://nc-img.cdn.l7cache.com/WlZ40KrRLi1CMXmd?26524109"><img border=0
+                              src="https://nc-img.cdn.l7cache.com/p0JX1L3VwIqCWB57?26524109"></a></td>
+                        <td> <a class="fancy_groups" rel="g3037290"
+                            href="https://nc-img.cdn.l7cache.com/p0JX1L3VwIDf9B57?26524109"><img border=0
+                              src="https://nc-img.cdn.l7cache.com/pdG4yqR67CWfDXx8?26524109"></a></td>
+                        <td> <a class="fancy_groups" rel="g3037290"
+                            href="https://nc-img.cdn.l7cache.com/pdG4yqR67CNhqXx8?26524109"><img border=0
+                              src="https://nc-img.cdn.l7cache.com/rlLeoq8W7C2hA_vW?26524109"></a></td>
+                      </tr>
+                      <tr>
+                        <td align="center"><em>(1920x1080)</em></td>
+                        <td align="center"><em>(1920x1080)</em></td>
+                        <td align="center"><em>(1920x1080)</em></td>
+                      </tr>
+                    </table>
+                  </center><br>
+                  <center id="detailsad">
+                    <div class="banner" data-id="1235" data-banner-id="1217" data-zone-id="1,2,3,4"><a
+                        href="https://www.bestbyte.hu/best-november-hBEST.html" target="_blank"><img
+                          style="width:800px;height:100px;border:0;"
+                          src="https://nc-img.cdn.l7cache.com/bimages/2c1440ebb97ea90f39424e2da6637d0c.png"></a></div>
+                  </center>
+                  <!--<script type="text/javascript">
+    $(document).ready(function(){
+        $('#detailsad').html('<iframe id="detailsadb" src="http://yayo.hu/api/banner/800" style="width:800px;border:0;height:116px"></iframe>');
+    });
+</script>-->
+                  <br>
+                  <div class="torrent_reszletek">
+                    <div class="torrent_col1">
+                      <div class="dt">Típus:</div>
+                      <div class="dd"><a title="Még több ebből a kategóriából"
+                          href="torrents.php?csoport_listazas=osszes_sorozat">Sorozat</a> > <a
+                          title="Még több ebből a kategóriából" href="torrents.php?tipus=hdser_hun">HD/HU</a></div>
+                      <div class="dt">Feltöltve:</div>
+                      <div class="dd">2020-06-06 14:27:13</div>
+                      <div class="dt">Feltöltő:</div>
+                      <div class="dd">
+                        <span class="feltolto_szin">Anonymous</span>
+                      </div>
+                      <div class="dt">Hozzászólás:</div>
+                      <div class="dd">4 db</div>
+                    </div>
+                    <div class="torrent_col2">
+                      <div class="dt">Seederek:</div>
+                      <div class="dd"><a onclick="peers('peers', '3037290', 1);" title="Peerlista"
+                          href="javascript:void(0);">64</a></div>
+                      <div class="dt">Leecherek:</div>
+                      <div class="dd"><a onclick="peers('peers', '3037290', 1);" title="Peerlista"
+                          href="javascript:void(0);">41</a></div>
+                      <div class="dt">Letöltve:</div>
+                      <div class="dd">++</div>
+                      <div class="dt">Sebesség:</div>
+                      <div class="dd">1.33 MiB/s (becsült)</div>
+                      <div class="dt">Méret:</div>
+                      <div class="dd">548.88 GiB (589355019588 bájt)</div>
+                      <div class="dt">NFO:</div>
+                      <div class="dd"><a onclick="getNfo('nfocontent', '3037290', 1);" title="Mutat"
+                          href="javascript:void(0);">Mutat</a></div>
+                      <div class="dt">Fájlok:</div>
+                      <div class="dd"><a onclick="files('filelist', '3037290', 1);" title="Fájlok"
+                          href="javascript:void(0);">151</a></div>
+                      <!--<div class="dt">Mafab.hu</div>
+		<div class="dd"><a onclick="getMafab('mafab', 'tt1196946', 0, 1);" href="javascript:void(0);">Mutat</a></div>-->
+                      <div class="dt">Más verziók:</div>
+                      <div class="dd"><a onclick="other_versions('otherlist', '1196946', '3037290', 1);"
+                          title="Más verziók" href="javascript:void(0);">Mutat</a></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="download"><a style="font-size:11px;text-decoration:underline;text-transform:uppercase;"
+                      href="torrents.php?action=download&id=3037290&key=mockkey">Torrent
+                      letöltése</a></div>
+                  <div id="filelist"></div>
+                  <!-- <div id="mafab"></div>-->
+                  <div id="otherlist"></div>
+                  <div id="nfocontent"></div>
+                  <a name="peers"></a>
+                  <div id="peers"></div>
+                  <div id="subtitles"></div>
+                  <div class="torrent_leiras">
+                    <table width="100%">
+                      <tr>
+                        <td class="inforbar_img" align="center"><img
+                            src="https://nc-img.cdn.l7cache.com/covers/7YXQxgERikxFNedn?26524107" alt="Borító"></td>
+                        <td class="inforbar_txt">
+                          <div class="infobar_title"> A mentalista<br> (The Mentalist)
+                          </div>
+                          <table>
+                            <tr>
+                              <td style="vertical-align:top;width:110px;">Megjelenés éve:</td>
+                              <td>2008</td>
+                            </tr>
+                            <tr>
+                              <td style="vertical-align:top;width:110px;">Rendező:</td>
+                              <td>Chris Long, Eric Laneuville</td>
+                            </tr>
+                            <tr>
+                              <td style="vertical-align:top;width:110px;">Szereplők:</td>
+                              <td>Simon Baker, Robin Tunney, Tim Kang, Owain Yeoman, Amanda Righetti</td>
+                            </tr>
+                            <tr>
+                              <td style="vertical-align:top;width:110px;">Ország:</td>
+                              <td>USA</td>
+                            </tr>
+                            <tr>
+                              <td style="vertical-align:top;width:110px;">Hossz:</td>
+                              <td>43 perc</td>
+                            </tr>
+                            <tr>
+                              <td style="vertical-align:top;width:110px;">Címkék:</td>
+                              <td><a style="border-bottom:1px dotted white;"
+                                  href="torrents.php?tags=b%C5%B1n%C3%BCgyi">bűnügyi</a>, <a
+                                  style="border-bottom:1px dotted white;" href="torrents.php?tags=dr%C3%A1ma">dráma</a>,
+                                <a style="border-bottom:1px dotted white;"
+                                  href="torrents.php?tags=misztikus">misztikus</a>, <a
+                                  style="border-bottom:1px dotted white;" href="torrents.php?tags=thriller">thriller</a>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style="vertical-align:top;width:110px;">IMDb értékelés:</td>
+                              <td>8.1</td>
+                            </tr>
+                            <tr>
+                              <td style="vertical-align:top;width:110px;">IMDb link:</td>
+                              <td><a href="https://dereferer.me/?https://imdb.com/title/tt1196946"
+                                  target="_blank">https://imdb.com/title/tt1196946</a></td>
+                            </tr>
+                            <tr>
+                              <td style="vertical-align:top;width:110px;">Egyéb link:</td>
+                              <td><a href="https://dereferer.me/?https://www.tvmaze.com/shows/116/the-mentalist"
+                                  target="_blank">https://www.tvmaze.com/shows/1...</a></td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="torrent_leiras proba42">
+                    Eredeti release!
+                    <br />
+                    <br />
+                    <br /><span style="text-decoration:underline">Évad</span>: 1-7
+                    <br /><span style="text-decoration:underline">Epizód</span>: 1-150
+                    <br />
+                    <br />
+                  </div>
+                  <div class="torrent_leiras">
+                    Akik eddig megköszönték:<br><br>
+                    <div id="ncoreKoszonetAjax">
+                      <a href="profile.php?id=306871">Crypt</a>, <a href="profile.php?id=1345872">bottasbacsi</a>, <a
+                        href="profile.php?id=1359725">Hennessy7</a>, <a href="profile.php?id=1566402">Gameringer</a>, <a
+                        href="profile.php?id=922455">szokerjeno</a>, <a href="profile.php?id=1509064">Smalody</a>, <a
+                        href="profile.php?id=906223">coresster</a>, <a href="profile.php?id=594815">69RaizeN69</a>, <a
+                        href="profile.php?id=285897">tyrichie</a>, <a href="profile.php?id=861998">teki5650</a>, <a
+                        href="profile.php?id=96367">MorganCreate</a>, <a href="profile.php?id=42054">Tomi124</a>, <a
+                        href="profile.php?id=348420">robexx89</a>, <a href="profile.php?id=98826">philtaylor</a>, <a
+                        href="profile.php?id=196868">Termeszet</a>, <a href="profile.php?id=72462">salanki</a>, <a
+                        href="profile.php?id=14689">magyar28</a>, <a href="profile.php?id=931625">muller996</a>, <a
+                        href="profile.php?id=28485">famarci</a>, <a href="profile.php?id=422853">Patkos96</a>, <a
+                        href="profile.php?id=933429">Matu01</a>, <a href="profile.php?id=271675">GGabox</a>, <a
+                        href="profile.php?id=765705">yodamester1980</a>, <a href="profile.php?id=998312">gagne</a>, <a
+                        href="profile.php?id=178863">jooda</a>, <a href="profile.php?id=94314">csillagSu</a>, <a
+                        href="profile.php?id=31903">Oni2</a>, <a href="profile.php?id=132798">maxfischer</a>, <a
+                        href="profile.php?id=569663">peet9208</a>, <a href="profile.php?id=30333">hackeeeee</a>, <a
+                        href="profile.php?id=262847">szilas074</a>, <a href="profile.php?id=955774">otto00001</a>, <a
+                        href="profile.php?id=103976">tovitom</a>, <a href="profile.php?id=162071">nubie</a>, <a
+                        href="profile.php?id=1645253">chomiakdavid</a>, <a href="profile.php?id=63295">llsz</a>, <a
+                        href="profile.php?id=1301979">Zoltan20000711</a>, <a href="profile.php?id=266155">Anachel</a>,
+                      <a href="profile.php?id=252912">sbeci40</a>, <a href="profile.php?id=153514">tgaly</a>, <a
+                        href="profile.php?id=1105535">asepta</a>, <a href="profile.php?id=721877">sravasz04</a>, <a
+                        href="profile.php?id=254866">accx</a>, <a href="profile.php?id=151593">peti910</a>, <a
+                        href="profile.php?id=418502">kurta999</a>, <a href="profile.php?id=704914">03061981</a>, <a
+                        href="profile.php?id=479024">ComposedJesus</a>, <a href="profile.php?id=1083908">dodmax13</a>,
+                      <a href="profile.php?id=645300">krisztianhor</a>, <a href="profile.php?id=863771">sulaco5</a>, <a
+                        href="profile.php?id=1156024">kmetyozoli</a>, <a href="profile.php?id=1578867">Emancipalt06</a>,
+                      <a href="profile.php?id=1580799">mahuriann</a>, <a href="profile.php?id=29408">Piem</a>, <a
+                        href="profile.php?id=927433">almoa</a>, <a href="profile.php?id=200772">kkamin</a>, <a
+                        href="profile.php?id=947957">cszoli93</a>, <a href="profile.php?id=132090">Soad999</a>, <a
+                        href="profile.php?id=337379">ellamiso</a>, <a href="profile.php?id=522346">IceMan45</a>, <a
+                        href="profile.php?id=280602">abotyetye</a>, <a href="profile.php?id=820894">pecek94</a>, <a
+                        href="profile.php?id=736823">wombats</a>, <a href="profile.php?id=130722">nemenvoltam</a>, <a
+                        href="profile.php?id=698015">Bojho07</a>, <a href="profile.php?id=168349">amper007</a>, <a
+                        href="profile.php?id=1285103">Aranya</a>, <a href="profile.php?id=1070475">Kolre51</a>, <a
+                        href="profile.php?id=265403">fellegus</a>, <a href="profile.php?id=86998">bikas84</a>, <a
+                        href="profile.php?id=312423">394ede</a>, <a href="profile.php?id=1479606">energie55</a>, <a
+                        href="profile.php?id=1287781">PippoCardelone</a>, <a href="profile.php?id=731537">viktor120</a>,
+                      <a href="profile.php?id=1257606">SDezsoke</a>, <a href="profile.php?id=869736">nemo1975</a>, <a
+                        href="profile.php?id=1689039">Rachel78</a>, <a href="profile.php?id=449231">csabeee81</a>, <a
+                        href="profile.php?id=361923">Wallander</a>, <a href="profile.php?id=1122050">lacithe1</a>, <a
+                        href="profile.php?id=905257">spidy71</a>, <a href="profile.php?id=190039">bumamaci</a>, <a
+                        href="profile.php?id=113972">martogato</a>, <a href="profile.php?id=758886">kukolla</a>, <a
+                        href="profile.php?id=778569">Italia458</a>, <a href="profile.php?id=464495">borni1975</a>, <a
+                        href="profile.php?id=1617623">Hokuszpokusz47</a>, <a href="profile.php?id=15948">valory</a>, <a
+                        href="profile.php?id=1737997">cossacks8</a>, <a href="profile.php?id=88352">Puppetmaster</a>, <a
+                        href="profile.php?id=336576">laceemaci</a>, <a href="profile.php?id=666264">bigiboy30</a>, <a
+                        href="profile.php?id=1055801">Pola28</a>, <a href="profile.php?id=415865">indyan669</a>, <a
+                        href="profile.php?id=307039">mykee77</a>, <a href="profile.php?id=1766891">hokozso</a>, <a
+                        href="profile.php?id=412569">Aeolian</a>, <a href="profile.php?id=1067583">kutyafej4</a>, <a
+                        href="profile.php?id=268134">dubadi</a>, <a href="profile.php?id=411604">kutyatibi</a>, <a
+                        href="profile.php?id=488745">bandikkaa</a>, <a href="profile.php?id=328812">vadgaz</a>, <a
+                        href="profile.php?id=519388">STibithegreat</a>, <a href="profile.php?id=1655960">Misi131</a>, <a
+                        href="profile.php?id=360692">juliesko</a>, <a href="profile.php?id=480508">syanaku</a>, <a
+                        href="profile.php?id=702276">RFPsziho</a>, <a href="profile.php?id=310172">heknyekukk</a>, <a
+                        href="profile.php?id=1729698">NanSzi88</a>, <a href="profile.php?id=1479235">Akyne</a>, <a
+                        href="profile.php?id=1631314">kajak1111</a>, <a href="profile.php?id=900436">djkuby</a>, <a
+                        href="profile.php?id=1638737">reka55</a>, <a href="profile.php?id=439121">ferum79</a>, <a
+                        href="profile.php?id=1802936">Sigaba</a>, <a href="profile.php?id=24614">JuhaszAtt</a>, <a
+                        href="profile.php?id=628171">lakibalint</a>, <a href="profile.php?id=737997">bierne</a>, <a
+                        href="profile.php?id=1550504">tryke000</a>, <a href="profile.php?id=723700">vonR</a>, <a
+                        href="profile.php?id=1054201">Tadae</a>, <a href="profile.php?id=1718744">Tar710</a>, <a
+                        href="profile.php?id=876761">Nakloss</a>, <a href="profile.php?id=723424">Montecito</a>, <a
+                        href="profile.php?id=230870">NagyEdmund</a>, <a href="profile.php?id=1601581">spenotlaci</a>, <a
+                        href="profile.php?id=6931">KisHerceg</a>, <a href="profile.php?id=1338941">Robi216</a>, <a
+                        href="profile.php?id=424113">Sams1</a>, <a href="profile.php?id=943995">cinoberci</a>, <a
+                        href="profile.php?id=1779823">Freddy2380</a>, <a href="profile.php?id=1152346">Tanc0s</a>, <a
+                        href="profile.php?id=1399865">MartinCross</a>
+                      <p align="center">
+                        <a href="javascript:void(0);" onclick="thanks(3037290);"><img class="g_koszi"
+                            src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"
+                            alt="Megköszönheted a feltöltést"></a>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="download"><a style="font-size:11px;text-decoration:underline;text-transform:uppercase;"
+                      href="torrents.php?action=download&id=3037290&key=mockkey">Torrent
+                      letöltése</a></div>
+                </div>
+                <div class="fobox_lab"></div>
+              </div>
+              <div align="center">
+                <div style="width:917px;height:13px;"></div>
+              </div>
+              <a name="comments"></a>
+              <div class="fobox_all" id="details2">
+                <div class="fobox_fej_t"></div>
+                <div class="fobox_fej">Hozzászólások</div>
+                <div class="fobox_fej_b"></div>
+                <div class="fobox_tartalom_t"></div>
+                <div class="fobox_tartalom">
+                  <div id="hozzaszolasok">
+                    <div class="hozzaszolasok_pager"><span class="active_link"><strong>1-4</strong></span></div>
+                    <a name="hsz_5473184"></a>
+                    <div class="hsz_block">
+                      <div class="hsz_bal">
+                        <div class="hsz_avatar"><img class="lazy"
+                            data-original="https://nc-avatar.cdn.l7cache.com/Pr02QxV7R3lBye1A?27294891"></div>
+                        <div class="hsz_avatar_also"></div>
+                      </div>
+                      <div class="hsz_jobb_all">
+                        <div class="hsz_jobb">
+                          <div class="hsz_jobb_felso_ico"></div>
+                          <div class="hsz_jobb_felso">
+                            <div class="hsz_jobb_felso_txt"><a
+                                href="torrents.php?action=details&id=3037290&hsz_id=5473184">Írta:</a> <a
+                                href="profile.php?id=277725">pcroland</a> <img
+                                src="https://static.ncore.pro/static/images/beer.png" width="11" height="12" border="0">
+                              | <em>(<img border="0" width="80" height="16" src="https://i.kek.sh/4nAYFQVvBdV.gif"
+                                  alt="https://i.kek.sh/4nAYFQVvBdV.gif" class="lazy bb-image" />)</em></div>
+                            <div class="hsz_jobb_felso_thumbs" id="thumbsdiv_5473184" style="position:relative;">
+                              <a href="javascript:void(0);" onclick="comment_vote(this, 5473184, -1);"
+                                onmouseover="document.getElementById('hsz_down_5473184').src='styles/brutecore/thumbsdown_on.png';"
+                                onmouseout="document.getElementById('hsz_down_5473184').src='styles/brutecore/thumbsdown_off.png';"><img
+                                  title="Negatív értékelés" id="hsz_down_5473184"
+                                  src="https://static.ncore.pro/styles/brutecore/thumbsdown_off.png" border="0"></a><a
+                                href="javascript:void(0);" onclick="comment_vote(this, 5473184, 1);"
+                                onmouseover="document.getElementById('hsz_up_5473184').src='styles/brutecore/thumbsup_on.png';"
+                                onmouseout="document.getElementById('hsz_up_5473184').src='styles/brutecore/thumbsup_off.png';"><img
+                                  title="Pozitív értékelés" id="hsz_up_5473184"
+                                  src="https://static.ncore.pro/styles/brutecore/thumbsup_off.png" border="0"></a>
+                            </div>
+                            <div class="hsz_jobb_felso_date">
+                              <a title="Válaszol!"
+                                href="torrents.php?action=details&id=3037290&reply=5473184#reply">[V]</a> <a
+                                title="Hozzászólás bejelentés!"
+                                href="torrents.php?action=notification&id=3037290&hsz_id=5473184">[!]</a>
+                              &nbsp;2020-06-06 14:40:51 | <span id="hsz_pont_5473184"><span
+                                  class="hsz_vote_plusz">+41</span></span>
+                            </div>
+                          </div>
+                          <div class="hsz_jobb_comment">Ha valami hibát tapasztaltok bármelyik epizódnál (hang vágás,
+                            felirat vagy akármi), PM-ben jelezzétek.</div>
+                        </div>
+                        <div style="clear:both;"></div>
+                      </div>
+                      <div style="clear:both;"></div>
+                    </div>
+                    <div class="hr_stuff"></div>
+                    <a name="hsz_5691436"></a>
+                    <div class="hsz_block">
+                      <div class="hsz_bal">
+                        <div class="hsz_avatar"><img class="lazy"
+                            data-original="https://static.ncore.pro/styles/brutecore/avatar3.png"></div>
+                        <div class="hsz_avatar_also"></div>
+                      </div>
+                      <div class="hsz_jobb_all">
+                        <div class="hsz_jobb">
+                          <div class="hsz_jobb_felso_ico"></div>
+                          <div class="hsz_jobb_felso">
+                            <div class="hsz_jobb_felso_txt"><a
+                                href="torrents.php?action=details&id=3037290&hsz_id=5691436">Írta:</a> <a
+                                href="profile.php?id=1181174">jozsatoldi</a> | Tag</div>
+                            <div class="hsz_jobb_felso_thumbs" id="thumbsdiv_5691436" style="position:relative;">
+                              <a href="javascript:void(0);" onclick="comment_vote(this, 5691436, -1);"
+                                onmouseover="document.getElementById('hsz_down_5691436').src='styles/brutecore/thumbsdown_on.png';"
+                                onmouseout="document.getElementById('hsz_down_5691436').src='styles/brutecore/thumbsdown_off.png';"><img
+                                  title="Negatív értékelés" id="hsz_down_5691436"
+                                  src="https://static.ncore.pro/styles/brutecore/thumbsdown_off.png" border="0"></a><a
+                                href="javascript:void(0);" onclick="comment_vote(this, 5691436, 1);"
+                                onmouseover="document.getElementById('hsz_up_5691436').src='styles/brutecore/thumbsup_on.png';"
+                                onmouseout="document.getElementById('hsz_up_5691436').src='styles/brutecore/thumbsup_off.png';"><img
+                                  title="Pozitív értékelés" id="hsz_up_5691436"
+                                  src="https://static.ncore.pro/styles/brutecore/thumbsup_off.png" border="0"></a>
+                            </div>
+                            <div class="hsz_jobb_felso_date">
+                              <a title="Válaszol!"
+                                href="torrents.php?action=details&id=3037290&reply=5691436#reply">[V]</a> <a
+                                title="Hozzászólás bejelentés!"
+                                href="torrents.php?action=notification&id=3037290&hsz_id=5691436">[!]</a>
+                              &nbsp;2021-11-04 18:57:50 | <span id="hsz_pont_5691436"><span
+                                  class="hsz_vote_minusz">-7</span></span>
+                            </div>
+                          </div>
+                          <div class="hsz_jobb_comment">nem lehet letölteni </div>
+                        </div>
+                        <div style="clear:both;"></div>
+                      </div>
+                      <div style="clear:both;"></div>
+                    </div>
+                    <div class="hr_stuff"></div>
+                    <a name="hsz_5765703"></a>
+                    <div class="hsz_block">
+                      <div class="hsz_bal">
+                        <div class="hsz_avatar"><img class="lazy"
+                            data-original="https://static.ncore.pro/styles/brutecore/avatar1.png"></div>
+                        <div class="hsz_avatar_also"></div>
+                      </div>
+                      <div class="hsz_jobb_all">
+                        <div class="hsz_jobb">
+                          <div class="hsz_jobb_felso_ico"></div>
+                          <div class="hsz_jobb_felso">
+                            <div class="hsz_jobb_felso_txt"><a
+                                href="torrents.php?action=details&id=3037290&hsz_id=5765703">Írta:</a> <a
+                                href="profile.php?id=1544208">Runningwild</a> | Tag</div>
+                            <div class="hsz_jobb_felso_thumbs" id="thumbsdiv_5765703" style="position:relative;">
+                              <a href="javascript:void(0);" onclick="comment_vote(this, 5765703, -1);"
+                                onmouseover="document.getElementById('hsz_down_5765703').src='styles/brutecore/thumbsdown_on.png';"
+                                onmouseout="document.getElementById('hsz_down_5765703').src='styles/brutecore/thumbsdown_off.png';"><img
+                                  title="Negatív értékelés" id="hsz_down_5765703"
+                                  src="https://static.ncore.pro/styles/brutecore/thumbsdown_off.png" border="0"></a><a
+                                href="javascript:void(0);" onclick="comment_vote(this, 5765703, 1);"
+                                onmouseover="document.getElementById('hsz_up_5765703').src='styles/brutecore/thumbsup_on.png';"
+                                onmouseout="document.getElementById('hsz_up_5765703').src='styles/brutecore/thumbsup_off.png';"><img
+                                  title="Pozitív értékelés" id="hsz_up_5765703"
+                                  src="https://static.ncore.pro/styles/brutecore/thumbsup_off.png" border="0"></a>
+                            </div>
+                            <div class="hsz_jobb_felso_date">
+                              <a title="Válaszol!"
+                                href="torrents.php?action=details&id=3037290&reply=5765703#reply">[V]</a> <a
+                                title="Hozzászólás bejelentés!"
+                                href="torrents.php?action=notification&id=3037290&hsz_id=5765703">[!]</a>
+                              &nbsp;2022-04-29 21:40:18 | <span id="hsz_pont_5765703"><span
+                                  class="hsz_vote_minusz">-2</span></span>
+                            </div>
+                          </div>
+                          <div class="hsz_jobb_comment">2. évad első részt nem játsza le semmi nálam.</div>
+                        </div>
+                        <div style="clear:both;"></div>
+                      </div>
+                      <div style="clear:both;"></div>
+                    </div>
+                    <div class="hr_stuff"></div>
+                    <a name="hsz_5966034"></a>
+                    <div class="hsz_block">
+                      <div class="hsz_bal">
+                        <div class="hsz_avatar"><img class="lazy"
+                            data-original="https://static.ncore.pro/styles/brutecore/avatar1.png"></div>
+                        <div class="hsz_avatar_also"></div>
+                      </div>
+                      <div class="hsz_jobb_all">
+                        <div class="hsz_jobb">
+                          <div class="hsz_jobb_felso_ico"></div>
+                          <div class="hsz_jobb_felso">
+                            <div class="hsz_jobb_felso_txt"><a
+                                href="torrents.php?action=details&id=3037290&hsz_id=5966034">Írta:</a> <a
+                                href="profile.php?id=360692">juliesko</a> | Elite</div>
+                            <div class="hsz_jobb_felso_thumbs" id="thumbsdiv_5966034" style="position:relative;">
+                              <a href="javascript:void(0);" onclick="comment_vote(this, 5966034, -1);"
+                                onmouseover="document.getElementById('hsz_down_5966034').src='styles/brutecore/thumbsdown_on.png';"
+                                onmouseout="document.getElementById('hsz_down_5966034').src='styles/brutecore/thumbsdown_off.png';"><img
+                                  title="Negatív értékelés" id="hsz_down_5966034"
+                                  src="https://static.ncore.pro/styles/brutecore/thumbsdown_off.png" border="0"></a><a
+                                href="javascript:void(0);" onclick="comment_vote(this, 5966034, 1);"
+                                onmouseover="document.getElementById('hsz_up_5966034').src='styles/brutecore/thumbsup_on.png';"
+                                onmouseout="document.getElementById('hsz_up_5966034').src='styles/brutecore/thumbsup_off.png';"><img
+                                  title="Pozitív értékelés" id="hsz_up_5966034"
+                                  src="https://static.ncore.pro/styles/brutecore/thumbsup_off.png" border="0"></a>
+                            </div>
+                            <div class="hsz_jobb_felso_date">
+                              <a title="Hozzászólás bejelentés!"
+                                href="torrents.php?action=notification&id=3037290&hsz_id=5966034">[!]</a>
+                              &nbsp;2023-12-19 09:13:55 | <span id="hsz_pont_5966034"><span
+                                  class="hsz_vote_minusz">-1</span></span>
+                            </div>
+                          </div>
+                          <div class="hsz_jobb_comment">szia az 5/22 nem jön le. köszi</div>
+                        </div>
+                        <div style="clear:both;"></div>
+                      </div>
+                      <div style="clear:both;"></div>
+                    </div>
+                    <div class="hr_stuff"></div>
+                    <div class="hozzaszolasok_pager"><span class="active_link"><strong>1-4</strong></span></div>
+                  </div>
+                </div>
+                <div class="fobox_lab"></div>
+              </div>
+              <div align="center">
+                <div style="width:917px;height:13px;"></div>
+              </div>
+              <div class="commentbox_all">
+                <div class="commentbox_fej">Szólj hozzá te is!</div>
+                <div class="commentbox_tartalom">
+                  <a name="reply"></a>
+                  <form action="torrents.php?action=details&id=3037290#comment_pre" method="post" name="hozzaszol"
+                    target="_self">
+                    <input type="hidden" name="getUnique" value="jkdfkusjgbsuodkjbskjdfnbsukjdgf">
+
+                    <div class="hsz_iconok">
+                      <table class="hsz_iconok_table">
+                        <tr>
+                          <td class="hsz_width1">
+                            <div class="hsz_bb_vastag"><a href="javascript: AddBB('szoveg', 'bold')"
+                                title="Vastag betű"><img class="bb_link"
+                                  src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"></a>
+                            </div>
+                            <div class="hsz_bb_dolt"><a href="javascript: AddBB('szoveg', 'italic')"
+                                title="Dőlt betű"><img class="bb_link"
+                                  src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"></a>
+                            </div>
+                            <div class="hsz_bb_alahuzott"><a href="javascript: AddBB('szoveg', 'underline')"
+                                title="Aláhúzott betű"><img class="bb_link"
+                                  src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"></a>
+                            </div>
+                          </td>
+                          <td class="hsz_width2">
+                            <select id="sizes" name="size" size="1">
+                              <option value="8pt">8</option>
+                              <option value="9pt">9</option>
+                              <option selected="selected" value="10pt">10</option>
+                              <option value="12pt">12</option>
+                              <option value="14pt">14</option>
+                              <option value="16pt">16</option>
+                              <option value="18pt">18</option>
+                              <option value="20pt">20</option>
+                              <option value="22pt">22</option>
+                              <option value="24pt">24</option>
+                              <option value="30pt">30</option>
+                              <option value="36pt">36</option>
+                              <option value="48pt">48</option>
+                              <option value="72pt">72</option>
+                            </select>
+                          </td>
+                          <td class="hsz_width3">
+                            <div class="hsz_bb_meret"><a href="javascript: AddBB('szoveg', 'size')"
+                                title="Betűméret"><img class="bb_link"
+                                  src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"></a>
+                            </div>
+                          </td>
+                          <td class="hsz_width4">
+                            <select id="colors" name="color" size="1">
+                              <option selected="selected" value="black">Fekete</option>
+                              <option value="white">Fehér</option>
+                              <option value="green">Zöld</option>
+                              <option value="maroon">Gesztenyebarna</option>
+                              <option value="olive">Olivazöld</option>
+                              <option value="navy">Mélykék</option>
+                              <option value="purple">Lila</option>
+                              <option value="gray">Szürke</option>
+                              <option value="yellow">Sárga</option>
+                              <option value="lime">Lime</option>
+                              <option value="aqua">Cián</option>
+                              <option value="fuchsia">Ciklámen</option>
+                              <option value="silver">Ezüst</option>
+                              <option value="red">Piros</option>
+                              <option value="blue">Kék</option>
+                              <option value="teal">Pávakék</option>
+                            </select>
+                          </td>
+                          <td class="hsz_width5">
+                            <div class="hsz_bb_szin"><a href="javascript: AddBB('szoveg', 'color')"
+                                title="Betűszín"><img class="bb_link"
+                                  src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"></a>
+                            </div>
+                            <div class="hsz_bb_smilie"><a target="_blank" href="wiki.php?action=read&id=403"
+                                title="Smile beszúrása"><img class="bb_link"
+                                  src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"></a>
+                            </div>
+                            <div class="hsz_bb_kep"><a href="javascript: AddBB('szoveg', 'picture')"
+                                title="Kép beszúrása"><img class="bb_link"
+                                  src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"></a>
+                            </div>
+                            <div class="hsz_bb_imgw"><a href="javascript: AddBB('szoveg', 'imgw')"
+                                title="Nagyméretű kép beszúrása"><img class="bb_link"
+                                  src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"></a>
+                            </div>
+                            <div class="hsz_bb_link"><a href="javascript: AddBB('szoveg', 'url')"
+                                title="Link beszúrása"><img class="bb_link"
+                                  src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"></a>
+                            </div>
+                            <div class="hsz_bb_spoiler"><a href="javascript: AddBB('szoveg', 'spoiler')"
+                                title="Spoiler, rejtett szöveg beszúrása"><img class="bb_link"
+                                  src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"></a>
+                            </div>
+                            <div class="hsz_bb_felsorolas"><a href="javascript: AddBB('szoveg', 'list')"
+                                title="Felsorolás"><img class="bb_link"
+                                  src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"></a>
+                            </div>
+                            <div class="hsz_bb_idezet"><a href="javascript: AddBB('szoveg', 'quote')"
+                                title="Idézet"><img class="bb_link"
+                                  src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"></a>
+                            </div>
+                            <div class="hsz_bb_kerdes"><a target="_blank" href="wiki.php?action=read&id=393"
+                                title="Kérdés"><img class="bb_link"
+                                  src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"></a>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                    <div class="hsz_textarea">
+                      <textarea class="textarea_fancy" id="szoveg" name="szoveg"
+                        onbeforedeactivate="window.txtRange = document.selection.createRange();" tabindex=1></textarea>
+                    </div>
+                    <br><br>
+                    <center>
+                      <input name="g_mehet" type="image" value="submit"
+                        src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"
+                        class="g_mehet">
+                      &nbsp;&nbsp;&nbsp;
+                      <input name="g_elonezet" type="image" value="submit"
+                        src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"
+                        class="g_elonezet">
+                    </center>
+                  </form>
+                </div>
+                <div class="commentbox_lab"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="div_body_space"></div>
+      </div>
+      <div id="footer_bg">
+        <div id="footer">
+          <div id="footer_left">
+            <a href="#"></a>
+          </div>
+          <div id="footer_center">nCore bzv | render: 5 ms | mem: 2 MiB | load: 7.8 7.42 7.05</div>
+          <div id="footer_right"></div>
+        </div>
+      </div>
+      <script language="JavaScript" type="text/javascript"
+        src="https://static.ncore.pro/static/js/ieupdate.js"></script>
+      <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-2914855-1']);
+        _gaq.push(['_setSampleRate', '10']);
+        _gaq.push(['_trackPageview']);
+
+        (function () {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+      </script>
+
+      <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+      <style>
+        #x-pop {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          right: 0;
+          background-color: #1b1b1b;
+          color: #fff;
+          flex-direction: column;
+          box-sizing: border-box;
+          place-content: center;
+          align-items: center;
+          font-family: Roboto, 'sans-serif';
+          font-size: 14px;
+        }
+
+        #x-pop h1 {
+          font-weight: 300;
+          margin: 0;
+          padding: 28px 0;
+          font-size: 20px;
+        }
+
+        #x-pop img {
+          width: 300px;
+        }
+
+        #x-pop p {
+          max-width: 540px;
+          line-height: 20px;
+          text-align: justify;
+        }
+
+        #x-pop .f {
+          display: flex;
+          height: 36px;
+        }
+
+        #x-pop .c {
+          text-decoration: underline;
+          color: #9ccc65;
+          cursor: pointer;
+        }
+      </style>
+
+      <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function (event) {
+          var req = new Request('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js', { method: 'HEAD', mode: 'no-cors' });
+
+          fetch(req).then(function (resp) {
+            return resp;
+          }).then(function () {
+          }).catch(function (e) {
+            var old = localStorage.getItem('adpt');
+            if (!old || (Date.parse(old) < new Date())) {
+              var date = new Date();
+              date.setDate(date.getDate() + 7);
+              localStorage.setItem('adpt', date);
+              localStorage.setItem('adpv', true);
+              window.location.replace('/premium.php');
+            }
+          });
+
+          if (localStorage.getItem('adpv') == 'true') {
+            localStorage.removeItem('adpv');
+            var el = document.getElementById('x-pop');
+            el.style.display = 'flex';
+          }
+        });
+
+        function closeXPop() {
+          var el = document.getElementById('x-pop');
+          el.style.display = 'none';
+        }
+      </script>
+
+      <div id="x-pop">
+        <img src="https://static.ncore.pro/static/images/true_love.svg">
+        <h1>Kedves felhasználónk!</h1>
+        <p>Kérjük az oldal hosszútávú működése érdekében mellőzd az Adblock használatát, vagy támogass minket egy
+          általad választott prémium csomagra történő előfizetéssel.<br><br>Köszönjük!</p>
+        <span class="f"></span>
+        <span class="c" onclick="closeXPop()">A bezáráshoz kattints ide.</span>
+      </div>
+
+
+</body>
+
+</html>

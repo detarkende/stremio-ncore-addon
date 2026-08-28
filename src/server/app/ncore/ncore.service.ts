@@ -1,0 +1,302 @@
+import { StreamType } from '@server/app/stream/stream.constants';
+import { env } from '@server/env';
+import { logger } from '@server/logger';
+import { cacheFunction, DEFAULT_MAX, DEFAULT_TTL } from '@server/utils/cache';
+import { getAllPromiseResults } from '@server/utils/get-all-promise-results';
+import { batchAsyncFunctions } from '@server/utils/process-in-batches';
+import { JSDOM } from 'jsdom';
+import cookieParser from 'set-cookie-parser';
+
+import { downloadAndParseTorrent } from '../torrent/torrent-file.utils';
+import { NcoreTorrentDetails } from './ncore-torrent-details';
+import {
+  BATCH_DELAY,
+  BATCH_SIZE,
+  MOVIE_CATEGORY_FILTERS,
+  SERIES_CATEGORY_FILTERS,
+} from './ncore.constants';
+import {
+  NcoreOrderBy,
+  NcoreSearchBy,
+  type NcoreQueryParams,
+  type NcoreTorrent,
+} from './ncore.types';
+import { getAllPages, getNcoreSearchResults } from './ncore.utils';
+
+export class NcoreService {
+  _cookiesCache = {
+    pass: null as string | null,
+    cookieExpirationDate: 0,
+  };
+  async _getCookies() {
+    {
+      try {
+        const username = env.NCORE_USERNAME;
+        const password = env.NCORE_PASSWORD;
+        const ncoreUrl = env.NCORE_URL;
+        if (
+          this._cookiesCache.pass &&
+          this._cookiesCache.cookieExpirationDate > Date.now() + 1000
+        ) {
+          return this._cookiesCache.pass;
+        }
+        logger.info(`Fetching cookies for nCore user "${username}"`);
+        const body = new FormData();
+        body.append('set_lang', 'hu');
+        body.append('submitted', '1');
+        body.append('nev', username);
+        body.append('pass', password);
+        body.append('ne_leptessen_ki', '1');
+        const resp = await fetch(`${ncoreUrl}/login.php`, {
+          method: 'POST',
+          body,
+          redirect: 'manual',
+        });
+
+        const setCookieHeader = resp.headers.get('set-cookie');
+        if (!setCookieHeader) {
+          logger.error(
+            `No Set-Cookie header received when logging in to nCore for user "${username}"`,
+            {
+              status: resp.status,
+              headers: resp.headers,
+            },
+          );
+          throw new Error('No Set-Cookie header received', {
+            cause: { status: resp.status, headers: resp.headers, username },
+          });
+        }
+        const allCookies = cookieParser.parse(
+          cookieParser.splitCookiesString(setCookieHeader),
+        );
+        const passCookie = allCookies.find(({ name }) => name === 'pass');
+
+        if (!passCookie || passCookie.value === 'deleted') {
+          logger.error(`Failed to log in to nCore for user "${username}"`, {
+            status: resp.status,
+            headers: resp.headers,
+          });
+          throw new Error('No pass cookie found', {
+            cause: { passCookie, status: resp.status, headers: resp.headers, username },
+          });
+        }
+        const fullCookieString = allCookies
+          .map(({ name, value }) => `${name}=${value}`)
+          .join('; ');
+        this._cookiesCache.pass = fullCookieString;
+        if (passCookie.expires) {
+          this._cookiesCache.cookieExpirationDate = Number(passCookie.expires);
+        }
+        logger.info(`Successfully fetched cookies for nCore user "${username}"`);
+        return fullCookieString;
+      } catch (error) {
+        logger.error('Failed to get cookies from nCore', { error });
+        throw new Error('Failed to get cookies from nCore', { cause: error });
+      }
+    }
+  }
+
+  async _getTorrentsForQuery(queryParams: NcoreQueryParams): Promise<NcoreTorrent[]> {
+    const baseParams = {
+      ...queryParams,
+      tipus: 'kivalasztottak_kozott',
+      jsons: 'true',
+    };
+
+    const cookies = await this._getCookies();
+
+    const results: NcoreTorrent[] = await getAllPages(async (page) => {
+      const query = new URLSearchParams({
+        ...baseParams,
+        oldal: page.toString(),
+      });
+      const request = await fetch(`${env.NCORE_URL}/torrents.php?${query.toString()}`, {
+        headers: {
+          cookie: cookies,
+        },
+      });
+      const body = (await request.text()) ?? '';
+      const pageResponse = getNcoreSearchResults(body);
+      return pageResponse;
+    });
+    return results;
+  }
+
+  async _convertNcoreTorrentToTorrentDetails(ncoreTorrents: NcoreTorrent[]) {
+    const torrentDetailPromiseFns = ncoreTorrents.map((ncoreTorrent) => async () => {
+      const { torrentFileData } = await downloadAndParseTorrent(
+        ncoreTorrent.download_url,
+      );
+      return new NcoreTorrentDetails(ncoreTorrent, torrentFileData);
+    });
+    const batchedPromises = batchAsyncFunctions({
+      batchSize: BATCH_SIZE,
+      delayMs: BATCH_DELAY,
+      functions: torrentDetailPromiseFns,
+    });
+
+    const [ncoreTorrentDetails, errors] = await getAllPromiseResults(batchedPromises);
+    if (errors.length > 0) {
+      logger.warning('Encountered errors while fetching torrent details', {
+        errors,
+      });
+    }
+    return ncoreTorrentDetails;
+  }
+
+  public getTorrentsByImdbId = cacheFunction(
+    {
+      max: DEFAULT_MAX,
+      ttl: DEFAULT_TTL,
+      ttlAutopurge: true,
+      generateKey: (params) => `${params.type}:${params.imdbId}`,
+    },
+    async ({
+      imdbId,
+      type,
+    }: {
+      imdbId: string;
+      type: StreamType;
+    }): Promise<NcoreTorrentDetails[]> => {
+      const ncoreTorrents = await this._getTorrentsForQuery({
+        mire: imdbId,
+        miben: NcoreSearchBy.IMDB,
+        miszerint: NcoreOrderBy.SEEDERS,
+        kivalasztott_tipus:
+          type === StreamType.MOVIE ? MOVIE_CATEGORY_FILTERS : SERIES_CATEGORY_FILTERS,
+      });
+
+      return this._convertNcoreTorrentToTorrentDetails(ncoreTorrents);
+    },
+  );
+
+  public getTorrentsByTitle = cacheFunction(
+    {
+      max: DEFAULT_MAX,
+      ttl: DEFAULT_TTL,
+      ttlAutopurge: true,
+      generateKey: (params) => `${params.type}:${params.title}`,
+    },
+    async ({
+      title,
+      type,
+    }: {
+      title: string;
+      type: StreamType;
+    }): Promise<NcoreTorrentDetails[]> => {
+      const ncoreTorrents = await this._getTorrentsForQuery({
+        mire: title,
+        miben: NcoreSearchBy.NAME,
+        miszerint: NcoreOrderBy.SEEDERS,
+        kivalasztott_tipus:
+          type === StreamType.MOVIE ? MOVIE_CATEGORY_FILTERS : SERIES_CATEGORY_FILTERS,
+      });
+      return this._convertNcoreTorrentToTorrentDetails(ncoreTorrents);
+    },
+  );
+
+  public async getTorrentUrlByNcoreId(ncoreId: string): Promise<string> {
+    logger.info(`Getting torrent URL for nCore ID ${ncoreId}`);
+    const cookies = await this._getCookies();
+    try {
+      const response = await fetch(
+        `${env.NCORE_URL}/torrents.php?action=details&id=${ncoreId}`,
+        {
+          headers: {
+            cookie: cookies,
+          },
+          signal: AbortSignal.timeout(5_000),
+        },
+      );
+      if (!response.ok) {
+        logger.error(`Failed to fetch torrent details page`, {
+          status: response.status,
+          ncoreId,
+        });
+        throw new Error('Failed to fetch torrent details page', {
+          cause: { status: response.status, ncoreId },
+        });
+      }
+      const html = await response.text();
+      logger.info(`Successfully fetched torrent details page`, { ncoreId });
+      const { document } = new JSDOM(html).window;
+      const downloadLink = `${env.NCORE_URL}/${document
+        .querySelector('.download > a')
+        ?.getAttribute('href')}`;
+      logger.info(`Successfully extracted torrent download URL`, {
+        ncoreId,
+        downloadLink,
+      });
+      return downloadLink;
+    } catch (error) {
+      logger.error(`Failed to get torrent URL from nCore`, { error, ncoreId });
+      throw new Error('Failed to get torrent URL from nCore', { cause: error });
+    }
+  }
+
+  public async getSeedRequiredNcoreInfoHashes(): Promise<string[]> {
+    const infoHashes: string[] = [];
+    const seedRequiredNcoreIds = await this.getSeedRequiredNcoreIds();
+    for (const ncoreId of seedRequiredNcoreIds) {
+      const torrentUrl = await this.getTorrentUrlByNcoreId(ncoreId);
+      const { torrentFileData } = await downloadAndParseTorrent(torrentUrl);
+      infoHashes.push(torrentFileData.infoHash);
+    }
+    return infoHashes;
+  }
+
+  public async getSeedRequiredNcoreIds(): Promise<string[]> {
+    logger.info(`Getting seed-required nCore IDs`);
+    const cookie = await this._getCookies();
+
+    try {
+      const request = await fetch(`${env.NCORE_URL}/hitnrun.php?showall=false`, {
+        headers: { cookie },
+      });
+      const html = await request.text();
+      const { document } = new JSDOM(html).window;
+
+      const rows = Array.from(document.querySelectorAll('.hnr_all, .hnr_all2')).filter(
+        (row) => {
+          const timeRemainingCell = row.querySelector('.hnr_ttimespent');
+          return timeRemainingCell?.textContent?.trim() !== '-';
+        },
+      );
+
+      const seedRequiredNcoreIds = rows.map((row) => {
+        const detailsUrl = row.querySelector('.hnr_tname a')?.getAttribute('href') ?? '';
+        const searchParams = new URLSearchParams(detailsUrl.split('?')[1] ?? '');
+        const ncoreId = searchParams.get('id') ?? '';
+        return ncoreId;
+      });
+
+      return seedRequiredNcoreIds;
+    } catch (error) {
+      logger.error('Failed to get seed-required nCore IDs', { error });
+      throw new Error('Failed to get seed-required nCore IDs', { cause: error });
+    }
+  }
+
+  public async isNcoreAccessible(): Promise<boolean> {
+    try {
+      const cookies = await this._getCookies();
+      const response = await fetch(`${env.NCORE_URL}/torrents.php`, {
+        headers: {
+          cookie: cookies,
+        },
+        signal: AbortSignal.timeout(5_000),
+      });
+      if (!response.ok) {
+        logger.warn(`nCore is not accessible`, {
+          status: response.status,
+        });
+        return false;
+      }
+      logger.info(`nCore is accessible`);
+      return true;
+    } catch (error) {
+      logger.error('Failed to access nCore', { error });
+      return false;
+    }
+  }
+}
