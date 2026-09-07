@@ -21,11 +21,11 @@ describe('basic client components', () => {
     const url = 'https://addon.example/manifest.json?token=test value';
     const screen = await render(<AddonUrl url={url} label="Addon URL" />);
 
-    expect(screen.getByRole('button', { name: 'Stremio App' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Stremio App' })).toHaveAttribute(
       'href',
       'stremio://addon.example/manifest.json?token=test value',
     );
-    expect(screen.getByRole('button', { name: /Stremio Web/ })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /Stremio Web/ })).toHaveAttribute(
       'href',
       `https://web.stremio.com/#/addons?addon=${encodeURIComponent(url)}`,
     );

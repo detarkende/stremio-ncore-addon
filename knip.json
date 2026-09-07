@@ -8,7 +8,6 @@
     "src/server/typings/webtorrent.d.ts"
   ],
   "ignoreDependencies": [
-    "@heroui/theme",
     "scss",
     "bitfield",
     "@types/bittorrent-protocol",

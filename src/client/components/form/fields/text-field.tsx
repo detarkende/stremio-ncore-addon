@@ -1,29 +1,43 @@
-import { Input, type InputProps } from '@heroui/react';
+import {
+  Description,
+  FieldError,
+  Input,
+  Label,
+  TextField as HeroTextField,
+} from '@heroui/react';
+import type { ComponentProps, ReactNode, Ref } from 'react';
 
 import { defaultFieldProps } from '../default-props';
 import { useFieldContext } from '../index';
 
 type TextFieldProps = Omit<
-  InputProps,
-  'value' | 'onChange' | 'onBlur' | 'name' | 'isInvalid' | 'errorMessage' | 'classNames'
->;
+  ComponentProps<typeof HeroTextField>,
+  'children' | 'isInvalid' | 'ref'
+> & {
+  label?: ReactNode;
+  description?: ReactNode;
+  ref?: Ref<HTMLInputElement>;
+};
 
-export function TextField(props: TextFieldProps) {
+export function TextField({ label, description, ref, ...props }: TextFieldProps) {
   const field = useFieldContext<string>();
   const isInvalid = field.state.meta.isDirty && !field.state.meta.isValid;
   return (
-    <Input
+    <HeroTextField
       {...defaultFieldProps}
       {...props}
-      classNames={{
-        input: 'text-base',
-      }}
       name={field.name}
-      value={field.state.value}
-      onValueChange={field.handleChange}
-      onBlur={field.handleBlur}
       isInvalid={isInvalid}
-      errorMessage={field.state.meta.errors[0]?.message}
-    />
+    >
+      {label && <Label>{label}</Label>}
+      <Input
+        className="text-base"
+        value={field.state.value}
+        onChange={(event) => field.handleChange(event.target.value)}
+        ref={ref}
+      />
+      {description && <Description>{description}</Description>}
+      <FieldError>{field.state.meta.errors[0]?.message}</FieldError>
+    </HeroTextField>
   );
 }

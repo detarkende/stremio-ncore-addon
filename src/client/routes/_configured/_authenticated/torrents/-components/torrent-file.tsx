@@ -1,5 +1,5 @@
 import { Text } from '@client/components/text';
-import { Progress } from '@heroui/react';
+import { Label, ProgressBar } from '@heroui/react';
 import type { Torrent, TorrentFile } from '@server/exports';
 
 export function TorrentFile({ torrent, file }: { torrent: Torrent; file: TorrentFile }) {
@@ -10,12 +10,17 @@ export function TorrentFile({ torrent, file }: { torrent: Torrent; file: Torrent
       <Text as="div" id={labelId} className="text-sm break-all">
         {file.name}
       </Text>
-      <Progress
+      <ProgressBar
         value={file.progress * 100}
         size="sm"
-        showValueLabel
-        color={file.progress === 1 ? 'success' : 'primary'}
-      />
+        color={file.progress === 1 ? 'success' : 'accent'}
+      >
+        <Label className="sr-only">File progress</Label>
+        <ProgressBar.Output />
+        <ProgressBar.Track>
+          <ProgressBar.Fill />
+        </ProgressBar.Track>
+      </ProgressBar>
     </div>
   );
 }

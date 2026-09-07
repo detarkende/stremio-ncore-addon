@@ -3,7 +3,7 @@ import { Text } from '@client/components/text';
 import { apiClient } from '@client/integrations/api';
 import { meOrNullQueryOptions } from '@client/integrations/tanstack-query/queries/me';
 import { handleHttpError } from '@client/utils/http';
-import { addToast, Form } from '@heroui/react';
+import { Form, toast } from '@heroui/react';
 import { loginSchema, type LoginCredentials } from '@server/exports';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, redirect, useRouter } from '@tanstack/react-router';
@@ -46,18 +46,14 @@ function RouteComponent() {
     onSubmit: async ({ formApi, value }) => {
       try {
         await mutateAsync(value);
-        addToast({
-          title: 'Login successful',
-          color: 'success',
+        toast.success('Login successful', {
           timeout: 3000,
         });
         await queryClient.refetchQueries(meOrNullQueryOptions);
         await router.invalidate();
       } catch (error) {
-        addToast({
-          title: 'Login failed',
+        toast.danger('Login failed', {
           description: (error as Error)?.message,
-          color: 'danger',
           timeout: 5000,
         });
         formApi.reset();
@@ -90,8 +86,6 @@ function RouteComponent() {
                 <field.TextField
                   isRequired
                   label="Username"
-                  labelPlacement="outside-top"
-                  variant="bordered"
                   ref={firstFieldRef}
                   autoComplete="username"
                 />
@@ -103,16 +97,12 @@ function RouteComponent() {
                   isRequired
                   type="password"
                   label="Password"
-                  labelPlacement="outside-top"
-                  variant="bordered"
                   autoComplete="password"
                 />
               )}
             </form.AppField>
 
-            <form.SubmitButton color="primary" className="w-full">
-              Log in
-            </form.SubmitButton>
+            <form.SubmitButton className="w-full">Log in</form.SubmitButton>
           </Form>
         </form.AppForm>
       </div>

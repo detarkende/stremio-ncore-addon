@@ -1,12 +1,4 @@
-import {
-  Button,
-  Card,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-} from '@heroui/react';
-import { User } from '@heroui/react';
+import { Avatar, Button, Card, Dropdown, Label } from '@heroui/react';
 import { type User as UserType } from '@server/exports';
 import { EllipsisVerticalIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -27,29 +19,35 @@ export function UserCard({ user, isMe }: { user: UserType; isMe: boolean }) {
   return (
     <Card className="rounded-xl flex flex-col gap-4 p-4">
       <div className="flex items-center justify-between gap-2">
-        <User
-          name={username}
-          avatarProps={{
-            name: user.username,
-          }}
-        />
+        <div className="inline-flex items-center gap-2">
+          <Avatar>
+            <Avatar.Fallback>{user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+          </Avatar>
+          <span className="text-sm">{username}</span>
+        </div>
         <Dropdown>
-          <DropdownTrigger asChild>
-            <Button isIconOnly>
-              <EllipsisVerticalIcon size={16} />
-            </Button>
-          </DropdownTrigger>
-          <DropdownMenu
-            onAction={(key) => setDropdownValue(key as UserMenuOption)}
-            disabledKeys={isMe ? ['delete'] : []}
-          >
-            <DropdownItem key="token">View/Rotate token</DropdownItem>
-            <DropdownItem key="edit">Edit user</DropdownItem>
-            <DropdownItem key="change-password">Change password</DropdownItem>
-            <DropdownItem key="delete" color="danger" className="text-danger">
-              Delete user
-            </DropdownItem>
-          </DropdownMenu>
+          <Button isIconOnly aria-label="User actions" variant="tertiary">
+            <EllipsisVerticalIcon size={16} />
+          </Button>
+          <Dropdown.Popover>
+            <Dropdown.Menu
+              onAction={(key) => setDropdownValue(key as UserMenuOption)}
+              disabledKeys={isMe ? ['delete'] : []}
+            >
+              <Dropdown.Item id="token" textValue="View/Rotate token">
+                <Label>View/Rotate token</Label>
+              </Dropdown.Item>
+              <Dropdown.Item id="edit" textValue="Edit user">
+                <Label>Edit user</Label>
+              </Dropdown.Item>
+              <Dropdown.Item id="change-password" textValue="Change password">
+                <Label>Change password</Label>
+              </Dropdown.Item>
+              <Dropdown.Item id="delete" textValue="Delete user" variant="danger">
+                <Label>Delete user</Label>
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown.Popover>
         </Dropdown>
       </div>
       {dropdownValue === 'token' && (

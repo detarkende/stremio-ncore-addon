@@ -1,4 +1,4 @@
-import { Button, Tooltip, type TooltipProps } from '@heroui/react';
+import { Button, Tooltip } from '@heroui/react';
 import { CopyIcon, CopyXIcon, CopyCheckIcon } from 'lucide-react';
 import { useState } from 'react';
 
@@ -16,10 +16,10 @@ const iconMap = {
   [ButtonState.FAILED]: CopyXIcon,
 };
 
-const tooltipPropsMap: Record<ButtonState, TooltipProps> = {
-  [ButtonState.DEFAULT]: { content: 'Copy to clipboard', isOpen: undefined },
-  [ButtonState.COPIED]: { content: 'Copied!', isOpen: true, color: 'success' },
-  [ButtonState.FAILED]: { content: 'Failed to copy', isOpen: true, color: 'danger' },
+const tooltipStateMap: Record<ButtonState, { content: string; isOpen?: boolean }> = {
+  [ButtonState.DEFAULT]: { content: 'Copy to clipboard' },
+  [ButtonState.COPIED]: { content: 'Copied!', isOpen: true },
+  [ButtonState.FAILED]: { content: 'Failed to copy', isOpen: true },
 };
 
 export function CopyToClipboard({ text }: { text: string }) {
@@ -45,20 +45,23 @@ export function CopyToClipboard({ text }: { text: string }) {
 
   return (
     <Tooltip
-      {...tooltipPropsMap[buttonState]}
-      isOpen={tooltipPropsMap[buttonState].isOpen ?? isTooltipOpen}
+      delay={500}
+      isOpen={tooltipStateMap[buttonState].isOpen ?? isTooltipOpen}
       onOpenChange={(isOpen) => setIsTooltipOpen(isOpen)}
     >
-      <Button
-        size="sm"
-        className="h-6"
-        onPress={handleCopy}
-        isIconOnly
-        aria-label="Copy to clipboard"
-        variant="light"
-      >
-        <Icon size={16} data-testid={`icon-${buttonState}`} />
-      </Button>
+      <Tooltip.Trigger aria-label="Copy tooltip">
+        <Button
+          size="sm"
+          className="h-6"
+          onPress={handleCopy}
+          isIconOnly
+          aria-label="Copy to clipboard"
+          variant="tertiary"
+        >
+          <Icon size={16} data-testid={`icon-${buttonState}`} />
+        </Button>
+      </Tooltip.Trigger>
+      <Tooltip.Content>{tooltipStateMap[buttonState].content}</Tooltip.Content>
     </Tooltip>
   );
 }

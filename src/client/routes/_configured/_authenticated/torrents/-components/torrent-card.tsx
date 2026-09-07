@@ -2,7 +2,7 @@ import { Text } from '@client/components/text';
 import { apiClient } from '@client/integrations/api';
 import { QueryKeys } from '@client/integrations/tanstack-query/keys';
 import { handleHttpError } from '@client/utils/http';
-import { addToast, Button, Card, Chip, Progress } from '@heroui/react';
+import { Button, Card, Chip, Label, ProgressBar, toast } from '@heroui/react';
 import { formatBytes, type Torrent } from '@server/exports';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -37,17 +37,13 @@ export function TorrentCard({
     try {
       await mutateAsync();
       await queryClient.refetchQueries({ queryKey: [QueryKeys.TORRENTS] });
-      addToast({
-        title: 'Torrent deleted',
+      toast.success('Torrent deleted', {
         description: `"${torrent.name}" has been deleted successfully.`,
-        color: 'success',
         timeout: 5000,
       });
     } catch (error) {
-      addToast({
-        title: `Failed to delete "${torrent.name}"`,
+      toast.danger(`Failed to delete "${torrent.name}"`, {
         description: (error as Error).message,
-        color: 'danger',
         timeout: 10_000,
       });
     }
@@ -56,33 +52,33 @@ export function TorrentCard({
   const downloadedLabelId = `downloaded-label-${torrent.infoHash}`;
 
   const card = (
-    <Card as="article" className="p-5 flex flex-col gap-4" aria-labelledby={labelId}>
+    <Card className="p-5 flex flex-col gap-4" role="article" aria-labelledby={labelId}>
       <div className="flex flex-col gap-2">
         <Text as="h2" id={labelId} className="break-all">
           {torrent.name}
         </Text>
-        <Text
-          as="p"
-          id={downloadedLabelId}
-          variant="body-sm"
-          className="text-default-500"
-        >
+        <Text as="p" id={downloadedLabelId} variant="body-sm" className="text-muted">
           Downloaded: {formatBytes(torrent.downloaded)} / {formatBytes(torrent.size)}
         </Text>
-        <Progress
+        <ProgressBar
           aria-labelledby={downloadedLabelId}
-          className="max-w-xl text-default-500"
+          className="max-w-xl text-muted"
           value={torrent.progress * 100}
-          showValueLabel
-          color={torrent.progress === 1 ? 'success' : 'primary'}
-        />
+          color={torrent.progress === 1 ? 'success' : 'accent'}
+        >
+          <Label className="sr-only">Download progress</Label>
+          <ProgressBar.Output />
+          <ProgressBar.Track>
+            <ProgressBar.Fill />
+          </ProgressBar.Track>
+        </ProgressBar>
       </div>
 
       <div className="flex items-center justify-between gap-3">
         <Text
           as="button"
           variant="body-md"
-          className="text-default-500 hover:underline cursor-pointer"
+          className="text-muted hover:underline cursor-pointer"
           onClick={() => setIsOpen((v) => !v)}
           aria-expanded={isOpen}
           aria-controls={`torrent-files-${torrent.infoHash}`}
@@ -91,16 +87,15 @@ export function TorrentCard({
         </Text>
         <div className="flex items-center gap-2">
           {isUnnecessary && (
-            <Chip size="sm" color="warning" variant="flat">
+            <Chip size="sm" color="warning" variant="soft">
               Unnecessary
             </Chip>
           )}
           <Button
             size="sm"
-            color="danger"
-            variant="flat"
+            variant="danger-soft"
             onPress={handleDelete}
-            isLoading={isPending}
+            isPending={isPending}
           >
             Delete
           </Button>
@@ -110,7 +105,7 @@ export function TorrentCard({
       {isOpen && (
         <div
           id={`torrent-files-${torrent.infoHash}`}
-          className="max-w-xl rounded-lg border border-default-200 bg-default-50/40 p-3 flex flex-col gap-2"
+          className="max-w-xl rounded-lg border border-border bg-surface/40 p-3 flex flex-col gap-2"
         >
           {torrent.files.map((file) => (
             <TorrentFile key={file.path} torrent={torrent} file={file} />

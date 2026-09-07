@@ -13,7 +13,7 @@ vi.mock('./logout-button', () => ({
 import { render } from '@client/test-utils/render';
 import { UserRole } from '@server/exports';
 
-import { Header } from './header';
+import { Header } from './header/header';
 
 describe('Header', () => {
   it('should render regular user navigation', async () => {

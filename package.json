@@ -51,8 +51,8 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@heroui/react": "^2.8.10",
-    "@heroui/theme": "^2.4.26",
+    "@heroui/react": "^3.2.4",
+    "@heroui/styles": "^3.2.4",
     "@rolldown/plugin-babel": "^0.2.3",
     "@tailwindcss/vite": "^4.3.2",
     "@tanstack/devtools-vite": "^0.8.1",
@@ -85,7 +85,6 @@
     "bitfield": "^5.0.1",
     "clsx": "^2.1.1",
     "drizzle-kit": "1.0.0-rc.4",
-    "framer-motion": "^12.42.2",
     "knip": "^6.24.0",
     "lucide-react": "^1.23.0",
     "mock-fs": "^5.5.0",

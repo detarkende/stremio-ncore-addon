@@ -2,16 +2,7 @@ import { Text } from '@client/components/text';
 import { apiClient } from '@client/integrations/api';
 import { QueryKeys } from '@client/integrations/tanstack-query/keys';
 import { handleHttpError } from '@client/utils/http';
-import {
-  addToast,
-  Button,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  useDisclosure,
-} from '@heroui/react';
+import { Button, Modal, toast, useOverlayState } from '@heroui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
@@ -33,24 +24,25 @@ export function DeleteUnnecessaryTorrents({
     },
   });
 
-  const { onOpen, isOpen, onOpenChange, onClose } = useDisclosure({
-    onClose: () => deleteMutation.reset(),
+  const state = useOverlayState({
+    onOpenChange: (isOpen) => {
+      if (!isOpen) {
+        deleteMutation.reset();
+      }
+    },
   });
 
   const deleteUnnecessaryTorrents = useCallback(async () => {
     try {
       const result = await deleteMutation.mutateAsync();
       if (result.failed.length === 0) {
-        addToast({
-          color: 'success',
-          title: `Successfully deleted ${result.deleted.length} unnecessary torrents`,
-        });
-        onClose();
+        toast.success(
+          `Successfully deleted ${result.deleted.length} unnecessary torrents`,
+        );
+        state.close();
       }
     } catch (error) {
-      addToast({
-        color: 'danger',
-        title: 'Failed to delete unnecessary torrents',
+      toast.danger('Failed to delete unnecessary torrents', {
         description: (error as Error).message,
       });
     } finally {
@@ -58,56 +50,58 @@ export function DeleteUnnecessaryTorrents({
         queryKey: [QueryKeys.TORRENTS, QueryKeys.UNNECESSARY_TORRENTS],
       });
     }
-  }, [onClose, queryClient, deleteMutation]);
+  }, [queryClient, deleteMutation, state]);
 
   return (
     <>
       <Button
-        color="danger"
-        variant="flat"
-        onPress={onOpen}
+        variant="danger-soft"
+        onPress={state.open}
         isDisabled={isDisabled || deleteMutation.isPending}
       >
         Delete unnecessary torrents
       </Button>
 
-      <Modal
-        isOpen={isOpen}
-        isDismissable={!deleteMutation.isPending}
-        onOpenChange={onOpenChange}
-        size="xl"
-      >
-        <ModalContent>
-          <>
-            <ModalHeader>Delete unnecessary torrents</ModalHeader>
-            <ModalBody>
-              <Text as="p">
-                This will attempt to delete unnecessary torrents. This action cannot be
-                undone.
-              </Text>
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                variant="light"
-                onPress={onClose}
-                isDisabled={deleteMutation.isPending}
-              >
-                Cancel
-              </Button>
-              <Button
-                color="danger"
-                onPress={deleteUnnecessaryTorrents}
-                isLoading={deleteMutation.isPending}
-                isDisabled={deleteMutation.isPending}
-              >
-                Delete torrents
-              </Button>
-            </ModalFooter>
-          </>
-        </ModalContent>
+      <Modal>
+        <Modal.Backdrop
+          isOpen={state.isOpen}
+          isDismissable={!deleteMutation.isPending}
+          onOpenChange={state.setOpen}
+        >
+          <Modal.Container size="lg">
+            <Modal.Dialog>
+              <Modal.Header>
+                <Modal.Heading>Delete unnecessary torrents</Modal.Heading>
+              </Modal.Header>
+              <Modal.Body>
+                <Text as="p">
+                  This will attempt to delete unnecessary torrents. This action cannot be
+                  undone.
+                </Text>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  variant="tertiary"
+                  onPress={state.close}
+                  isDisabled={deleteMutation.isPending}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="danger"
+                  onPress={deleteUnnecessaryTorrents}
+                  isPending={deleteMutation.isPending}
+                  isDisabled={deleteMutation.isPending}
+                >
+                  Delete torrents
+                </Button>
+              </Modal.Footer>
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
       </Modal>
 
-      <DeletionResultsModal result={deleteMutation.data ?? null} onClose={onClose} />
+      <DeletionResultsModal result={deleteMutation.data ?? null} onClose={state.close} />
     </>
   );
 }

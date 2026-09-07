@@ -5,7 +5,7 @@ import { Text } from '@client/components/text';
 import { apiClient } from '@client/integrations/api';
 import { isConfiguredQueryOptions } from '@client/integrations/tanstack-query/queries/config';
 import { handleHttpError } from '@client/utils/http';
-import { addToast, Card, Form } from '@heroui/react';
+import { Card, Form, toast } from '@heroui/react';
 import {
   createConfigSchema,
   Language,
@@ -78,19 +78,15 @@ function RouteComponent() {
     onSubmit: async ({ value }) => {
       try {
         await mutateAsync(value);
-        addToast({
-          title: 'Setup complete',
+        toast.success('Setup complete', {
           description: 'You can now log in with your admin account.',
-          color: 'success',
           timeout: 5000,
         });
         await queryClient.refetchQueries(isConfiguredQueryOptions);
         await router.invalidate();
       } catch (error) {
-        addToast({
-          title: 'Setup failed',
+        toast.danger('Setup failed', {
           description: (error as Error)?.message,
-          color: 'danger',
           timeout: 5000,
         });
         firstFieldRef.current?.focus();
@@ -142,9 +138,7 @@ function RouteComponent() {
               />
             </Card>
 
-            <form.SubmitButton color="primary" className="w-full">
-              Complete setup
-            </form.SubmitButton>
+            <form.SubmitButton className="w-full">Complete setup</form.SubmitButton>
           </Form>
         </form.AppForm>
       </div>

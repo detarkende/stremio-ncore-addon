@@ -1,0 +1,109 @@
+/* inter-latin-wght-normal */
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(https://cdn.jsdelivr.net/fontsource/fonts/inter:vf@5.3.0/latin-wght-normal.woff2)
+    format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/*
+ * HeroUI Theme Customization
+ * Add this to your global.css after importing @heroui/styles
+ * Only includes variables users need to customize
+ * @see https://heroui.com/docs/react/getting-started/theming
+ */
+
+:root {
+  --accent-hue: 270;
+  --base: 0.0075;
+  --font-inter: 'Inter Variable', sans-serif;
+}
+
+:root,
+.light,
+.default,
+[data-theme='light'],
+[data-theme='default'] {
+  /* Theme Colors (Light Mode) */
+  --accent: oklch(62.04% 0.195 var(--accent-hue));
+  --accent-foreground: oklch(99.11% 0 0);
+  --background: oklch(97.02% var(--base) var(--accent-hue));
+  --border: oklch(90% var(--base) var(--accent-hue));
+  --danger: oklch(65.32% 0.2335 5.1);
+  --danger-foreground: oklch(99.11% 0 0);
+  --default: oklch(94% var(--base) var(--accent-hue));
+  --default-foreground: oklch(21.03% 0.0059 var(--accent-hue));
+  --field-background: oklch(100% 0.0008 var(--accent-hue));
+  --field-border: transparent;
+  --field-foreground: oklch(21.03% var(--base) var(--accent-hue));
+  --field-placeholder: oklch(55.17% 0.003 var(--accent-hue));
+  --focus: oklch(62.04% 0.195 var(--accent-hue));
+  --foreground: oklch(21.03% var(--base) var(--accent-hue));
+  --muted: oklch(55.17% 0.003 var(--accent-hue));
+  --overlay: oklch(100% 0.0004 var(--accent-hue));
+  --overlay-foreground: oklch(21.03% var(--base) var(--accent-hue));
+  --scrollbar: oklch(87.1% var(--base) var(--accent-hue));
+  --segment: oklch(100% var(--base) var(--accent-hue));
+  --segment-foreground: oklch(21.03% var(--base) var(--accent-hue));
+  --separator: oklch(92% var(--base) var(--accent-hue));
+  --success: oklch(73.29% 0.1941 130.17);
+  --success-foreground: oklch(21.03% 0.0059 130.17);
+  --surface: oklch(100% 0.0008 var(--accent-hue));
+  --surface-foreground: oklch(21.03% var(--base) var(--accent-hue));
+  --surface-secondary: oklch(95.24% 0.0012 var(--accent-hue));
+  --surface-secondary-foreground: oklch(21.03% var(--base) var(--accent-hue));
+  --surface-tertiary: oklch(93.73% 0.0012 var(--accent-hue));
+  --surface-tertiary-foreground: oklch(21.03% var(--base) var(--accent-hue));
+  --warning: oklch(78.19% 0.159 51.69);
+  --warning-foreground: oklch(21.03% 0.0059 51.69);
+
+  /* Border Radius */
+  --radius: 0.5rem;
+  --field-radius: 0.75rem;
+
+  /* Font Family */
+  /* Make sure to load Inter font in your app */
+  --font-sans: var(--font-inter);
+}
+
+.dark,
+[data-theme='dark'] {
+  color-scheme: dark;
+  /* Theme Colors (Dark Mode) */
+  --accent: oklch(62.04% 0.195 var(--accent-hue));
+  --accent-foreground: oklch(99.11% 0 0);
+  --background: oklch(12% var(--base) var(--accent-hue));
+  --border: oklch(28% var(--base) var(--accent-hue));
+  --danger: oklch(59.4% 0.1973 3.99);
+  --danger-foreground: oklch(99.11% 0 0);
+  --default: oklch(27.4% var(--base) var(--accent-hue));
+  --default-foreground: oklch(99.11% 0 0);
+  --field-background: oklch(21.03% 0.003 var(--accent-hue));
+  --field-border: transparent;
+  --field-foreground: oklch(99.11% var(--base) var(--accent-hue));
+  --field-placeholder: oklch(70.5% 0.003 var(--accent-hue));
+  --focus: oklch(62.04% 0.195 var(--accent-hue));
+  --foreground: oklch(99.11% var(--base) var(--accent-hue));
+  --muted: oklch(70.5% 0.003 var(--accent-hue));
+  --overlay: oklch(21.03% 0.003 var(--accent-hue));
+  --overlay-foreground: oklch(99.11% var(--base) var(--accent-hue));
+  --scrollbar: oklch(70.5% var(--base) var(--accent-hue));
+  --segment: oklch(39.64% var(--base) var(--accent-hue));
+  --segment-foreground: oklch(99.11% var(--base) var(--accent-hue));
+  --separator: oklch(25% var(--base) var(--accent-hue));
+  --success: oklch(73.29% 0.1941 130.17);
+  --success-foreground: oklch(21.03% 0.0059 130.17);
+  --surface: oklch(21.03% 0.003 var(--accent-hue));
+  --surface-foreground: oklch(99.11% var(--base) var(--accent-hue));
+  --surface-secondary: oklch(25.7% 0.0023 var(--accent-hue));
+  --surface-secondary-foreground: oklch(99.11% var(--base) var(--accent-hue));
+  --surface-tertiary: oklch(27.21% 0.0023 var(--accent-hue));
+  --surface-tertiary-foreground: oklch(99.11% var(--base) var(--accent-hue));
+  --warning: oklch(82.03% 0.1392 55.7);
+  --warning-foreground: oklch(21.03% 0.0059 55.7);
+}

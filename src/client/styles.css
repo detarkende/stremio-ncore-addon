@@ -1,15 +1,26 @@
 @import 'tailwindcss';
-@plugin './integrations/heroui/css-plugin.ts';
-
-@source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+@import '@heroui/styles';
+@import './theme.css';
 @custom-variant dark (&:is(.dark *));
 
-.container {
+@utility container {
   @apply mx-auto max-w-[min(100vw,80rem)] px-6;
 }
 
-html,
+html {
+  height: 100%;
+  min-height: 100%;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
+
 body,
 #app {
   height: 100%;
+}
+
+.lucide {
+  stroke-width: 3px;
+  width: 1rem;
+  height: 1rem;
 }

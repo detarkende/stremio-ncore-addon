@@ -22,7 +22,7 @@ export function ConfigSettings() {
   if (query.isPending) {
     return (
       <Wrapper>
-        <div className="bg-default-200 rounded-xl flex items-center justify-center w-full h-58">
+        <div className="bg-surface-secondary rounded-xl flex items-center justify-center w-full h-58">
           <Spinner size="lg" />
         </div>
       </Wrapper>
@@ -31,16 +31,16 @@ export function ConfigSettings() {
   if (query.error) {
     return (
       <Wrapper>
-        <div className="bg-danger-50/50 rounded-xl flex flex-col items-center justify-center gap-4 w-full h-58">
-          <Text as="p" variant="body-lg" className="text-danger-500">
+        <div className="bg-danger-soft rounded-xl flex flex-col items-center justify-center gap-4 w-full h-58">
+          <Text as="p" variant="body-lg" className="text-danger">
             Failed to load configuration.
           </Text>
           {query.error && (
-            <Text variant="body-sm" as="pre" className="mt-2 text-danger-500">
+            <Text variant="body-sm" as="pre" className="mt-2 text-danger">
               {(query.error as Error).message}
             </Text>
           )}
-          <Button color="danger" variant="flat" onPress={() => query.refetch()}>
+          <Button variant="danger-soft" onPress={() => query.refetch()}>
             Retry
           </Button>
         </div>

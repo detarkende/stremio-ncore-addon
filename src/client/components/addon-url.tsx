@@ -1,5 +1,5 @@
 import type { LucideIcon } from '@client/types/icons';
-import { Button, Tooltip } from '@heroui/react';
+import { Tooltip } from '@heroui/react';
 import { ExternalLink } from 'lucide-react';
 import { useId, useState } from 'react';
 
@@ -30,25 +30,26 @@ export function AddonUrl({
         <Text
           as="p"
           variant="body-sm"
-          className="text-default-500 flex items-center gap-2"
+          className="text-muted flex items-center gap-2"
           id={labelId}
         >
           {Icon && <Icon size={12} className="ml-1" />} {label}
         </Text>
-        <div className="flex gap-1 items-center">
-          <div className="w-full flex items-start gap-2 bg-default-200 px-3 py-2 rounded-xl">
-            <Tooltip
-              delay={500}
-              content={<code className="break-all">{url}</code>}
-              placement="top"
-            >
-              <code
-                onClick={toggleWrapUrl}
-                aria-labelledby={labelId}
-                className={`w-full ${wrapUrl ? 'wrap-break-word' : 'text-nowrap'} overflow-hidden text-ellipsis`}
-              >
-                {url}
-              </code>
+        <div className="min-w-0 flex gap-1 items-center">
+          <div className="min-w-0 w-full flex items-start gap-2 bg-surface-secondary px-3 py-2 rounded-xl">
+            <Tooltip delay={500}>
+              <Tooltip.Trigger className="min-w-0 flex-1">
+                <code
+                  onClick={toggleWrapUrl}
+                  aria-labelledby={labelId}
+                  className={`block min-w-0 w-full ${wrapUrl ? 'wrap-break-word' : 'text-nowrap'} overflow-hidden text-ellipsis`}
+                >
+                  {url}
+                </code>
+              </Tooltip.Trigger>
+              <Tooltip.Content placement="top">
+                <code className="break-all">{url}</code>
+              </Tooltip.Content>
             </Tooltip>
             <CopyToClipboard text={url} />
           </div>
@@ -56,27 +57,21 @@ export function AddonUrl({
       </div>
 
       <div className="flex gap-4">
-        <Button
-          as="a"
-          color="secondary"
-          variant="solid"
-          size="md"
+        <a
+          className="button button--md button--secondary"
           href={addInAppUrl}
           target="_blank"
         >
           <span className="text-wrap">Stremio App</span>
-        </Button>
-        <Button
-          as="a"
-          color="primary"
-          variant="solid"
-          size="md"
+        </a>
+        <a
+          className="button button--md button--primary"
           href={addOnWebUrl}
           target="_blank"
         >
           <span className="text-wrap">Stremio Web</span>
           <ExternalLink size={16} />
-        </Button>
+        </a>
       </div>
     </div>
   );

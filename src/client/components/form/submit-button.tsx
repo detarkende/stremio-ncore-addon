@@ -3,7 +3,7 @@ import { useStore } from '@tanstack/react-form';
 
 import { useFormContext } from './index';
 
-type SubmitButtonProps = Omit<ButtonProps, 'type' | 'disabled' | 'isLoading'> & {
+type SubmitButtonProps = Omit<ButtonProps, 'type' | 'isDisabled' | 'isPending'> & {
   buttonMode?: 'create' | 'update';
 };
 
@@ -16,6 +16,6 @@ export function SubmitButton({ buttonMode = 'create', ...props }: SubmitButtonPr
   ]);
   const isEnabled = buttonMode === 'create' ? canSubmit : canSubmit && isDirty;
   return (
-    <Button {...props} type="submit" isDisabled={!isEnabled} isLoading={isSubmitting} />
+    <Button {...props} type="submit" isDisabled={!isEnabled} isPending={isSubmitting} />
   );
 }

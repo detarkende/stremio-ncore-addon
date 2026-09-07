@@ -1,7 +1,7 @@
 import { apiClient } from '@client/integrations/api';
 import { QueryKeys } from '@client/integrations/tanstack-query/keys';
 import { handleHttpError } from '@client/utils/http';
-import { addToast, Button } from '@heroui/react';
+import { Button, toast } from '@heroui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { LogOutIcon } from 'lucide-react';
@@ -22,19 +22,15 @@ export function LogoutButton() {
   const logout = async () => {
     try {
       await mutateAsync();
-      addToast({
-        title: 'Logged out',
+      toast.success('Logged out', {
         description: 'You have been successfully logged out.',
-        color: 'success',
         timeout: 5000,
       });
       await queryClient.refetchQueries({ queryKey: [QueryKeys.ME] });
       await router.invalidate();
     } catch (error) {
-      addToast({
-        title: 'Logout failed',
+      toast.danger('Logout failed', {
         description: (error as Error).message,
-        color: 'danger',
         timeout: 10_000,
       });
     }
@@ -42,12 +38,12 @@ export function LogoutButton() {
 
   return (
     <Button
-      color="danger"
       onPress={logout}
-      variant="light"
-      className="text-large px-0 sm:px-4"
+      variant="ghost"
+      size="lg"
+      className="text-danger hover:bg-danger-soft-hover -mr-4 -mt-2 sm:mr-0 sm:mt-0"
     >
-      <LogOutIcon size={16} />
+      <LogOutIcon />
       Logout
     </Button>
   );

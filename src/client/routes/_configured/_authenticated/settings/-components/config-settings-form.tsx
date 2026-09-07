@@ -3,7 +3,7 @@ import { AddonSettingsFields } from '@client/components/form/field-groups/addon-
 import { apiClient } from '@client/integrations/api';
 import { configQueryOptions } from '@client/integrations/tanstack-query/queries/config';
 import { handleHttpError } from '@client/utils/http';
-import { addToast } from '@heroui/react';
+import { toast } from '@heroui/react';
 import {
   updateConfigSchema,
   type Configuration,
@@ -33,18 +33,14 @@ export function ConfigSettingsForm({ config }: { config: Configuration }) {
     onSubmit: async ({ value }) => {
       try {
         await mutateAsync(value);
-        addToast({
-          title: 'Configuration updated successfully.',
-          color: 'success',
+        toast.success('Configuration updated successfully.', {
           timeout: 5000,
         });
         await queryClient.refetchQueries(configQueryOptions);
         form.reset(value);
       } catch (error) {
-        addToast({
-          title: 'Failed to update configuration.',
+        toast.danger('Failed to update configuration.', {
           description: (error as Error).message,
-          color: 'danger',
           timeout: 8000,
         });
       }
@@ -72,7 +68,7 @@ export function ConfigSettingsForm({ config }: { config: Configuration }) {
             deleteAfterHitnrun: 'deleteAfterHitnrun',
           }}
         />
-        <form.SubmitButton buttonMode="update" color="primary" className="w-fit">
+        <form.SubmitButton buttonMode="update" className="w-fit">
           Save settings
         </form.SubmitButton>
       </form>

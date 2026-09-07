@@ -1,7 +1,7 @@
 import type { UserRole } from '@server/exports';
 import type { PropsWithChildren } from 'react';
 
-import { Header } from './header';
+import { Header } from './header/header';
 
 interface LayoutProps extends PropsWithChildren {
   userRole: UserRole;
@@ -9,10 +9,8 @@ interface LayoutProps extends PropsWithChildren {
 
 export function Layout({ children, userRole }: LayoutProps) {
   return (
-    <div className="min-h-dvh grid grid-rows-[auto_1fr]">
-      <div className="bg-default-50">
-        <Header userRole={userRole} />
-      </div>
+    <div className="h-full grid grid-rows-[auto_1fr]">
+      <Header userRole={userRole} />
       <main className="container w-full h-full px-6 pt-2 pb-20">{children}</main>
     </div>
   );

@@ -3,7 +3,7 @@ import { UpdateUserFields } from '@client/components/form/field-groups/update-us
 import { apiClient } from '@client/integrations/api';
 import { QueryKeys } from '@client/integrations/tanstack-query/keys';
 import { handleHttpError } from '@client/utils/http';
-import { addToast, Button } from '@heroui/react';
+import { Button, toast } from '@heroui/react';
 import { updateUserSchema, type UpdateUserRequest, type User } from '@server/exports';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -46,24 +46,23 @@ export function EditUserForm({
           await queryClient.invalidateQueries({ queryKey: [QueryKeys.ME] });
         }
         await queryClient.refetchQueries();
-        addToast({
-          title: 'User updated',
+        toast.success('User updated', {
           description: isMe
             ? 'Your user details have been updated successfully.'
             : `User details for "${user.username}" have been updated successfully.`,
-          color: 'success',
           timeout: 5000,
         });
         onClose();
       } catch (error) {
-        addToast({
-          title: isMe
+        toast.danger(
+          isMe
             ? 'Failed to update your user details'
             : `Failed to update user "${user.username}"`,
-          description: (error as Error).message,
-          color: 'danger',
-          timeout: 10_000,
-        });
+          {
+            description: (error as Error).message,
+            timeout: 10_000,
+          },
+        );
       }
     },
   });
@@ -86,9 +85,7 @@ export function EditUserForm({
           }}
         />
         <div className="flex gap-4">
-          <form.SubmitButton color="primary" buttonMode="update">
-            Update User
-          </form.SubmitButton>
+          <form.SubmitButton buttonMode="update">Update User</form.SubmitButton>
           <Button onPress={onClose} type="button">
             Cancel
           </Button>
