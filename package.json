@@ -96,6 +96,7 @@
     "react-dom": "^19.2.7",
     "sass-embedded": "^1.100.0",
     "scss": "^0.2.4",
+    "selfsigned": "^5.5.0",
     "stremio-addon-sdk": "^1.6.10",
     "tailwindcss": "^4.3.2",
     "tsx": "^4.23.0",
