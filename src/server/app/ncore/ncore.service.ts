@@ -220,9 +220,14 @@ export class NcoreService {
       const html = await response.text();
       logger.info(`Successfully fetched torrent details page`, { ncoreId });
       const { document } = new JSDOM(html).window;
-      const downloadLink = `${env.NCORE_URL}/${document
-        .querySelector('.download > a')
-        ?.getAttribute('href')}`;
+      const downloadLinkElement = document.querySelector('.download > a');
+      const downloadLinkHref = downloadLinkElement?.getAttribute('href');
+      if (!downloadLinkElement || !downloadLinkHref) {
+        throw new Error('Failed to find download link on torrent details page', {
+          cause: { ncoreId },
+        });
+      }
+      const downloadLink = `${env.NCORE_URL}/${downloadLinkHref}`;
       logger.info(`Successfully extracted torrent download URL`, {
         ncoreId,
         downloadLink,
