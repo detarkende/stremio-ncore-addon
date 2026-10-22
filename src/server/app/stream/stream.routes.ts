@@ -10,19 +10,35 @@ import { getMimeType } from 'hono/utils/mime';
 import { useUrlTokenAuth } from '../auth/auth.middleware';
 import { useIsConfigured } from '../config/config.middleware';
 import { ncoreService } from '../ncore/index';
+import { type TorrentDetails, type ParsedTorrentFileDetails } from '../torrent/index';
 import {
-  downloadAndParseTorrent,
-  type TorrentDetails,
-  type ParsedTorrentFileDetails,
-  torrentClient,
-} from '../torrent/index';
-import { insertNewTorrent, insertUserTorrentFileRecord } from '../torrent/torrent.utils';
+  getFileForHead,
+  getOrAddTorrent,
+  insertUserTorrentFileRecord,
+} from '../torrent/torrent.utils';
 import {
   listStreamsParamsSchema,
   playStreamParamsSchema,
   type CinemetaResponse,
 } from './stream.schema';
 import { convertTorrentToStream, getCinemetaData, orderTorrents } from './stream.utils';
+
+function throwFileNotFound({
+  infoHash,
+  torrentName,
+  filePath,
+}: {
+  infoHash: string;
+  torrentName: string;
+  filePath: string;
+}): never {
+  logger.error('File not found in torrent when trying to play', {
+    infoHash,
+    torrentName,
+    filePath,
+  });
+  throw new HTTPException(HttpStatusCode.NOT_FOUND);
+}
 
 export const streamRoutes = new Hono()
   .basePath('/api')
@@ -102,46 +118,36 @@ export const streamRoutes = new Hono()
     zValidator('query', playStreamParamsSchema),
     async (c) => {
       const { type, imdbId, torrentSourceId, infoHash, filePath } = c.req.valid('query');
+      if (c.req.method === 'HEAD') {
+        const file = await getFileForHead({ infoHash, torrentSourceId, filePath });
+        if (!file) {
+          throwFileNotFound({ infoHash, torrentName: 'unknown', filePath });
+        }
 
-      let torrent = await torrentClient.getTorrent(infoHash);
-      if (!torrent) {
-        const ncoreUrl = await ncoreService.getTorrentUrlByNcoreId(torrentSourceId);
-        const { torrentFileData, torrentBuffer } =
-          await downloadAndParseTorrent(ncoreUrl);
-        const dbTorrent = insertNewTorrent({
-          userId: c.var.user.id,
-          imdbId,
-          torrentFileData,
-          torrentBuffer,
-          type,
-        });
-        torrent = await torrentClient.addTorrent(dbTorrent, true);
-      } else {
-        // Log user-torrent association if not already present
-        insertUserTorrentFileRecord({
-          userId: c.var.user.id,
-          torrentInfoHash: infoHash,
+        return c.body(null, 200, {
+          'Content-Length': `${file.size}`,
+          'Content-Type': getMimeType(file.path) || 'application/octet-stream',
         });
       }
+
+      const torrent = await getOrAddTorrent({
+        userId: c.var.user.id,
+        imdbId,
+        type,
+        torrentSourceId,
+        infoHash,
+      });
+      insertUserTorrentFileRecord({
+        userId: c.var.user.id,
+        torrentInfoHash: infoHash,
+      });
 
       const file = torrent.files.find((f) => f.path === filePath);
 
       if (!file) {
-        logger.error(`File not found in torrent when trying to play`, {
-          infoHash,
-          torrentName: torrent.name,
-          filePath,
-        });
-        throw new HTTPException(HttpStatusCode.NOT_FOUND);
+        throwFileNotFound({ infoHash, torrentName: torrent.name, filePath });
       }
       const fileType = getMimeType(file.path) || 'application/octet-stream';
-
-      if (c.req.method === 'HEAD') {
-        return c.body(null, 200, {
-          'Content-Length': `${file.size}`,
-          'Content-Type': fileType,
-        });
-      }
 
       const range = parseRangeHeader(c.req.header('range'), file.size);
       const stream = file.getStream(range);
