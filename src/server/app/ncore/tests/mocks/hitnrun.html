@@ -1,0 +1,951 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Language" content="hu">
+  <link rel="icon" href="https://static.ncore.pro/styles/ncore.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="https://static.ncore.pro/styles/ncore.ico" type="image/x-icon">
+  <link rel="stylesheet" href="https://static.ncore.pro/styles/brutecore/style_sslv11.css" type="text/css">
+  <!--		<link rel="alternate" href="/rss/rss.xml" type="application/rss+xml" title="nCORE Torrentek">-->
+  <!--		<link rel="alternate" href="/rss/rssdd.xml" type="application/rss+xml" title="nCORE Torrentek Közvetlen Letöltéssel">-->
+  <link rel="alternate" href="/rss.php?key=mockkey" title="nCore Torrentek közvetlen letöltéssel" />
+  <title>nCore | Seed kötelezett torrentek</title>
+  <!--[if lt IE 7.]>
+		<script defer type="text/javascript" src="https://static.ncore.pro/static/js/pngfix.js"></script>
+		<![endif]-->
+  <link rel="stylesheet" href="https://static.ncore.pro/static/js/fancybox/fancybox.css" type="text/css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.2.1/jquery-migrate.min.js"></script>
+  <script language="JavaScript" type="text/javascript"
+    src="https://static.ncore.pro/static/js/jquery_stuff2.js?v=1"></script>
+  <script language="JavaScript" type="text/javascript"
+    src="https://static.ncore.pro/static/js/ncorev12.js?v=1"></script>
+</head>
+
+<body>
+  <input type="hidden" id="confg" data-uid="1754263" data-unique="3bhb32v4f23hgn4g23v4gb32hjb3gh2" />
+  <!--
+	<div style="position:fixed;left:10px;bottom:10px;z-index:2000;" id="ape-container"></div>
+	<script type="text/javaScript" src="https://static.ncore.pro/static/js/push.js"></script>
+	<script type="text/javaScript">
+		var myCats = ["xvid_hun","xvid","dvd_hun","dvd","dvd9_hun","dvd9","hd_hun","hd","xvidser_hun","xvidser","dvdser_hun","dvdser","hdser_hun","hdser","xxx_xvid","xxx_dvd","xxx_imageset","xxx_hd","mp3_hun","mp3","lossless_hun","lossless","clip","game_iso","game_rip","console","ebook_hun","ebook","iso","misc","mobil"];
+		var catsName = {"xvid_hun":"Film SD\/HU","xvid":"Film SD\/EN","dvd_hun":"Film DVDR\/HU","dvd":"Film DVDR\/EN","dvd9_hun":"Film DVD9\/HU","dvd9":"Film DVD9\/EN","hd_hun":"Film HD\/HU","hd":"Film HD\/EN","xvidser_hun":"Sorozat SD\/HU","xvidser":"Sorozat SD\/EN","dvdser_hun":"Sorozat DVDR\/HU","dvdser":"Sorozat DVDR\/EN","hdser_hun":"Sorozat HD\/HU","hdser":"Sorozat HD\/EN","mp3_hun":"MP3\/HU","mp3":"MP3\/EN","lossless_hun":"Lossless\/HU","lossless":"Lossless\/EN","clip":"Klip","game_iso":"J\u00e1t\u00e9k PC\/ISO","game_rip":"J\u00e1t\u00e9k PC\/RIP","console":"Konzol","ebook_hun":"eBook\/HU","ebook":"eBook\/EN","iso":"APP\/ISO","misc":"APP\/RIP","mobil":"APP\/Mobil","xxx_xvid":"XXX SD","xxx_dvd":"XXX DVDR\/DVD9","xxx_imageset":"XXX Imageset","xxx_hd":"XXX HD"};
+		function stripslashes (str) {
+			return (str + '').replace(/\\(.?)/g, function (s, n1) {switch (n1){case '\\':return '\\';case '0':return '\u0000';case '':return '';default:return n1;}});
+		}
+		// <![CDATA[
+		function messageReceived(text, id, channel) {
+			var d=$.parseJSON(text);
+			var pid = d.id;
+			var pcat = d.cat;
+			var pname = stripslashes(decodeURIComponent(d.name));
+			pname = pname.replace(/\+/g," ",pname);
+			if($.inArray(pcat, myCats)>=0){
+				$("#ape-container").prepend('<div id="apeT'+pid+'" class="ape-popup"><span class="comment">Új torrent!</span><span onclick="$(\'#apeT'+pid+'\').fadeOut(\'slow\', function(){$(\'#apeT'+pid+'\').remove()});" class="ape-close">X</span><br /><a href="/torrents.php?action=details&id='+pid+'">' + pname + '</a><br /><span class="comment">' + catsName[pcat] + '</span></div>');
+				setInterval("$(\'#apeT"+pid+"\').fadeOut(\'slow\', function(){$(\'#apeT"+pid+"\').remove()});", 15000);
+			}
+		};
+		var pushstream = new PushStream({
+			host: 'push.ncore.pro',
+			port: window.location.port,
+			useSSL: true,
+			modes: "websocket|eventsource|longpolling",
+			longPollingByHeaders: false,
+			longPollingTagArgument: 'tag',
+			longPollingTimeArgument: 'time',
+			longPollingUseJSONP: false,
+			longPollingTimeout: 30000
+		});
+		pushstream.onmessage = messageReceived;
+		pushstream.addChannel('live_torrents');
+		pushstream.connect();
+
+		// ]]>
+	</script>
+-->
+  <div id="container">
+    <div id="container_in">
+      <div id="div_body">
+        <div id="fej_csik_felso"></div>
+        <div id="fej_fejlec_bg">
+          <div id="fej_fejlec"></div>
+        </div>
+        <div id="menu_bg">
+          <div id="menu_all">
+            <div id="menu_left"></div>
+            <div id="menu_center">
+              <a href="index.php" title="Új hír!">
+                <div class="topnews_alert">!</div>
+              </a>
+              <div class="menu_arrow"></div>
+              <div class="menu_text"><a href="index.php" id="menu_1" class="menu_link">Főoldal</a></div>
+              <div class="menu_arrow"></div>
+              <div class="menu_text"><a href="torrents.php" id="menu_2" class="menu_link">Letöltés</a></div>
+              <div class="menu_arrow"></div>
+              <div class="menu_text"><a href="upload.php" id="menu_3" class="menu_link">Feltöltés</a></div>
+              <div class="menu_arrow"></div>
+              <div class="menu_text"><a href="requests.php" id="menu_4" class="menu_link">Kérések</a></div>
+              <div class="menu_arrow"></div>
+              <div class="menu_text"><a href="recommended.php" id="menu_5" class="menu_link">Ajánló</a></div>
+              <div class="menu_arrow"></div>
+              <div class="menu_text"><a href="forum.php" id="menu_6" class="menu_link">Fórum</a></div>
+              <div class="menu_arrow"></div>
+              <div class="menu_text"><a href="wiki.php" id="menu_7" class="menu_link">Wiki</a></div>
+              <div class="menu_arrow"></div>
+              <div class="menu_text"><a href="users.php" id="menu_8" class="menu_link">Felhasználók</a></div>
+              <div class="menu_arrow"></div>
+              <div class="menu_text"><a href="helpdesk.php" id="menu_9" class="menu_link">HelpDesk</a></div>
+              <div class="menu_arrow"></div>
+              <div class="menu_text"><a href="exit.php?q=3bhb32v4f23hgn4g23v4gb32hjb3gh2" id="menu_11"
+                  class="menu_link">Kilépés</a></div>
+            </div>
+            <div id="menu_right"></div>
+          </div>
+        </div>
+        <div id="infosav">
+          <div class="infosav_l"></div>
+          <div class="infosav_c">
+            <div id="infosav_adatok">
+              <a href="profile.php">username</a>
+              (Felhasználó),
+              Pontok: <a href="wiki.php?action=read&id=33">1088</a>
+              Fel: <span class="list_alert">12.18 GiB</span>
+              Helyezés:
+              <a class="list_alert" href="wiki.php?action=read&id=581">155664</a>.
+              [<a class="list_alert" href="hitnrun.php">Aktivitás</a>]
+              [<a class="premium" href="/shop">Prémium</a>]
+
+              <!--[<a class="premium" href="nyeremenyjatek.php">Játék</a>]-->
+              <!--[<a class="premium" href="kviz.php">Kvíz</a>]-->
+            </div>
+            <div id="infosav_extra">
+              <div id="i_e_log"><a href="log.php" title="Torrentek naplózása"><img
+                    src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"
+                    class="i_e_link"></a></div>
+              <div class="i_e_vonal"></div>
+              <div id="i_e_baratok"><a href="profile.php?action=friends" title="Barátok"><img
+                    src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"
+                    class="i_e_link"></a></div>
+              <div class="i_e_vonal"></div>
+              <div id="i_e_konyvjelzo"><a id="konyvjelzo" href="bookmarks.php" title="Könyvjelző"><img
+                    src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"
+                    class="i_e_link"></a></div>
+              <div class="i_e_vonal"></div>
+              <div id="i_e_beallitasok"><a href="profile.php?action=config" title="Profil beállítása"><img
+                    src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"
+                    class="i_e_link"></a></div>
+              <div class="i_e_vonal"></div>
+              <div id="i_e_level"><a href="inbox.php" title="Üzeneteim"><img
+                    src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"
+                    class="i_e_link"></a></div>
+              <div class="i_e_vonal"></div>
+              <div id="i_e_meghivo"><a href="invites" title="Meghívó"><img
+                    src="data:image/gif;base64,R0lGODlhDwAPAJEAAAAAAP///////wAAACH5BAEAAAIALAAAAAAPAA8AAAINlI+py+0Po5y02otnAQA7"
+                    class="i_e_link"></a></div>
+            </div>
+          </div>
+          <div class="infosav_r"></div>
+        </div>
+        <div id="main_all">
+          <div id="main">
+            <div class="infocsik" style="background:#BB0000;"><a href="index.php" style="color:#fff;">Új hír van a
+                főoldalon!</a> / <a href='promo.php' style='color:#fff;'>Új promóciós hír lett kiírva</a></div>
+            <div id="main_tartalom">
+              <div class="fobox_all">
+                <div class="fobox_fej_t"></div>
+                <div class="fobox_fej">Opciók</div>
+                <div class="fobox_fej_b"></div>
+                <div class="fobox_tartalom_t"></div>
+                <div class="fobox_tartalom">
+                  <a href="hitnrun.php?showall=true">Összes torrent</a> | <a href="hitnrun.php?showall=false">Seed
+                    kötelezett torrentek</a>
+                </div>
+                <div class="fobox_lab"></div>
+              </div>
+              <div class="fobox_all">
+                <div class="fobox_fej_t"></div>
+                <div class="fobox_fej">Statisztika</div>
+                <div class="fobox_fej_b"></div>
+                <div class="fobox_tartalom_t"></div>
+                <div class="fobox_tartalom">
+                  <div style="width:36%;float:left;">
+                    <div class="dt" style="border:0;width:200px;">Napi helyezés:</div>
+                    <div class="dd" style="border:0;">234693</div>
+                    <div class="dt" style="border:0;width:200px;">Heti helyezés:</div>
+                    <div class="dd" style="border:0;">178617</div>
+                    <div class="dt" style="border:0;width:200px;">Havi helyezés:</div>
+                    <div class="dd" style="border:0;">163890</div>
+                    <div class="dt" style="border:0;width:200px;">Elmúlt havi helyezés:</div>
+                    <div class="dd" style="border:0;">142410</div>
+                    <div class="dt" style="border:0;width:200px;">Jelenleg letölthet:</div>
+                    <div class="dd" style="border:0;">igen</div>
+                    <div class="dt" style="border:0;width:200px;">Lehetséges hit'n'runok száma:</div>
+                    <div class="dd" style="border:0;">0</div>
+                    <div class="dt" style="border:0;width:200px;">Hit'n'runolható torrentek száma:</div>
+                    <div class="dd" style="border:0;">5</div>
+                    <div class="dt" style="border:0;width:200px;">Hit'n'runolt hónapok száma:</div>
+                    <div class="dd" style="border:0;">0</div>
+                    <div class="dt" style="border:0;width:200px;">Hit'n'runolt torrentek száma:</div>
+                    <div class="dd" style="border:0;">0</div>
+                  </div>
+                  <div style="width:64%;float:left;">
+                    <div class="dt" style="border:0;width:100%;font-style:italic;font-weight:100">* A napi helyezés
+                      óránként frissül, éjfélkor pedig nullázódik.</div>
+                    <div class="dt" style="border:0;width:100%;font-style:italic;font-weight:100">* A heti helyezés
+                      óránként frissül, vasárnaponként 23 óra 59 perckor pedig nullázódik.</div>
+                    <div class="dt" style="border:0;width:100%;font-style:italic;font-weight:100">* A havi helyezés
+                      óránként frissül, hónap első napján 0 óra 1 perckor pedig nullázódik.</div>
+                    <div class="dt" style="border:0;width:100%;font-style:italic;font-weight:100">* Az előző hónapban
+                      elért helyezés. Minden hónap első napján frissülő adat.</div>
+                    <div class="dt" style="border:0;width:100%;font-style:italic;font-weight:100">* Jelenleg tudsz-e
+                      letölteni.</div>
+                    <div class="dt" style="border:0;width:100%;font-style:italic;font-weight:100">* Ha minden így
+                      maradna hónap végéig, akkor ennyi hit'n'runolt torrented lenne.</div>
+                    <div class="dt" style="border:0;width:100%;font-style:italic;font-weight:100">* Ennyi torrentnél
+                      nincs seed-kötelezettséged. <a href="wiki.php?action=read&id=20">Rangonként</a> eltérő mennyiség.
+                    </div>
+                    <div class="dt" style="border:0;width:100%;font-style:italic;font-weight:100">* A hit'n'run rendszer
+                      bevezetése óta ennyi büntetett hónapod volt.</div>
+                    <div class="dt" style="border:0;width:100%;font-style:italic;font-weight:100">* E hónapban jelenleg
+                      ennyi torrentnél nem tettél eleget seed-kötelezettségednek, azonban a hónap végéig még lehetőséged
+                      van pótolni azokat.</div>
+                  </div>
+                  <div style="clear:both"></div>
+                </div>
+                <div class="fobox_lab"></div>
+              </div>
+              <div class="lista_all">
+                <div class="lista_fej_t"></div>
+                <div class="lista_fej">Elmúlt időszakban futtatott torrentek (26)</div>
+                <div class="lista_fej_b"></div>
+                <div class="box_alcimek_all">
+                  <div class="box_alap">
+                    <table class="alcim">
+                      <tr>
+                        <td>
+                          <div class="alcim_bal"></div>
+                        </td>
+                        <td>
+                          <div class="hnr_name"><a
+                              href="hitnrun.php?id=1754263&showall=true&order_by=name&o=desc">Név</a></div>
+                        </td>
+                        <td>
+                          <div class="alcim_jobb"></div>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="box_alap">
+                    <table class="alcim">
+                      <tr>
+                        <td>
+                          <div class="alcim_bal"></div>
+                        </td>
+                        <td>
+                          <div class="hnr_start"><a
+                              href="hitnrun.php?id=1754263&showall=true&order_by=start&o=asc">Start</a></div>
+                        </td>
+                        <td>
+                          <div class="alcim_jobb"></div>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="box_alap">
+                    <table class="alcim">
+                      <tr>
+                        <td>
+                          <div class="alcim_bal"></div>
+                        </td>
+                        <td>
+                          <div class="hnr_lastactive"><a
+                              href="hitnrun.php?id=1754263&showall=true&order_by=updated&o=asc">Frissítve</a></div>
+                        </td>
+                        <td>
+                          <div class="alcim_jobb"></div>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="box_alap">
+                    <table class="alcim">
+                      <tr>
+                        <td>
+                          <div class="alcim_bal"></div>
+                        </td>
+                        <td>
+                          <div class="hnr_seed"><a
+                              href="hitnrun.php?id=1754263&showall=true&order_by=seed&o=asc">Status</a></div>
+                        </td>
+                        <td>
+                          <div class="alcim_jobb"></div>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="box_alap">
+                    <table class="alcim">
+                      <tr>
+                        <td>
+                          <div class="alcim_bal"></div>
+                        </td>
+                        <td>
+                          <div class="hnr_up"><a href="hitnrun.php?id=1754263&showall=true&order_by=up&o=asc">Fel</a>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="alcim_jobb"></div>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="box_alap">
+                    <table class="alcim">
+                      <tr>
+                        <td>
+                          <div class="alcim_bal"></div>
+                        </td>
+                        <td>
+                          <div class="hnr_down"><a href="hitnrun.php?id=1754263&showall=true&order_by=down&o=asc">Le</a>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="alcim_jobb"></div>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="box_alap">
+                    <table class="alcim">
+                      <tr>
+                        <td>
+                          <div class="alcim_bal"></div>
+                        </td>
+                        <td>
+                          <div class="hnr_timespent"><a
+                              href="hitnrun.php?id=1754263&showall=true&order_by=remaining&o=asc">Hátravan</a></div>
+                        </td>
+                        <td>
+                          <div class="alcim_jobb"></div>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="box_alap_utolso">
+                    <table class="alcim">
+                      <tr>
+                        <td>
+                          <div class="alcim_bal"></div>
+                        </td>
+                        <td>
+                          <div class="hnr_ratio"><a
+                              href="hitnrun.php?id=1754263&showall=true&order_by=ratio&o=asc">Arány</a></div>
+                        </td>
+                        <td>
+                          <div class="alcim_jobb"></div>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+                <div class="box_torrent_all">
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all2" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all2'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=4038421" onclick="torrent(4038421); return false;"
+                          title="A.House.of.Dynamite.2025.720p.NF.WEB-DL.DDP5.1.Atmos.H.264.HUN.ENG-PTHD">
+                          <nobr>A.House.of.Dynamite.2025.720p.NF.WEB-DL.DDP5.1.Atmos.H....</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">6 napja</div>
+                      <div class="hnr_tlastactive">23 órája</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">99.55 MiB</div>
+                      <div class="hnr_tdown">2.68 GiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.036</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=2218906" onclick="torrent(2218906); return false;"
+                          title="A.Karib.tenger.kalozai-A.vilag.vegen.2007.Open.Matte.WEBRIP.x264.HUN-nubira">
+                          <nobr>A.Karib.tenger.kalozai-A.vilag.vegen.2007.Open.Matte.WE...</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">20 napja</div>
+                      <div class="hnr_tlastactive">8 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">16.79 MiB</div>
+                      <div class="hnr_tdown">36.02 MiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.466</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all2" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all2'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=3924062" onclick="torrent(3924062); return false;"
+                          title="Babygirl.2024.720p.BluRay.DD5.1.x264.HUN-FULCRUM">
+                          <nobr>Babygirl.2024.720p.BluRay.DD5.1.x264.HUN-FULCRUM</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">27 napja</div>
+                      <div class="hnr_tlastactive">22 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">113.14 MiB</div>
+                      <div class="hnr_tdown">11.02 GiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.010</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=3110978" onclick="torrent(3110978); return false;"
+                          title="Cambio.tutto.2020.AMZN.WEBRip.x264.HUN-SFY">
+                          <nobr>Cambio.tutto.2020.AMZN.WEBRip.x264.HUN-SFY</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">8 napja</div>
+                      <div class="hnr_tlastactive">7 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">3.54 MiB</div>
+                      <div class="hnr_tdown">48.08 MiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.074</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all2" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all2'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=1020578" onclick="torrent(1020578); return false;"
+                          title="Ice.Age.2002.720p.RETAiL.BluRay.DTS.Hungarian.x264-WALLE">
+                          <nobr>Ice.Age.2002.720p.RETAiL.BluRay.DTS.Hungarian.x264-WALL...</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">27 napja</div>
+                      <div class="hnr_tlastactive">21 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">27.58 MiB</div>
+                      <div class="hnr_tdown">30.53 MiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.903</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=1251007" onclick="torrent(1251007); return false;"
+                          title="Ice.Age.2002.BDRip.x264.HUN-MDC">
+                          <nobr>Ice.Age.2002.BDRip.x264.HUN-MDC</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">27 napja</div>
+                      <div class="hnr_tlastactive">21 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">74.76 MiB</div>
+                      <div class="hnr_tdown">997.7 MiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.075</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all2" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all2'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=3248015" onclick="torrent(3248015); return false;"
+                          title="Lavinacápa">
+                          <nobr>Lavinacápa</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">20 napja</div>
+                      <div class="hnr_tlastactive">4 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">13.98 MiB</div>
+                      <div class="hnr_tdown">699.91 MiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.020</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=4046786" onclick="torrent(4046786); return false;"
+                          title="Maxton.Hall.The.World.Between.Us.S02E01.720p.AMZN.WEB-DL.DDP5.1.H.264.HUN.GER.ENG-PTHD">
+                          <nobr>Maxton.Hall.The.World.Between.Us.S02E01.720p.AMZN.WEB-D...</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">15 napja</div>
+                      <div class="hnr_tlastactive">4 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">345.51 MiB</div>
+                      <div class="hnr_tdown">3.03 GiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.111</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all2" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all2'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=4046789" onclick="torrent(4046789); return false;"
+                          title="Maxton.Hall.The.World.Between.Us.S02E02.720p.AMZN.WEB-DL.DDP5.1.H.264.HUN.GER.ENG-PTHD">
+                          <nobr>Maxton.Hall.The.World.Between.Us.S02E02.720p.AMZN.WEB-D...</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">14 napja</div>
+                      <div class="hnr_tlastactive">4 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">501.84 MiB</div>
+                      <div class="hnr_tdown">1.86 GiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.264</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=4046791" onclick="torrent(4046791); return false;"
+                          title="Maxton.Hall.The.World.Between.Us.S02E03.720p.AMZN.WEB-DL.DDP5.1.H.264.HUN.GER.ENG-PTHD">
+                          <nobr>Maxton.Hall.The.World.Between.Us.S02E03.720p.AMZN.WEB-D...</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">14 napja</div>
+                      <div class="hnr_tlastactive">4 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">322.23 MiB</div>
+                      <div class="hnr_tdown">2.03 GiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.155</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all2" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all2'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=4051126" onclick="torrent(4051126); return false;"
+                          title="Maxton.Hall.The.World.Between.Us.S02E04.720p.AMZN.WEB-DL.DDP5.1.H.264.HUN.GER.ENG-PTHD">
+                          <nobr>Maxton.Hall.The.World.Between.Us.S02E04.720p.AMZN.WEB-D...</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">7 napja</div>
+                      <div class="hnr_tlastactive">4 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">101.86 MiB</div>
+                      <div class="hnr_tdown">1.36 GiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.073</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=4054824" onclick="torrent(4054824); return false;"
+                          title="Most.Wanted.A.hajsza.S01.HUN.WEB-DL.1080p.H264-LEGION">
+                          <nobr>Most.Wanted.A.hajsza.S01.HUN.WEB-DL.1080p.H264-LEGION</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">21 órája</div>
+                      <div class="hnr_tlastactive">6 órája</div>
+                      <div class="hnr_tseed"><span class="stopped">Stopped</span></div>
+                      <div class="hnr_tup">210.11 MiB</div>
+                      <div class="hnr_tdown">1.57 GiB</div>
+                      <div class="hnr_ttimespent"><span class="stopped">26ó 15p</span></div>
+                      <div class="hnr_tratio"><span class="stopped">0.131</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all2" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all2'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=4050710" onclick="torrent(4050710); return false;"
+                          title="One.Battle.After.Another.2025.1080p.AMZN.WEB-DL.DDP5.1.H.264.HUN.ENG-PTHD">
+                          <nobr>One.Battle.After.Another.2025.1080p.AMZN.WEB-DL.DDP5.1....</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">6 napja</div>
+                      <div class="hnr_tlastactive">23 órája</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">113.66 MiB</div>
+                      <div class="hnr_tdown">11.95 GiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.009</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=4040794" onclick="torrent(4040794); return false;"
+                          title="Only.Murders.in.the.Building.S05.720p.DSNP.WEB-DL.DDP5.1.H.264.HUN.ENG-PTHD">
+                          <nobr>Only.Murders.in.the.Building.S05.720p.DSNP.WEB-DL.DDP5....</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">21 napja</div>
+                      <div class="hnr_tlastactive">4 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">423.06 MiB</div>
+                      <div class="hnr_tdown">1.67 GiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.247</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all2" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all2'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=4031621" onclick="torrent(4031621); return false;"
+                          title="Our.Fault.2025.1080p.AMZN.WEB-DL.DDP5.1.Atmos.H.264.Hun-Winner">
+                          <nobr>Our.Fault.2025.1080p.AMZN.WEB-DL.DDP5.1.Atmos.H.264.Hun...</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">35 napja</div>
+                      <div class="hnr_tlastactive">28 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">467.4 MiB</div>
+                      <div class="hnr_tdown">8.37 GiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.055</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=4031620" onclick="torrent(4031620); return false;"
+                          title="Our.Fault.2025.720p.AMZN.WEB-DL.DDP5.1.Atmos.H.264.Hun-Winner">
+                          <nobr>Our.Fault.2025.720p.AMZN.WEB-DL.DDP5.1.Atmos.H.264.Hun-...</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">35 napja</div>
+                      <div class="hnr_tlastactive">28 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">200.02 MiB</div>
+                      <div class="hnr_tdown">3.86 GiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.051</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all2" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all2'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=1496568" onclick="torrent(1496568); return false;"
+                          title="Pirates.Of.The.Caribbean.II.Dead.Mans.Chest.2006.BDRiP.RETAiL.x264.HuN-HyperX">
+                          <nobr>Pirates.Of.The.Caribbean.II.Dead.Mans.Chest.2006.BDRiP....</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">20 napja</div>
+                      <div class="hnr_tlastactive">4 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">181.64 MiB</div>
+                      <div class="hnr_tdown">1.43 GiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.124</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=965327" onclick="torrent(965327); return false;"
+                          title="Pirates.Of.The.Caribbean.III.At.Worlds.End.2007.720p.RETAiL.BluRay.DTS.HUN.x264-TRiNiTY">
+                          <nobr>Pirates.Of.The.Caribbean.III.At.Worlds.End.2007.720p.RE...</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">20 napja</div>
+                      <div class="hnr_tlastactive">4 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">369.86 MiB</div>
+                      <div class="hnr_tdown">200 MiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">1.849</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all2" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all2'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=1496569" onclick="torrent(1496569); return false;"
+                          title="Pirates.Of.The.Caribbean.III.At.Worlds.End.2007.BDRiP.RETAiL.HuN.x264-HyperX">
+                          <nobr>Pirates.Of.The.Caribbean.III.At.Worlds.End.2007.BDRiP.R...</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">20 napja</div>
+                      <div class="hnr_tlastactive">4 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">184.58 MiB</div>
+                      <div class="hnr_tdown">1.48 GiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.122</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=4046776" onclick="torrent(4046776); return false;"
+                          title="Pluribus.S01E01.We.Is.Us.720p.ATVP.WEB-DL.DDP5.1.Atmos.H.264-FLUX">
+                          <nobr>Pluribus.S01E01.We.Is.Us.720p.ATVP.WEB-DL.DDP5.1.Atmos....</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">7 napja</div>
+                      <div class="hnr_tlastactive">4 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">89.22 MiB</div>
+                      <div class="hnr_tdown">1.43 GiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.061</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all2" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all2'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=4046778" onclick="torrent(4046778); return false;"
+                          title="Pluribus.S01E02.Pirate.Lady.720p.ATVP.WEB-DL.DDP5.1.Atmos.H.264-FLUX">
+                          <nobr>Pluribus.S01E02.Pirate.Lady.720p.ATVP.WEB-DL.DDP5.1.Atm...</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">7 napja</div>
+                      <div class="hnr_tlastactive">4 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">133.79 MiB</div>
+                      <div class="hnr_tdown">1.57 GiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.083</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=4050994" onclick="torrent(4050994); return false;"
+                          title="Pluribus.S01E03.Grenade.720p.ATVP.WEB-DL.DDP5.1.Atmos.H.264-FLUX">
+                          <nobr>Pluribus.S01E03.Grenade.720p.ATVP.WEB-DL.DDP5.1.Atmos.H...</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">6 napja</div>
+                      <div class="hnr_tlastactive">4 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">86.79 MiB</div>
+                      <div class="hnr_tdown">1.09 GiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.078</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all2" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all2'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=3037290" onclick="torrent(3037290); return false;"
+                          title="The.Mentalist.S01-S07.COMPLETE.1080p.AMZN.WEB-DL.DDP5.1.H.264.HUN.ENG-pcroland">
+                          <nobr>The.Mentalist.S01-S07.COMPLETE.1080p.AMZN.WEB-DL.DDP5.1...</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">21 napja</div>
+                      <div class="hnr_tlastactive">4 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">1.4 GiB</div>
+                      <div class="hnr_tdown">18.62 GiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.075</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=3037289" onclick="torrent(3037289); return false;"
+                          title="The.Mentalist.S01-S07.COMPLETE.720p.AMZN.WEBRip.DDP5.1.x264.HUN.ENG-pcroland">
+                          <nobr>The.Mentalist.S01-S07.COMPLETE.720p.AMZN.WEBRip.DDP5.1....</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">15 napja</div>
+                      <div class="hnr_tlastactive">4 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">1.34 GiB</div>
+                      <div class="hnr_tdown">5.63 GiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.238</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all2" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all2'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=3868339" onclick="torrent(3868339); return false;"
+                          title="Your.Fault.2024.2160p.WEB.h265-EDITH">
+                          <nobr>Your.Fault.2024.2160p.WEB.h265-EDITH</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">35 napja</div>
+                      <div class="hnr_tlastactive">28 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">2.41 MiB</div>
+                      <div class="hnr_tdown">6.38 MiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.378</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+                  <div class="hnr_torrents">
+                    <div class="hnr_all" onmouseover="this.className='hnr_hl'" onmouseout="this.className='hnr_all'">
+                      <div class="hnr_tname">
+                        <a href="torrents.php?action=details&id=3868344" onclick="torrent(3868344); return false;"
+                          title="Your.Fault.2024.HDR.2160p.WEB.h265-EDITH">
+                          <nobr>Your.Fault.2024.HDR.2160p.WEB.h265-EDITH</nobr>
+                        </a>
+                      </div>
+                      <div class="hnr_tstart">35 napja</div>
+                      <div class="hnr_tlastactive">28 napja</div>
+                      <div class="hnr_tseed"><span class="seed">Stopped</span></div>
+                      <div class="hnr_tup">440.4 MiB</div>
+                      <div class="hnr_tdown">13.31 GiB</div>
+                      <div class="hnr_ttimespent"><span class="seed">-</span></div>
+                      <div class="hnr_tratio"><span class="seed">0.032</span></div>
+                    </div>
+                  </div>
+                  <div style="clear:both;"></div>
+
+                  <div class="lista_lab"></div>
+                </div>
+              </div>
+              <div style="clear:both;"></div>
+
+            </div>
+          </div>
+        </div>
+        <div id="div_body_space"></div>
+      </div>
+      <div id="footer_bg">
+        <div id="footer">
+          <div id="footer_left">
+            <a href="#"></a>
+          </div>
+          <div id="footer_center">nCore bzv | render: 3 ms | mem: 2 MiB | load: 8.93 8.21 7.97</div>
+          <div id="footer_right"></div>
+        </div>
+      </div>
+      <script language="JavaScript" type="text/javascript"
+        src="https://static.ncore.pro/static/js/ieupdate.js"></script>
+      <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-2914855-1']);
+        _gaq.push(['_setSampleRate', '10']);
+        _gaq.push(['_trackPageview']);
+
+        (function () {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+      </script>
+
+      <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+      <style>
+        #x-pop {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          right: 0;
+          background-color: #1b1b1b;
+          color: #fff;
+          flex-direction: column;
+          box-sizing: border-box;
+          place-content: center;
+          align-items: center;
+          font-family: Roboto, 'sans-serif';
+          font-size: 14px;
+        }
+
+        #x-pop h1 {
+          font-weight: 300;
+          margin: 0;
+          padding: 28px 0;
+          font-size: 20px;
+        }
+
+        #x-pop img {
+          width: 300px;
+        }
+
+        #x-pop p {
+          max-width: 540px;
+          line-height: 20px;
+          text-align: justify;
+        }
+
+        #x-pop .f {
+          display: flex;
+          height: 36px;
+        }
+
+        #x-pop .c {
+          text-decoration: underline;
+          color: #9ccc65;
+          cursor: pointer;
+        }
+      </style>
+
+      <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function (event) {
+          var req = new Request('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js', { method: 'HEAD', mode: 'no-cors' });
+
+          fetch(req).then(function (resp) {
+            return resp;
+          }).then(function () {
+          }).catch(function (e) {
+            var old = localStorage.getItem('adpt');
+            if (!old || (Date.parse(old) < new Date())) {
+              var date = new Date();
+              date.setDate(date.getDate() + 7);
+              localStorage.setItem('adpt', date);
+              localStorage.setItem('adpv', true);
+              window.location.replace('/premium.php');
+            }
+          });
+
+          if (localStorage.getItem('adpv') == 'true') {
+            localStorage.removeItem('adpv');
+            var el = document.getElementById('x-pop');
+            el.style.display = 'flex';
+          }
+        });
+
+        function closeXPop() {
+          var el = document.getElementById('x-pop');
+          el.style.display = 'none';
+        }
+      </script>
+
+      <div id="x-pop">
+        <img src="https://static.ncore.pro/static/images/true_love.svg">
+        <h1>Kedves felhasználónk!</h1>
+        <p>Kérjük az oldal hosszútávú működése érdekében mellőzd az Adblock használatát, vagy támogass minket egy
+          általad választott prémium csomagra történő előfizetéssel.<br><br>Köszönjük!</p>
+        <span class="f"></span>
+        <span class="c" onclick="closeXPop()">A bezáráshoz kattints ide.</span>
+      </div>
+
+
+</body>
+
+</html>

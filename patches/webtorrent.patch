@@ -1,0 +1,13 @@
+diff --git a/lib/utp.cjs b/lib/utp.cjs
+index b59f7349171e54df9793fb27d6c5cc02ed0b2d91..bbee38b951b6444f05c0ccdc8e1993e6164642b2 100644
+--- a/lib/utp.cjs
++++ b/lib/utp.cjs
+@@ -6,7 +6,7 @@ module.exports = (() => {
+   try {
+     return require('utp-native')
+   } catch (err) {
+-    console.warn('WebTorrent: uTP not supported', err)
++    console.warn('WebTorrent: uTP not supported')
+     return {}
+   }
+ })()
