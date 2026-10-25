@@ -25,9 +25,6 @@ importers:
       '@libsql/client':
         specifier: ^0.17.4
         version: 0.17.4(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      '@logtape/file':
-        specifier: ^2.2.4
-        version: 2.2.4(@logtape/logtape@2.2.3)
       '@logtape/logtape':
         specifier: ^2.2.3
         version: 2.2.3
@@ -878,11 +875,6 @@ packages:
     resolution: {integrity: sha512-4/0CvEdhi6+KjMxMaVbFM2n2Z44escBRoEYpR+gZg64DdetzGnYm8mcNLcoySaDJZNaBd6wz5DNdgRmcI4hXcg==}
     cpu: [x64]
     os: [win32]
-
-  '@logtape/file@2.2.4':
-    resolution: {integrity: sha512-f+1g4VvB+HegOYwt8GAhYFk1OO9nbi5l0hn7hkKxjnyedE9CBEoKgN36nIYIt58asRms2GDXLtxeK0OStYjnsQ==}
-    peerDependencies:
-      '@logtape/logtape': ^2.2.4
 
   '@logtape/logtape@2.2.3':
     resolution: {integrity: sha512-NIPzXBJneBv7Ar6sFBbEo5L8zZr2lopQnlVeT881y68qGNcJBy/Y8s8uAwUaVhobB8GIiMluOY7j3bOsaaIhQQ==}
@@ -5364,10 +5356,6 @@ snapshots:
 
   '@libsql/win32-x64-msvc@0.5.29':
     optional: true
-
-  '@logtape/file@2.2.4(@logtape/logtape@2.2.3)':
-    dependencies:
-      '@logtape/logtape': 2.2.3
 
   '@logtape/logtape@2.2.3': {}
 

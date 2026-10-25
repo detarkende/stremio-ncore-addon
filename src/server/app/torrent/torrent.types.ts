@@ -106,7 +106,7 @@ export interface Torrent {
   files: TorrentFile[];
 }
 
-export interface TorrentDeletionFailure {
+interface TorrentDeletionFailure {
   torrent: Torrent;
   error: {
     message: string;
