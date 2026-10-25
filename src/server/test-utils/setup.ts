@@ -3,6 +3,16 @@ import { loadEnv } from '@server/env';
 import { logger, logLevels } from '@server/logger';
 import mockFs from 'mock-fs';
 
+vi.mock('undici', async (importActual) => {
+  // oxlint-disable-next-line typescript/consistent-type-imports
+  const actual = await importActual<typeof import('undici')>();
+
+  return {
+    ...actual,
+    fetch: vi.fn(),
+  };
+});
+
 function setupTestEnv() {
   for (const level of logLevels) {
     vi.spyOn(logger, level).mockImplementation(() => {});

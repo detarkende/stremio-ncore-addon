@@ -4,6 +4,7 @@ import { env } from '@server/env';
 import { formatBytes } from '@server/utils/bytes';
 import { rateList } from '@server/utils/rate-list';
 import type { Stream } from 'stremio-addon-sdk';
+import { fetch } from 'undici';
 
 import type { TorrentDetails, ParsedTorrentFileDetails } from '../torrent/index';
 import type { StreamType } from './stream.constants';

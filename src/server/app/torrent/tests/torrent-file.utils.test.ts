@@ -1,54 +1,37 @@
 import { logger } from '@server/logger';
 import mentalistMock from '@server/mocks/torrents/mentalist';
-import type { NockHandler } from '@server/test-utils/types';
-import nock from 'nock';
-import type { Mock } from 'vitest';
+import { fetchMock } from '@server/test-utils/fetch-mock';
 
-import { _fetchTorrent, downloadAndParseTorrent } from '../torrent-file.utils';
-
-vi.mock('@server/utils/cache', async (importActual) => {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  const actual = await importActual<typeof import('@server/utils/cache')>();
-  return {
-    ...actual,
-    cacheFunction: (_options: unknown, fn: typeof _fetchTorrent) => fn,
-  };
-});
+import { fetchTorrent, downloadAndParseTorrent } from '../torrent-file.utils';
 
 describe('Torrent file utils', () => {
-  const BASE_URL = 'http://example.com';
-  const ENDPOINT = '/test.torrent';
-  const TORRENT_URL = `${BASE_URL}${ENDPOINT}`;
+  const TORRENT_URL = `http://example.com/test.torrent`;
   const SAMPLE_TORRENT_BUFFER = mentalistMock.torrentBuffer;
-  const torrentFileRequestHandler: Mock<NockHandler> = vi.fn();
 
-  beforeEach(() => {
-    nock.disableNetConnect();
-    nock(BASE_URL)
-      .get(ENDPOINT)
-      .reply((uri, body) => {
-        return torrentFileRequestHandler({ uri, body });
-      });
-  });
   afterEach(() => {
-    nock.cleanAll();
-    nock.enableNetConnect();
-    vi.resetAllMocks();
+    vi.restoreAllMocks();
   });
 
-  describe('_fetchTorrent', () => {
+  describe('fetchTorrent', () => {
     it('should fetch torrent file from URL', async () => {
-      torrentFileRequestHandler.mockResolvedValueOnce([200, SAMPLE_TORRENT_BUFFER]);
+      fetchMock.mockResolvedValue(new Response(SAMPLE_TORRENT_BUFFER, { status: 200 }));
 
-      const { torrentBuffer } = await _fetchTorrent(TORRENT_URL);
+      const { torrentBuffer } = await fetchTorrent(TORRENT_URL);
+      expect(fetchMock).toHaveBeenCalledWith(
+        TORRENT_URL,
+        expect.objectContaining({
+          signal: expect.any(AbortSignal),
+          dispatcher: expect.any(Object),
+        }),
+      );
       expect(torrentBuffer).toEqual(SAMPLE_TORRENT_BUFFER);
-      expect(torrentFileRequestHandler).toHaveBeenCalledTimes(1);
+      expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 
     it('should handle fetch errors gracefully', async () => {
-      torrentFileRequestHandler.mockResolvedValueOnce([404, 'Not Found']);
+      fetchMock.mockResolvedValue(new Response('Not found', { status: 404 }));
 
-      await expect(_fetchTorrent(TORRENT_URL)).rejects.toThrow(
+      await expect(fetchTorrent(TORRENT_URL)).rejects.toThrow(
         `Failed to fetch torrent from URL ${TORRENT_URL}`,
       );
       const loggerErrorMock = vi.mocked(logger.error);
@@ -66,7 +49,7 @@ describe('Torrent file utils', () => {
 
   describe('downloadAndParseTorrent', () => {
     it('should download and parse torrent file from URL', async () => {
-      torrentFileRequestHandler.mockResolvedValueOnce([200, mentalistMock.torrentBuffer]);
+      fetchMock.mockResolvedValue(new Response(SAMPLE_TORRENT_BUFFER, { status: 200 }));
 
       const { torrentBuffer, torrentFileData } =
         await downloadAndParseTorrent(TORRENT_URL);
@@ -78,7 +61,7 @@ describe('Torrent file utils', () => {
         files: expect.any(Array),
       });
       expect(torrentFileData.files).toHaveLength(151);
-      expect(torrentFileRequestHandler).toHaveBeenCalledTimes(1);
+      expect(fetchMock).toHaveBeenCalledTimes(1);
     });
   });
 });

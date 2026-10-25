@@ -3,6 +3,7 @@ import { createSecureContext } from 'node:tls';
 
 import { env } from '@server/env';
 import { logger } from '@server/logger';
+import { fetch } from 'undici';
 
 import { localIpResponseSchema, ONE_HOUR, type LocalIpResponse } from './https.constants';
 

@@ -1,16 +1,27 @@
 import { db } from '@server/db';
 import { torrentsTable } from '@server/db/schema';
 import { logger } from '@server/logger';
-import { cacheFunction, DEFAULT_TTL } from '@server/utils/cache';
+import { createCacheAgent } from '@server/utils/undici';
 import parseTorrent from 'parse-torrent';
+import { fetch } from 'undici';
 
 import type { DbTorrent, ParsedTorrentDetails } from './torrent.types';
 
-export async function _fetchTorrent(
+const CACHE_TTL = 1000 * 60 * 15; // 15 minutes
+
+const cacheAgent = createCacheAgent({
+  cacheByDefault: CACHE_TTL,
+  methods: ['GET', 'HEAD'],
+});
+
+export async function fetchTorrent(
   torrentUrl: string,
 ): Promise<{ torrentBuffer: Buffer }> {
   try {
-    const response = await fetch(torrentUrl, { signal: AbortSignal.timeout(5_000) });
+    const response = await fetch(torrentUrl, {
+      signal: AbortSignal.timeout(5_000),
+      dispatcher: cacheAgent,
+    });
     if (!response.ok) {
       throw new Error(
         `Failed to fetch torrent from URL ${torrentUrl}. Status: ${response.status}`,
@@ -22,16 +33,6 @@ export async function _fetchTorrent(
     throw new Error(`Failed to fetch torrent from URL ${torrentUrl}`, { cause: error });
   }
 }
-
-const _cachedFetchTorrent = cacheFunction(
-  {
-    max: 1_000,
-    ttl: DEFAULT_TTL,
-    ttlAutopurge: true,
-    generateKey: (torrentUrl) => torrentUrl,
-  },
-  _fetchTorrent,
-);
 
 export async function parseTorrentBuffer(
   torrentBuffer: Buffer,
@@ -57,7 +58,7 @@ export async function downloadAndParseTorrent(torrentUrl: string): Promise<{
 }> {
   try {
     logger.info(`Fetching and parsing torrent from URL ${torrentUrl}`);
-    const { torrentBuffer } = await _cachedFetchTorrent(torrentUrl);
+    const { torrentBuffer } = await fetchTorrent(torrentUrl);
     const torrentFileData = await parseTorrentBuffer(torrentBuffer);
     return {
       torrentBuffer,

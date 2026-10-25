@@ -1,11 +1,12 @@
 import { StreamType } from '@server/app/stream/stream.constants';
 import { env } from '@server/env';
 import { logger } from '@server/logger';
-import { cacheFunction, DEFAULT_MAX, DEFAULT_TTL } from '@server/utils/cache';
 import { getAllPromiseResults } from '@server/utils/get-all-promise-results';
 import { batchAsyncFunctions } from '@server/utils/process-in-batches';
+import { createCacheAgent } from '@server/utils/undici';
 import { JSDOM } from 'jsdom';
-import cookieParser from 'set-cookie-parser';
+import { fetch, FormData } from 'undici';
+import { getSetCookies } from 'undici';
 
 import { downloadAndParseTorrent } from '../torrent/torrent-file.utils';
 import { NcoreTorrentDetails } from './ncore-torrent-details';
@@ -23,11 +24,19 @@ import {
 } from './ncore.types';
 import { getAllPages, getNcoreSearchResults } from './ncore.utils';
 
+const CACHE_TTL = 1000 * 60 * 15; // 15 minutes
+
 export class NcoreService {
   _cookiesCache = {
     pass: null as string | null,
     cookieExpirationDate: 0,
   };
+
+  private cacheAgent = createCacheAgent({
+    methods: ['GET', 'HEAD'],
+    cacheByDefault: CACHE_TTL,
+  });
+
   async _getCookies() {
     {
       try {
@@ -53,8 +62,8 @@ export class NcoreService {
           redirect: 'manual',
         });
 
-        const setCookieHeader = resp.headers.get('set-cookie');
-        if (!setCookieHeader) {
+        const setCookies = getSetCookies(resp.headers);
+        if (!setCookies.length) {
           logger.error(
             `No Set-Cookie header received when logging in to nCore for user "${username}"`,
             {
@@ -66,10 +75,8 @@ export class NcoreService {
             cause: { status: resp.status, headers: resp.headers, username },
           });
         }
-        const allCookies = cookieParser.parse(
-          cookieParser.splitCookiesString(setCookieHeader),
-        );
-        const passCookie = allCookies.find(({ name }) => name === 'pass');
+
+        const passCookie = setCookies.find(({ name }) => name === 'pass');
 
         if (!passCookie || passCookie.value === 'deleted') {
           logger.error(`Failed to log in to nCore for user "${username}"`, {
@@ -80,7 +87,7 @@ export class NcoreService {
             cause: { passCookie, status: resp.status, headers: resp.headers, username },
           });
         }
-        const fullCookieString = allCookies
+        const fullCookieString = setCookies
           .map(({ name, value }) => `${name}=${value}`)
           .join('; ');
         this._cookiesCache.pass = fullCookieString;
@@ -114,6 +121,7 @@ export class NcoreService {
         headers: {
           cookie: cookies,
         },
+        dispatcher: this.cacheAgent,
       });
       const body = (await request.text()) ?? '';
       const pageResponse = getNcoreSearchResults(body);
@@ -144,56 +152,40 @@ export class NcoreService {
     return ncoreTorrentDetails;
   }
 
-  public getTorrentsByImdbId = cacheFunction(
-    {
-      max: DEFAULT_MAX,
-      ttl: DEFAULT_TTL,
-      ttlAutopurge: true,
-      generateKey: (params) => `${params.type}:${params.imdbId}`,
-    },
-    async ({
-      imdbId,
-      type,
-    }: {
-      imdbId: string;
-      type: StreamType;
-    }): Promise<NcoreTorrentDetails[]> => {
-      const ncoreTorrents = await this._getTorrentsForQuery({
-        mire: imdbId,
-        miben: NcoreSearchBy.IMDB,
-        miszerint: NcoreOrderBy.SEEDERS,
-        kivalasztott_tipus:
-          type === StreamType.MOVIE ? MOVIE_CATEGORY_FILTERS : SERIES_CATEGORY_FILTERS,
-      });
+  public async getTorrentsByImdbId({
+    imdbId,
+    type,
+  }: {
+    imdbId: string;
+    type: StreamType;
+  }): Promise<NcoreTorrentDetails[]> {
+    const ncoreTorrents = await this._getTorrentsForQuery({
+      mire: imdbId,
+      miben: NcoreSearchBy.IMDB,
+      miszerint: NcoreOrderBy.SEEDERS,
+      kivalasztott_tipus:
+        type === StreamType.MOVIE ? MOVIE_CATEGORY_FILTERS : SERIES_CATEGORY_FILTERS,
+    });
 
-      return this._convertNcoreTorrentToTorrentDetails(ncoreTorrents);
-    },
-  );
+    return this._convertNcoreTorrentToTorrentDetails(ncoreTorrents);
+  }
 
-  public getTorrentsByTitle = cacheFunction(
-    {
-      max: DEFAULT_MAX,
-      ttl: DEFAULT_TTL,
-      ttlAutopurge: true,
-      generateKey: (params) => `${params.type}:${params.title}`,
-    },
-    async ({
-      title,
-      type,
-    }: {
-      title: string;
-      type: StreamType;
-    }): Promise<NcoreTorrentDetails[]> => {
-      const ncoreTorrents = await this._getTorrentsForQuery({
-        mire: title,
-        miben: NcoreSearchBy.NAME,
-        miszerint: NcoreOrderBy.SEEDERS,
-        kivalasztott_tipus:
-          type === StreamType.MOVIE ? MOVIE_CATEGORY_FILTERS : SERIES_CATEGORY_FILTERS,
-      });
-      return this._convertNcoreTorrentToTorrentDetails(ncoreTorrents);
-    },
-  );
+  public async getTorrentsByTitle({
+    title,
+    type,
+  }: {
+    title: string;
+    type: StreamType;
+  }): Promise<NcoreTorrentDetails[]> {
+    const ncoreTorrents = await this._getTorrentsForQuery({
+      mire: title,
+      miben: NcoreSearchBy.NAME,
+      miszerint: NcoreOrderBy.SEEDERS,
+      kivalasztott_tipus:
+        type === StreamType.MOVIE ? MOVIE_CATEGORY_FILTERS : SERIES_CATEGORY_FILTERS,
+    });
+    return this._convertNcoreTorrentToTorrentDetails(ncoreTorrents);
+  }
 
   public async getTorrentUrlByNcoreId(ncoreId: string): Promise<string> {
     logger.info(`Getting torrent URL for nCore ID ${ncoreId}`);
@@ -206,6 +198,7 @@ export class NcoreService {
             cookie: cookies,
           },
           signal: AbortSignal.timeout(5_000),
+          dispatcher: this.cacheAgent,
         },
       );
       if (!response.ok) {

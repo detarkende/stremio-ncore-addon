@@ -1,8 +1,5 @@
 import { Language, type Resolution } from '@server/app/user/user.types';
-import { env } from '@server/env';
-import type { NockHandler } from '@server/test-utils/types';
-import nock from 'nock';
-import type { Mock } from 'vitest';
+import { fetchMock } from '@server/test-utils/fetch-mock';
 
 import type {
   TorrentDetails,
@@ -19,19 +16,6 @@ import {
 
 describe('Stream utils', () => {
   describe('getCinemetaData', () => {
-    const cinemetaRequestHandler: Mock<NockHandler> = vi.fn();
-
-    beforeEach(() => {
-      nock.disableNetConnect();
-      nock(`${env.CINEMETA_URL}`)
-        .persist()
-        .get(/\/meta\/(movie|series)\/tt\d+\.json$/)
-        .reply(function (uri, requestBody) {
-          return cinemetaRequestHandler({ uri, body: requestBody });
-        });
-      cinemetaRequestHandler.mockReset();
-    });
-
     describe('successful responses', () => {
       it.each([
         {
@@ -51,23 +35,30 @@ describe('Stream utils', () => {
           } satisfies CinemetaResponse,
         },
       ])('should return valid CinemetaResponse for %type', async ({ type, response }) => {
-        cinemetaRequestHandler.mockResolvedValueOnce([200, response]);
+        fetchMock.mockResolvedValueOnce(Response.json(response));
 
         const data = await getCinemetaData(type, 'tt1234567');
         expect(data).toEqual(response);
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        expect(fetchMock).toHaveBeenCalledWith(
+          expect.stringMatching(/\/meta\/(movie|series)\/tt1234567\.json$/),
+        );
       });
     });
 
     it('should throw an error for failed responses', async () => {
-      cinemetaRequestHandler.mockResolvedValueOnce([500, 'Internal Server Error']);
+      fetchMock.mockResolvedValueOnce(
+        new Response('Internal Server Error', { status: 500 }),
+      );
 
       await expect(getCinemetaData(StreamType.MOVIE, 'tt1234567')).rejects.toThrow(
         'Error fetching metadata from Cinemeta',
       );
+      expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 
     it('should throw an error for invalid responses', async () => {
-      cinemetaRequestHandler.mockResolvedValueOnce([200, { invalid: 'data' }]);
+      fetchMock.mockResolvedValueOnce(Response.json({ invalid: 'data' }));
 
       await expect(getCinemetaData(StreamType.MOVIE, 'tt1234567')).rejects.toThrow(
         'Error fetching metadata from Cinemeta',

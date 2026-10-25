@@ -69,10 +69,10 @@ describe('TorrentClient', async () => {
 
   afterEach(async () => {
     await torrentClient.destroy();
-    fs.rmSync(tmpDir, { recursive: true, force: true });
   });
 
   afterAll(() => {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
     cleanupSeededTorrent();
   });
 

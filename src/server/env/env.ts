@@ -31,17 +31,9 @@ const envSchema = z
     }),
     NCORE_USERNAME: z.string(),
     NCORE_PASSWORD: z.string(),
-    TORRENTS_DIR: z.string().optional().meta({
-      description:
-        'Directory to store torrent files. By default, it is set to ADDON_DIR/torrents.',
-    }),
     DOWNLOADS_DIR: z.string().optional().meta({
       description:
         'Directory to store downloads. By default, it is set to ADDON_DIR/downloads.',
-    }),
-    LOGS_DIR: z.string().optional().meta({
-      description:
-        'Directory to store log files. By default, it is set to ADDON_DIR/logs.',
     }),
     NCORE_URL: z.string().url().default('https://ncore.pro').meta({
       description:
@@ -78,9 +70,8 @@ const envSchema = z
   .transform((env) => {
     return {
       ...env,
-      TORRENTS_DIR: env.TORRENTS_DIR ?? `${env.ADDON_DIR}/torrents`,
-      DOWNLOADS_DIR: env.DOWNLOADS_DIR ?? `${env.ADDON_DIR}/downloads`,
-      LOGS_DIR: env.LOGS_DIR ?? `${env.ADDON_DIR}/logs`,
+      DOWNLOADS_DIR: `${env.ADDON_DIR}/downloads`,
+      HTTP_CACHE_DIR: `${env.ADDON_DIR}/cache/http`,
     };
   });
 
