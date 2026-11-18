@@ -11,11 +11,7 @@ import { useUrlTokenAuth } from '../auth/auth.middleware';
 import { useIsConfigured } from '../config/config.middleware';
 import { ncoreService } from '../ncore/index';
 import { type TorrentDetails, type ParsedTorrentFileDetails } from '../torrent/index';
-import {
-  getOrAddTorrent,
-  getTorrentFileSizes,
-  insertUserTorrentFileRecord,
-} from '../torrent/torrent.utils';
+import { getOrAddTorrent, getTorrentFileSizes } from '../torrent/torrent.utils';
 import {
   listStreamsParamsSchema,
   playStreamParamsSchema,

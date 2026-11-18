@@ -15,6 +15,7 @@ import type { NcoreService } from '../ncore/ncore.service';
 import type { StreamType } from '../stream/stream.constants';
 import { downloadAndParseTorrent, parseTorrentBuffer } from './torrent-file.utils';
 import { TorrentClient } from './torrent.client';
+import { insertNewTorrent } from './torrent.db.utils';
 import type {
   DbTorrent,
   DeleteUnnecessaryTorrentsResponse,
@@ -23,7 +24,6 @@ import type {
   TorrentWithViewers,
   UnnecessaryTorrent,
 } from './torrent.types';
-import { insertNewTorrent } from './torrent.utils';
 
 export class TorrentStore {
   private pendingTorrentInitializations = new Map<string, Promise<WebtorrentTorrent>>();

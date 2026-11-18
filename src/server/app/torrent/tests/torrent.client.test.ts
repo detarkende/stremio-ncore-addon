@@ -9,8 +9,8 @@ import { createTestUserWithSession } from '@server/test-utils/users';
 import type { Torrent as WebtorrentTorrent } from 'webtorrent';
 
 import { TorrentClient } from '../torrent.client';
+import { insertNewTorrent } from '../torrent.db.utils';
 import type { DbTorrent } from '../torrent.types';
-import { insertNewTorrent } from '../torrent.utils';
 
 describe('TorrentClient', async () => {
   let torrentClient: TorrentClient;

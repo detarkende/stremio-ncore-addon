@@ -14,8 +14,8 @@ import { and, eq, sql } from 'drizzle-orm';
 import type { Torrent as WebtorrentTorrent } from 'webtorrent';
 
 import { TorrentClient } from '../torrent.client';
+import { insertNewTorrent } from '../torrent.db.utils';
 import { TorrentStore } from '../torrent.store';
-import { insertNewTorrent } from '../torrent.utils';
 
 const firstFiles = [
   createMockFile('First.Movie/First.Movie.mkv', 256 * 1024),

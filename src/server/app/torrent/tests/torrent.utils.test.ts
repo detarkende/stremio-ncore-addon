@@ -6,9 +6,10 @@ import { createTestUser } from '@server/test-utils/users';
 import { and, eq } from 'drizzle-orm';
 
 import { parseTorrentBuffer } from '../torrent-file.utils';
+import { insertNewTorrent } from '../torrent.db.utils';
 import { torrentStore } from '../torrent.store';
 import type { Torrent } from '../torrent.types';
-import { getOrAddTorrent, insertNewTorrent } from '../torrent.utils';
+import { getOrAddTorrent } from '../torrent.utils';
 
 describe('Torrent utils', () => {
   describe('insertNewTorrent', () => {
