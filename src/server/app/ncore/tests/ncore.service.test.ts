@@ -8,11 +8,13 @@ import type { MockInstance } from 'vitest';
 
 import * as torrentFileUtils from '../../torrent/torrent-file.utils';
 import { MOVIE_CATEGORY_FILTERS } from '../ncore.constants';
+import { NcoreTorrentNotFoundError } from '../ncore.errors';
 import { NcoreService } from '../ncore.service';
 import type { NcorePageResponseJson } from '../ncore.types';
 import { NcoreOrderBy, NcoreSearchBy } from '../ncore.types';
 import * as ncoreUtils from '../ncore.utils';
 import hitNRunMockHtml from './mocks/hitnrun.html?raw';
+import notFoundMockHtml from './mocks/not-found.html?raw';
 import torrentDetailMockHtml from './mocks/torrent-details.html?raw';
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
@@ -308,6 +310,18 @@ describe('nCore service', () => {
         `https://ncore.pro/torrents.php?action=download&id=${ncoreId}&key=mockkey`,
       );
     });
+
+    it('should throw NcoreTorrentNotFoundError when the torrent was removed', async () => {
+      vi.spyOn(ncoreService, '_getCookies').mockResolvedValue(
+        'nick=test-user; pass=valid_cookie_value; nyelv=hu',
+      );
+      const ncoreId = '123456';
+      fetchMock.mockResolvedValueOnce(new Response(notFoundMockHtml));
+
+      await expect(ncoreService.getTorrentUrlByNcoreId(ncoreId)).rejects.toBeInstanceOf(
+        NcoreTorrentNotFoundError,
+      );
+    });
   });
 
   describe('getSeedRequiredNcoreIds', () => {
@@ -330,6 +344,37 @@ describe('nCore service', () => {
       );
 
       expect(seedRequiredNcoreIds).toEqual(['4054824']);
+    });
+  });
+
+  describe('getSeedRequiredNcoreInfoHashes', () => {
+    it('should skip removed torrents and return hashes for the remaining torrents', async () => {
+      const removedNcoreId = '123456';
+      const availableNcoreId = '3037290';
+      vi.spyOn(ncoreService, '_getCookies').mockResolvedValue(
+        'nick=test-user; pass=valid_cookie_value; nyelv=hu',
+      );
+      vi.spyOn(ncoreService, 'getSeedRequiredNcoreIds').mockResolvedValue([
+        removedNcoreId,
+        availableNcoreId,
+      ]);
+      fetchMock
+        .mockResolvedValueOnce(new Response(notFoundMockHtml))
+        .mockResolvedValueOnce(new Response(torrentDetailMockHtml));
+      downloadAndParseTorrentSpy.mockResolvedValueOnce({
+        torrentFileData: {
+          name: 'available torrent',
+          infoHash: 'available-info-hash',
+          files: [],
+        },
+        torrentBuffer: Buffer.from([]),
+      });
+
+      const infoHashes = await ncoreService.getSeedRequiredNcoreInfoHashes();
+
+      expect(infoHashes).toEqual(['available-info-hash']);
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(downloadAndParseTorrentSpy).toHaveBeenCalledOnce();
     });
   });
 });

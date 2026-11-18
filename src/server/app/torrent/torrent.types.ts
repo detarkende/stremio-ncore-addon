@@ -106,14 +106,26 @@ export interface Torrent {
   files: TorrentFile[];
 }
 
-interface TorrentDeletionFailure {
-  torrent: Torrent;
+export interface TorrentViewer {
+  userId: number;
+  username: string;
+  firstWatchedAt: number;
+  lastWatchedAt: number;
+}
+
+export interface TorrentWithViewers extends Torrent {
+  viewers: TorrentViewer[];
+}
+
+export type UnnecessaryTorrent = Pick<Torrent, 'infoHash' | 'name'>;
+
+interface UnnecessaryTorrentDeletionFailure {
+  torrent: UnnecessaryTorrent;
   error: {
     message: string;
   };
 }
-
 export interface DeleteUnnecessaryTorrentsResponse {
-  deleted: Torrent[];
-  failed: TorrentDeletionFailure[];
+  deleted: UnnecessaryTorrent[];
+  failed: UnnecessaryTorrentDeletionFailure[];
 }

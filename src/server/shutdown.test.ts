@@ -1,5 +1,5 @@
 import { deleteOldTorrentsScheduler } from './app/config/config.schedule';
-import { torrentClient } from './app/torrent';
+import { torrentStore } from './app/torrent';
 import { closeDbInstance } from './db/client';
 import { registerGracefulShutdown } from './shutdown';
 
@@ -13,7 +13,7 @@ describe('graceful shutdown', () => {
   beforeEach(() => {
     vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
     vi.spyOn(deleteOldTorrentsScheduler, 'destroy').mockImplementation(() => undefined);
-    vi.spyOn(torrentClient, 'destroy').mockResolvedValue(undefined);
+    vi.spyOn(torrentStore, 'destroy').mockResolvedValue(undefined);
     vi.spyOn({ closeDbInstance }, 'closeDbInstance');
   });
 
@@ -35,14 +35,14 @@ describe('graceful shutdown', () => {
     expect(http.close).toHaveBeenCalledOnce();
     expect(https.close).toHaveBeenCalledOnce();
     expect(deleteOldTorrentsScheduler.destroy).toHaveBeenCalledOnce();
-    expect(torrentClient.destroy).toHaveBeenCalledOnce();
+    expect(torrentStore.destroy).toHaveBeenCalledOnce();
     expect(process.exit).toHaveBeenCalledWith(0);
   });
 
   it('should exit with failure when background cleanup fails', async () => {
     const http = createServer();
     const https = createServer();
-    vi.mocked(torrentClient.destroy).mockRejectedValueOnce(new Error('destroy failed'));
+    vi.mocked(torrentStore.destroy).mockRejectedValueOnce(new Error('destroy failed'));
 
     registerGracefulShutdown({ http, https });
     process.emit('SIGINT');

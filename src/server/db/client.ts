@@ -33,4 +33,7 @@ export function closeDbInstance() {
   db?.$client.close();
 }
 
+export type Db = typeof db;
+export type DbTransaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
+
 export { db };

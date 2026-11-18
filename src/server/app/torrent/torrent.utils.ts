@@ -1,15 +1,18 @@
-import type { DbTorrent } from '@server/app/torrent/torrent.types';
+import type {
+  DbTorrent,
+  ParsedTorrentFileDetails,
+  TorrentFile,
+} from '@server/app/torrent/torrent.types';
+import type { Db, DbTransaction } from '@server/db';
 import { db } from '@server/db';
 import { usersTorrentsTable, torrentsTable } from '@server/db/schema';
-import { eq } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 
 import { ncoreService } from '../ncore';
 import type { StreamType } from '../stream/stream.constants';
 import { downloadAndParseTorrent } from './torrent-file.utils';
-import { torrentClient } from './torrent.client';
+import { torrentStore } from './torrent.store';
 import type { ParsedTorrentDetails, Torrent } from './torrent.types';
-
-const pendingTorrentInitializations = new Map<string, Promise<Torrent>>();
 
 export async function getOrAddTorrent({
   userId,
@@ -24,64 +27,43 @@ export async function getOrAddTorrent({
   torrentSourceId: string;
   infoHash: string;
 }): Promise<Torrent> {
-  const existingTorrent = await torrentClient.getTorrent(infoHash);
+  const existingTorrent = await torrentStore.getTorrent(infoHash);
   if (existingTorrent) {
+    insertUserTorrentFileRecord(db, {
+      userId,
+      infoHash,
+    });
     return existingTorrent;
   }
 
-  const pendingInitialization = pendingTorrentInitializations.get(infoHash);
-  if (pendingInitialization) {
-    return pendingInitialization;
-  }
-
-  const initialization = (async () => {
-    const ncoreUrl = await ncoreService.getTorrentUrlByNcoreId(torrentSourceId);
-    const { torrentFileData, torrentBuffer } = await downloadAndParseTorrent(ncoreUrl);
-    const dbTorrent = insertNewTorrent({
-      userId,
-      imdbId,
-      torrentFileData,
-      torrentBuffer,
-      type,
-    });
-    return torrentClient.addTorrent(dbTorrent, true);
-  })();
-
-  pendingTorrentInitializations.set(infoHash, initialization);
-  try {
-    return await initialization;
-  } finally {
-    if (pendingTorrentInitializations.get(infoHash) === initialization) {
-      pendingTorrentInitializations.delete(infoHash);
-    }
-  }
+  return torrentStore.addTorrent({
+    userId,
+    imdbId,
+    type,
+    torrentSourceId,
+    infoHash,
+  });
 }
 
-export async function getFileForHead({
+export async function getTorrentFileSizes({
   infoHash,
   torrentSourceId,
-  filePath,
 }: {
   infoHash: string;
   torrentSourceId: string;
-  filePath: string;
-}): Promise<{ path: string; size: number; torrentName: string } | null> {
-  const existingTorrent = await torrentClient.getTorrent(infoHash);
+}): Promise<Record<string, number>> {
+  const existingTorrent = await torrentStore.getTorrent(infoHash);
+  let torrentFiles: (ParsedTorrentFileDetails | TorrentFile)[] = [];
   if (existingTorrent) {
-    const file = existingTorrent.files.find(
-      (torrentFile) => torrentFile.path === filePath,
-    );
-    return file
-      ? { path: file.path, size: file.size, torrentName: existingTorrent.name }
-      : null;
+    torrentFiles = existingTorrent.files;
+  } else {
+    const ncoreUrl = await ncoreService.getTorrentUrlByNcoreId(torrentSourceId);
+    const { torrentFileData } = await downloadAndParseTorrent(ncoreUrl);
+    torrentFiles = torrentFileData.files;
   }
-
-  const ncoreUrl = await ncoreService.getTorrentUrlByNcoreId(torrentSourceId);
-  const { torrentFileData } = await downloadAndParseTorrent(ncoreUrl);
-  const file = torrentFileData.files.find((torrentFile) => torrentFile.path === filePath);
-  return file
-    ? { path: file.path, size: file.length, torrentName: torrentFileData.name }
-    : null;
+  return Object.fromEntries(
+    torrentFiles.map((file) => [file.path, 'length' in file ? file.length : file.size]),
+  );
 }
 
 export function insertNewTorrent({
@@ -110,36 +92,36 @@ export function insertNewTorrent({
       })
       .returning()
       .get();
-    tx.insert(usersTorrentsTable)
-      .values({
-        userId,
-        torrentInfoHash: insertedTorrent.infoHash,
-      })
-      .returning()
-      .get();
+    insertUserTorrentFileRecord(tx, {
+      userId,
+      infoHash: insertedTorrent.infoHash,
+    });
     return insertedTorrent;
   });
 }
 
-export function insertUserTorrentFileRecord({
-  userId,
-  torrentInfoHash,
-}: {
-  userId: number;
-  torrentInfoHash: string;
-}): void {
-  const existingUserTorrentRecord = db
-    .select()
-    .from(usersTorrentsTable)
-    .where(eq(usersTorrentsTable.userId, userId))
-    .limit(1)
+export function insertUserTorrentFileRecord(
+  tx: Db | DbTransaction,
+  {
+    userId,
+    infoHash,
+  }: {
+    userId: number;
+    infoHash: string;
+  },
+) {
+  return tx
+    .insert(usersTorrentsTable)
+    .values({
+      userId,
+      torrentInfoHash: infoHash,
+    })
+    .onConflictDoUpdate({
+      target: [usersTorrentsTable.userId, usersTorrentsTable.torrentInfoHash],
+      set: {
+        updatedAt: sql`(unixepoch('subsec') * 1000)`,
+      },
+    })
+    .returning()
     .get();
-  if (!existingUserTorrentRecord) {
-    db.insert(usersTorrentsTable)
-      .values({
-        userId,
-        torrentInfoHash,
-      })
-      .run();
-  }
 }

@@ -20,5 +20,6 @@ export {
   /* @lintignore */
   SERIES_CATEGORY_FILTERS,
 } from './ncore.constants';
+export { NcoreTorrentNotFoundError } from './ncore.errors';
 
 export const ncoreService = new NcoreService();

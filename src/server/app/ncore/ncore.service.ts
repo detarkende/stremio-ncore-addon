@@ -16,6 +16,7 @@ import {
   MOVIE_CATEGORY_FILTERS,
   SERIES_CATEGORY_FILTERS,
 } from './ncore.constants';
+import { NcoreTorrentNotFoundError } from './ncore.errors';
 import {
   NcoreOrderBy,
   NcoreSearchBy,
@@ -213,6 +214,20 @@ export class NcoreService {
       const html = await response.text();
       logger.info(`Successfully fetched torrent details page`, { ncoreId });
       const { document } = new JSDOM(html).window;
+
+      const errorTitleBox = document.querySelector('.fobox_fej');
+      const errorMessageBox = document.querySelector('.fobox_tartalom');
+      if (
+        errorTitleBox &&
+        errorMessageBox &&
+        /HIBA/.test(errorTitleBox.textContent.trim()) &&
+        /Nem található az adatbázisunkban \d+ azonosítójú torrent!/.test(
+          errorMessageBox.textContent.trim(),
+        )
+      ) {
+        throw new NcoreTorrentNotFoundError(ncoreId);
+      }
+
       const downloadLinkElement = document.querySelector('.download > a');
       const downloadLinkHref = downloadLinkElement?.getAttribute('href');
       if (!downloadLinkElement || !downloadLinkHref) {
@@ -227,8 +242,12 @@ export class NcoreService {
       });
       return downloadLink;
     } catch (error) {
-      logger.error(`Failed to get torrent URL from nCore`, { error, ncoreId });
-      throw new Error('Failed to get torrent URL from nCore', { cause: error });
+      if (error instanceof NcoreTorrentNotFoundError) {
+        throw error;
+      } else {
+        logger.error(`Failed to get torrent URL from nCore`, { error, ncoreId });
+        throw new Error('Failed to get torrent URL from nCore', { cause: error });
+      }
     }
   }
 
@@ -236,9 +255,22 @@ export class NcoreService {
     const infoHashes: string[] = [];
     const seedRequiredNcoreIds = await this.getSeedRequiredNcoreIds();
     for (const ncoreId of seedRequiredNcoreIds) {
-      const torrentUrl = await this.getTorrentUrlByNcoreId(ncoreId);
-      const { torrentFileData } = await downloadAndParseTorrent(torrentUrl);
-      infoHashes.push(torrentFileData.infoHash);
+      try {
+        const torrentUrl = await this.getTorrentUrlByNcoreId(ncoreId);
+        const { torrentFileData } = await downloadAndParseTorrent(torrentUrl);
+        infoHashes.push(torrentFileData.infoHash);
+      } catch (e) {
+        if (e instanceof NcoreTorrentNotFoundError) {
+          logger.warn(
+            `Torrent not found for nCore ID ${ncoreId}. Marking as not seed-required`,
+            { ncoreId },
+          );
+        } else {
+          throw new Error(`Failed to get torrent info hash for nCore ID ${ncoreId}`, {
+            cause: e,
+          });
+        }
+      }
     }
     return infoHashes;
   }

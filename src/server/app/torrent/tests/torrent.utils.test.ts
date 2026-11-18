@@ -6,7 +6,9 @@ import { createTestUser } from '@server/test-utils/users';
 import { and, eq } from 'drizzle-orm';
 
 import { parseTorrentBuffer } from '../torrent-file.utils';
-import { insertNewTorrent, insertUserTorrentFileRecord } from '../torrent.utils';
+import { torrentStore } from '../torrent.store';
+import type { Torrent } from '../torrent.types';
+import { getOrAddTorrent, insertNewTorrent } from '../torrent.utils';
 
 describe('Torrent utils', () => {
   describe('insertNewTorrent', () => {
@@ -41,56 +43,79 @@ describe('Torrent utils', () => {
     });
   });
 
-  describe('insertUserTorrentFileRecord', () => {
-    it('should insert a user-torrent file record', async () => {
-      const user = await createTestUser();
-      const parsedTorrentData = await parseTorrentBuffer(mentalist.torrentBuffer);
-
+  describe('getOrAddTorrent', () => {
+    it('records a viewer when returning an existing torrent and refreshes their watch time', async () => {
+      const originalViewer = await createTestUser();
+      const returningViewer = await createTestUser();
+      const torrentFileData = await parseTorrentBuffer(mentalist.torrentBuffer);
+      const existingTorrent: Torrent = {
+        infoHash: torrentFileData.infoHash,
+        name: torrentFileData.name,
+        size: 0,
+        progress: 0,
+        downloaded: 0,
+        path: '',
+        files: [],
+      };
       insertNewTorrent({
-        userId: user.id,
-        imdbId: 'tt1234567',
+        userId: originalViewer.id,
+        imdbId: mentalist.imdbId,
         type: StreamType.TV_SHOW,
         torrentBuffer: mentalist.torrentBuffer,
-        torrentFileData: parsedTorrentData,
+        torrentFileData,
       });
+      vi.spyOn(torrentStore, 'getTorrent').mockResolvedValue(existingTorrent);
+      const addTorrentSpy = vi.spyOn(torrentStore, 'addTorrent');
+      const request = {
+        userId: returningViewer.id,
+        imdbId: mentalist.imdbId,
+        type: StreamType.TV_SHOW,
+        torrentSourceId: 'ncore-id',
+        infoHash: torrentFileData.infoHash,
+      };
 
-      insertUserTorrentFileRecord({
-        userId: user.id,
-        torrentInfoHash: parsedTorrentData.infoHash,
-      });
-
-      const userTorrentRecord = db
+      const returnedTorrent = await getOrAddTorrent(request);
+      const viewerRecord = db
         .select()
         .from(usersTorrentsTable)
         .where(
           and(
-            eq(usersTorrentsTable.userId, user.id),
-            eq(usersTorrentsTable.torrentInfoHash, parsedTorrentData.infoHash),
+            eq(usersTorrentsTable.userId, returningViewer.id),
+            eq(usersTorrentsTable.torrentInfoHash, torrentFileData.infoHash),
           ),
         )
         .get();
-      expect(userTorrentRecord).toBeDefined();
-    });
+      if (!viewerRecord) {
+        throw new Error('Expected the returning viewer to be recorded');
+      }
 
-    it('only tries to insert if record does not exist', async () => {
-      const user = await createTestUser();
-      const parsedTorrentData = await parseTorrentBuffer(mentalist.torrentBuffer);
-      insertNewTorrent({
-        userId: user.id,
-        torrentBuffer: mentalist.torrentBuffer,
-        imdbId: mentalist.imdbId,
-        type: StreamType.TV_SHOW,
-        torrentFileData: parsedTorrentData,
-      });
+      db.update(usersTorrentsTable)
+        .set({ updatedAt: new Date(0) })
+        .where(
+          and(
+            eq(usersTorrentsTable.userId, returningViewer.id),
+            eq(usersTorrentsTable.torrentInfoHash, torrentFileData.infoHash),
+          ),
+        )
+        .run();
 
-      const insertSpy = vi.spyOn(db, 'insert');
+      await getOrAddTorrent(request);
 
-      insertUserTorrentFileRecord({
-        userId: user.id,
-        torrentInfoHash: parsedTorrentData.infoHash,
-      });
+      const refreshedRecord = db
+        .select()
+        .from(usersTorrentsTable)
+        .where(
+          and(
+            eq(usersTorrentsTable.userId, returningViewer.id),
+            eq(usersTorrentsTable.torrentInfoHash, torrentFileData.infoHash),
+          ),
+        )
+        .get();
 
-      expect(insertSpy).not.toHaveBeenCalled();
+      expect(returnedTorrent).toBe(existingTorrent);
+      expect(viewerRecord.userId).toBe(returningViewer.id);
+      expect(refreshedRecord?.updatedAt.getTime()).toBeGreaterThan(0);
+      expect(addTorrentSpy).not.toHaveBeenCalled();
     });
   });
 });

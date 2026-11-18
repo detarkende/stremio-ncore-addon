@@ -11,7 +11,7 @@ import { HTTPException } from 'hono/http-exception';
 
 import { useCookieAuth } from '../auth';
 import { ncoreService } from '../ncore/index';
-import { torrentClient } from '../torrent/index';
+import { torrentStore } from '../torrent/index';
 import { createUserRequestToInsertStatement } from '../user/user.utils';
 import { useIsConfigured } from './config.middleware';
 import { deleteOldTorrentsScheduler } from './config.schedule';
@@ -59,7 +59,7 @@ export const configRoutes = new Hono()
       const config = getConfig();
       deleteOldTorrentsScheduler.schedule(
         config,
-        torrentClient.deleteUnnecessaryTorrents.bind(torrentClient),
+        torrentStore.deleteUnnecessaryTorrents.bind(torrentStore),
       );
     } catch (error) {
       logger.error('Failed to save configuration or create admin user', { error });
@@ -86,7 +86,7 @@ export const configRoutes = new Hono()
         const updatedConfig = getConfig();
         deleteOldTorrentsScheduler.schedule(
           updatedConfig,
-          torrentClient.deleteUnnecessaryTorrents.bind(torrentClient),
+          torrentStore.deleteUnnecessaryTorrents.bind(torrentStore),
         );
         return c.json(updatedConfig);
       } catch (error) {

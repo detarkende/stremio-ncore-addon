@@ -1,21 +1,12 @@
-import { rmSync } from 'node:fs';
-import { join } from 'node:path';
-
-import { db } from '@server/db';
-import { torrentsTable } from '@server/db/schema';
 import { env } from '@server/env';
 import { logger } from '@server/logger';
-import { getHighestCommonDir } from '@server/utils/files';
-import { eq } from 'drizzle-orm';
 import {
   type Torrent as WebtorrentTorrent,
   type Instance as WebtorrentInstance,
 } from 'webtorrent';
 import WebTorrent from 'webtorrent';
 
-import { ncoreService } from '../ncore/index';
-import { getExistingTorrents } from './torrent-file.utils';
-import type { DbTorrent, Torrent } from './torrent.types';
+import type { DbTorrent } from './torrent.types';
 
 export class TorrentClient {
   private webtorrent: WebtorrentInstance;
@@ -30,30 +21,12 @@ export class TorrentClient {
     });
   }
 
-  private mapToTorrentResponse(torrent: WebtorrentTorrent): Torrent {
-    return {
-      infoHash: torrent.infoHash,
-      name: torrent.name,
-      size: torrent.length,
-      progress: torrent.progress,
-      downloaded: torrent.downloaded,
-      path: torrent.path,
-      files: torrent.files.map((file) => ({
-        name: file.name,
-        path: file.path,
-        size: file.length,
-        progress: file.progress,
-        getStream: file.stream.bind(file),
-      })),
-    };
-  }
-
-  private setupVerifiedListener(torrent: WebtorrentTorrent, dbTorrent: DbTorrent): void {
+  private setupVerifiedListener(
+    torrent: WebtorrentTorrent,
+    onVerified: (torrent: WebtorrentTorrent) => void,
+  ): void {
     torrent.on('verified', () => {
-      db.update(torrentsTable)
-        .set({ bitfield: torrent.bitfield.buffer })
-        .where(eq(torrentsTable.infoHash, dbTorrent.infoHash))
-        .run();
+      onVerified(torrent);
     });
   }
 
@@ -81,11 +54,15 @@ export class TorrentClient {
     checkPreload();
   }
 
-  public async addTorrent(dbTorrent: DbTorrent, isNewTorrent: boolean): Promise<Torrent> {
+  public async addTorrent(
+    dbTorrent: DbTorrent,
+    isNewTorrent: boolean,
+    onVerified: (torrent: WebtorrentTorrent) => void,
+  ): Promise<WebtorrentTorrent> {
     try {
       const torrentPromise = new Promise<WebtorrentTorrent>((resolve, reject) => {
         try {
-          this.webtorrent.add(
+          const torrent = this.webtorrent.add(
             dbTorrent.torrentFile,
             {
               path: env.DOWNLOADS_DIR,
@@ -97,6 +74,7 @@ export class TorrentClient {
               resolve(torrent);
             },
           );
+          this.setupVerifiedListener(torrent, onVerified);
         } catch (error: unknown) {
           reject(error);
         }
@@ -105,9 +83,8 @@ export class TorrentClient {
       const torrent = await torrentPromise.finally(() =>
         this.pendingTorrents.delete(dbTorrent.infoHash),
       );
-      this.setupVerifiedListener(torrent, dbTorrent);
       this.setupPreloadListeners(torrent);
-      return this.mapToTorrentResponse(torrent);
+      return torrent;
     } catch (error: unknown) {
       logger.error(`Failed to add torrent "${dbTorrent.name}"`, { error });
       throw new Error(`Failed to add torrent "${dbTorrent.name}"`, {
@@ -116,7 +93,7 @@ export class TorrentClient {
     }
   }
 
-  public async getTorrent(infoHash: string): Promise<Torrent | null> {
+  public async getTorrent(infoHash: string): Promise<WebtorrentTorrent | null> {
     let torrent: WebtorrentTorrent | null = null;
 
     const pendingTorrentPromise = this.pendingTorrents.get(infoHash);
@@ -128,95 +105,11 @@ export class TorrentClient {
     if (!torrent) {
       return null;
     }
-    return this.mapToTorrentResponse(torrent);
+    return torrent;
   }
 
-  public async deleteTorrent(infoHash: string): Promise<void | Error> {
-    try {
-      const torrent = await this.webtorrent.get(infoHash);
-      if (!torrent) {
-        logger.warn('Torrent not found when trying to delete', { infoHash });
-        return new Error('Torrent not found');
-      }
-      const torrentRootPath = getHighestCommonDir(torrent.files.map((file) => file.path));
-      db.transaction((tx) => {
-        tx.delete(torrentsTable).where(eq(torrentsTable.infoHash, infoHash)).run();
-        rmSync(join(env.DOWNLOADS_DIR, torrentRootPath), { recursive: true });
-        torrent.destroy({ destroyStore: true });
-      });
-      return;
-    } catch (error: unknown) {
-      logger.error('Failed to delete torrent', { error, infoHash });
-      return new Error('Error while deleting torrent', { cause: error });
-    }
-  }
-
-  public async getStoreStats(): Promise<Torrent[]> {
-    try {
-      const stats = this.webtorrent.torrents.map(this.mapToTorrentResponse.bind(this));
-      return stats.sort((a, z) => a.name.localeCompare(z.name));
-    } catch (error: unknown) {
-      logger.error('Failed to get store stats', { error });
-      throw new Error('Failed to get store stats', { cause: error });
-    }
-  }
-
-  public async loadExistingTorrents() {
-    const torrents = getExistingTorrents();
-
-    for (const torrent of torrents) {
-      logger.info(`Loading existing torrent: ${torrent.name} (${torrent.infoHash})`);
-      try {
-        await this.addTorrent(torrent, false);
-        logger.info(
-          `Successfully loaded existing torrent: ${torrent.name} (${torrent.infoHash})`,
-        );
-      } catch (error: unknown) {
-        logger.error('Failed to load existing torrent', {
-          error,
-          infoHash: torrent.infoHash,
-          name: torrent.name,
-        });
-      }
-    }
-  }
-
-  public async getUnnecessaryTorrents(): Promise<Torrent[]> {
-    const seedRequiredNcoreInfohashes =
-      await ncoreService.getSeedRequiredNcoreInfoHashes();
-
-    const unnecessaryTorrents: Torrent[] = [];
-    for (const torrent of this.webtorrent.torrents) {
-      if (!seedRequiredNcoreInfohashes.includes(torrent.infoHash)) {
-        unnecessaryTorrents.push(this.mapToTorrentResponse(torrent));
-      }
-    }
-    return unnecessaryTorrents;
-  }
-
-  public async deleteUnnecessaryTorrents() {
-    const unnecessaryTorrents = await this.getUnnecessaryTorrents();
-    let results: { deleted: Torrent[]; failed: { torrent: Torrent; error: Error }[] } = {
-      deleted: [],
-      failed: [],
-    };
-    for (const torrent of unnecessaryTorrents) {
-      const error = await this.deleteTorrent(torrent.infoHash);
-      if (error) {
-        logger.error(
-          `Failed to delete unnecessary torrent: ${torrent.name || torrent.infoHash}`,
-          {
-            infoHash: torrent.infoHash,
-            error,
-          },
-        );
-        results.failed.push({ torrent, error });
-      } else {
-        logger.info(`Deleted unnecessary torrent: ${torrent.name || torrent.infoHash}`);
-        results.deleted.push(torrent);
-      }
-    }
-    return results;
+  public async getTorrents(): Promise<WebtorrentTorrent[]> {
+    return this.webtorrent.torrents;
   }
 
   public async destroy() {
@@ -236,5 +129,3 @@ export class TorrentClient {
     });
   }
 }
-
-export const torrentClient = new TorrentClient(env.TORRENT_PORT);

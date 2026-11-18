@@ -2,20 +2,20 @@ import { HttpStatusCode } from '@server/types/http';
 import { Hono } from 'hono';
 
 import { useCookieAuth } from '../auth';
-import { torrentClient } from './torrent.client';
+import { torrentStore } from './torrent.store';
 
 export const torrentRoutes = new Hono()
   .basePath('/api')
   .get('/torrents', useCookieAuth('adminOnly'), async (c) => {
-    const torrents = await torrentClient.getStoreStats();
+    const torrents = await torrentStore.getStoreStats();
     return c.json(torrents);
   })
   .get('/torrents/unnecessary', useCookieAuth('adminOnly'), async (c) => {
-    const unnecessaryTorrents = await torrentClient.getUnnecessaryTorrents();
+    const unnecessaryTorrents = await torrentStore.getUnnecessaryTorrents();
     return c.json(unnecessaryTorrents);
   })
   .delete('/torrents/unnecessary', useCookieAuth('adminOnly'), async (c) => {
-    const results = await torrentClient.deleteUnnecessaryTorrents();
+    const results = await torrentStore.deleteUnnecessaryTorrents();
     const response = {
       deleted: results.deleted,
       failed: results.failed.map(({ torrent, error }) => ({
@@ -27,10 +27,10 @@ export const torrentRoutes = new Hono()
   })
   .delete('/torrents/:infoHash', useCookieAuth('adminOnly'), async (c) => {
     const { infoHash } = c.req.param();
-    const deleteError = await torrentClient.deleteTorrent(infoHash);
+    let deleteError = await torrentStore.deleteTorrent(infoHash);
     if (deleteError) {
       return c.json(
-        { message: deleteError.message },
+        { message: deleteError.message, cause: deleteError.cause },
         { status: HttpStatusCode.INTERNAL_SERVER_ERROR },
       );
     }

@@ -1,11 +1,11 @@
 import { SESSION_COOKIE_NAME } from '@server/app/auth/auth.constants';
-import type { Torrent } from '@server/app/torrent/torrent.types';
+import type { Torrent, TorrentWithViewers } from '@server/app/torrent/torrent.types';
 import { UserRole } from '@server/app/user/user.types';
 import { createTestUserWithSession } from '@server/test-utils/users';
 import { testClient } from 'hono/testing';
 
-import { torrentClient } from '../torrent.client';
 import { torrentRoutes } from '../torrent.routes';
+import { torrentStore } from '../torrent.store';
 
 describe('Torrent routes', () => {
   const client = testClient(torrentRoutes);
@@ -20,10 +20,29 @@ describe('Torrent routes', () => {
       files: [],
     },
   ];
+  const torrentStats: TorrentWithViewers[] = [
+    {
+      infoHash: 'info-hash',
+      name: 'Example torrent',
+      size: 1024,
+      progress: 0.5,
+      downloaded: 512,
+      path: '/downloads/example-torrent',
+      files: [],
+      viewers: [
+        {
+          userId: 1,
+          username: 'testuser',
+          firstWatchedAt: Date.now(),
+          lastWatchedAt: Date.now(),
+        },
+      ],
+    },
+  ];
 
   describe('GET /api/torrents', () => {
     it('should return 401 for unauthenticated requests', async () => {
-      const getStoreStatsSpy = vi.spyOn(torrentClient, 'getStoreStats');
+      const getStoreStatsSpy = vi.spyOn(torrentStore, 'getStoreStats');
 
       const response = await client.api.torrents.$get({}, { headers: { Cookie: '' } });
 
@@ -33,7 +52,7 @@ describe('Torrent routes', () => {
 
     it('should return 403 for non-admin users', async () => {
       const { token } = await createTestUserWithSession({ role: UserRole.USER });
-      const getStoreStatsSpy = vi.spyOn(torrentClient, 'getStoreStats');
+      const getStoreStatsSpy = vi.spyOn(torrentStore, 'getStoreStats');
 
       const response = await client.api.torrents.$get(
         {},
@@ -47,8 +66,8 @@ describe('Torrent routes', () => {
     it('should return torrents for admin users', async () => {
       const { token } = await createTestUserWithSession({ role: UserRole.ADMIN });
       const getStoreStatsSpy = vi
-        .spyOn(torrentClient, 'getStoreStats')
-        .mockResolvedValue(torrents);
+        .spyOn(torrentStore, 'getStoreStats')
+        .mockResolvedValue(torrentStats);
 
       const response = await client.api.torrents.$get(
         {},
@@ -56,14 +75,14 @@ describe('Torrent routes', () => {
       );
 
       expect(response.status).toBe(200);
-      expect(await response.json()).toEqual(torrents);
+      expect(await response.json()).toEqual(torrentStats);
       expect(getStoreStatsSpy).toHaveBeenCalledOnce();
     });
   });
 
   describe('DELETE /api/torrents/:infoHash', () => {
     it('should return 401 for unauthenticated requests', async () => {
-      const deleteTorrentSpy = vi.spyOn(torrentClient, 'deleteTorrent');
+      const deleteTorrentSpy = vi.spyOn(torrentStore, 'deleteTorrent');
 
       const response = await client.api.torrents[':infoHash'].$delete(
         { param: { infoHash: 'info-hash' } },
@@ -76,7 +95,7 @@ describe('Torrent routes', () => {
 
     it('should return 403 for non-admin users', async () => {
       const { token } = await createTestUserWithSession({ role: UserRole.USER });
-      const deleteTorrentSpy = vi.spyOn(torrentClient, 'deleteTorrent');
+      const deleteTorrentSpy = vi.spyOn(torrentStore, 'deleteTorrent');
 
       const response = await client.api.torrents[':infoHash'].$delete(
         { param: { infoHash: 'info-hash' } },
@@ -90,8 +109,8 @@ describe('Torrent routes', () => {
     it('should delete a torrent for admin users', async () => {
       const { token } = await createTestUserWithSession({ role: UserRole.ADMIN });
       const deleteTorrentSpy = vi
-        .spyOn(torrentClient, 'deleteTorrent')
-        .mockResolvedValue(undefined);
+        .spyOn(torrentStore, 'deleteTorrent')
+        .mockResolvedValue(null);
 
       const response = await client.api.torrents[':infoHash'].$delete(
         { param: { infoHash: 'info-hash' } },
@@ -107,7 +126,7 @@ describe('Torrent routes', () => {
 
     it('should return 500 when deleting a torrent fails', async () => {
       const { token } = await createTestUserWithSession({ role: UserRole.ADMIN });
-      vi.spyOn(torrentClient, 'deleteTorrent').mockResolvedValue(
+      vi.spyOn(torrentStore, 'deleteTorrent').mockResolvedValue(
         new Error('Torrent not found'),
       );
 
@@ -126,7 +145,7 @@ describe('Torrent routes', () => {
       const { token } = await createTestUserWithSession({ role: UserRole.ADMIN });
       const failedTorrent = { ...torrents[0], infoHash: 'failed-info-hash' };
       const deleteUnnecessaryTorrentsSpy = vi
-        .spyOn(torrentClient, 'deleteUnnecessaryTorrents')
+        .spyOn(torrentStore, 'deleteUnnecessaryTorrents')
         .mockResolvedValue({
           deleted: torrents,
           failed: [{ torrent: failedTorrent, error: new Error('Torrent is locked') }],

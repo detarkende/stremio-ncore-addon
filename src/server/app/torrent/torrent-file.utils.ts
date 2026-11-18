@@ -1,8 +1,8 @@
+import * as parseTorrentFile from '@ctrl/torrent-file';
 import { db } from '@server/db';
 import { torrentsTable } from '@server/db/schema';
 import { logger } from '@server/logger';
 import { createCacheAgent } from '@server/utils/undici';
-import parseTorrent from 'parse-torrent';
 import { fetch } from 'undici';
 
 import type { DbTorrent, ParsedTorrentDetails } from './torrent.types';
@@ -34,21 +34,20 @@ export async function fetchTorrent(
   }
 }
 
-export async function parseTorrentBuffer(
-  torrentBuffer: Buffer,
-): Promise<ParsedTorrentDetails> {
+export function parseTorrentBuffer(torrentBuffer: Buffer): ParsedTorrentDetails {
   const uint8Array = new Uint8Array(torrentBuffer);
-  const torrentData = await parseTorrent(uint8Array);
+  const info = parseTorrentFile.info(uint8Array);
+  const infoHash = parseTorrentFile.hash(uint8Array);
+  const files = parseTorrentFile.files(uint8Array);
   return {
-    infoHash: torrentData.infoHash,
-    name: torrentData.name || 'unknown',
-    files:
-      torrentData.files?.map((file) => ({
-        name: file.name,
-        length: file.length,
-        offset: file.offset,
-        path: file.path,
-      })) ?? [],
+    infoHash,
+    name: info.name,
+    files: files.files.map((file) => ({
+      name: file.name,
+      length: file.length,
+      offset: file.offset,
+      path: file.path,
+    })),
   };
 }
 
@@ -59,7 +58,7 @@ export async function downloadAndParseTorrent(torrentUrl: string): Promise<{
   try {
     logger.info(`Fetching and parsing torrent from URL ${torrentUrl}`);
     const { torrentBuffer } = await fetchTorrent(torrentUrl);
-    const torrentFileData = await parseTorrentBuffer(torrentBuffer);
+    const torrentFileData = parseTorrentBuffer(torrentBuffer);
     return {
       torrentBuffer,
       torrentFileData,

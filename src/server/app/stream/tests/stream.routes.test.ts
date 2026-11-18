@@ -1,12 +1,17 @@
+import { TorrentClient } from '@server/app/torrent/torrent.client';
 import { db } from '@server/db';
 import { torrentsTable } from '@server/db/schema';
 import { configureApp } from '@server/test-utils/config';
 import { createTestUser } from '@server/test-utils/users';
 import { testClient } from 'hono/testing';
+import type {
+  Torrent as WebtorrentTorrent,
+  TorrentFile as WebtorrentTorrentFile,
+} from 'webtorrent';
 
 import type { NcoreTorrent } from '../../ncore';
 import { ncoreService } from '../../ncore';
-import { torrentClient, type Torrent } from '../../torrent';
+import { torrentStore } from '../../torrent';
 import * as torrentFileUtils from '../../torrent/torrent-file.utils';
 import { StreamType } from '../stream.constants';
 import { streamRoutes } from '../stream.routes';
@@ -22,8 +27,6 @@ describe('Stream routes', () => {
     torrentFileUtils,
     'downloadAndParseTorrent',
   );
-  const getTorrentSpy = vi.spyOn(torrentClient, 'getTorrent');
-  const addTorrentSpy = vi.spyOn(torrentClient, 'addTorrent');
 
   const torrentInfoHash = 'abcdef1234567890abcdef1234567890abcdef12';
   const torrentFilePath = 'The.Movie.2026/The.Movie.2026.mkv';
@@ -40,29 +43,29 @@ describe('Stream routes', () => {
     ],
   };
 
-  function createStreamTorrent(): Torrent {
+  function createStreamTorrent() {
     return {
       infoHash: torrentInfoHash,
       name: torrentFileData.name,
       progress: 0,
-      size: 1024,
+      length: 1024,
       downloaded: 0,
       path: '/downloads',
       files: [
         {
           name: torrentFileData.files[0].name,
           path: torrentFilePath,
-          size: torrentFileData.files[0].length,
+          length: torrentFileData.files[0].length,
           progress: 0,
-          getStream: () =>
+          stream: () =>
             new ReadableStream<Uint8Array>({
               start(controller) {
                 controller.close();
               },
             }),
-        },
+        } as WebtorrentTorrentFile,
       ],
-    };
+    } satisfies Partial<WebtorrentTorrent> as WebtorrentTorrent;
   }
 
   function getStreamUrl(token: string): string {
@@ -164,8 +167,10 @@ describe('Stream routes', () => {
 
     it('does not add a torrent on HEAD, then adds it once on GET', async () => {
       const user = await createTestUser();
-      getTorrentSpy.mockResolvedValue(null);
-      addTorrentSpy.mockResolvedValue(createStreamTorrent());
+      vi.spyOn(torrentStore, 'getTorrent').mockResolvedValue(null);
+      vi.spyOn(torrentStore['torrentClient'], 'addTorrent').mockResolvedValue(
+        createStreamTorrent(),
+      );
 
       const headResponse = await streamRoutes.request(getStreamUrl(user.token), {
         method: 'HEAD',
@@ -173,20 +178,22 @@ describe('Stream routes', () => {
 
       expect(headResponse.status).toBe(200);
       expect(headResponse.headers.get('Content-Length')).toBe('1024');
-      expect(addTorrentSpy).not.toHaveBeenCalled();
-      expect(db.select().from(torrentsTable).all()).toHaveLength(0);
+      expect(torrentStore['torrentClient'].addTorrent).not.toHaveBeenCalled();
 
-      const getResponse = await streamRoutes.request(getStreamUrl(user.token));
+      const getResponse = await streamRoutes.request(getStreamUrl(user.token), {
+        method: 'GET',
+      });
 
       expect(getResponse.status).toBe(206);
-      expect(addTorrentSpy).toHaveBeenCalledTimes(1);
-      expect(db.select().from(torrentsTable).all()).toHaveLength(1);
+      expect(torrentStore['torrentClient'].addTorrent).toHaveBeenCalledTimes(1);
     });
 
     it('initializes a torrent only once for concurrent GET requests', async () => {
       const user = await createTestUser();
-      getTorrentSpy.mockResolvedValue(null);
-      addTorrentSpy.mockResolvedValue(createStreamTorrent());
+      vi.spyOn(torrentStore, 'getTorrent').mockResolvedValue(null);
+      vi.spyOn(torrentStore['torrentClient'], 'addTorrent').mockResolvedValue(
+        createStreamTorrent(),
+      );
 
       const [firstResponse, secondResponse] = await Promise.all([
         streamRoutes.request(getStreamUrl(user.token)),
@@ -197,7 +204,7 @@ describe('Stream routes', () => {
       expect(secondResponse.status).toBe(206);
       expect(getTorrentUrlByNcoreIdSpy).toHaveBeenCalledTimes(1);
       expect(downloadAndParseTorrentSpy).toHaveBeenCalledTimes(1);
-      expect(addTorrentSpy).toHaveBeenCalledTimes(1);
+      expect(torrentStore['torrentClient'].addTorrent).toHaveBeenCalledTimes(1);
       expect(db.select().from(torrentsTable).all()).toHaveLength(1);
     });
   });

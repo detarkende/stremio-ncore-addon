@@ -1,7 +1,7 @@
 import process from 'node:process';
 
 import { deleteOldTorrentsScheduler } from './app/config/config.schedule';
-import { torrentClient } from './app/torrent';
+import { torrentStore } from './app/torrent';
 import { closeDbInstance } from './db/client';
 import { logger } from './logger';
 
@@ -49,7 +49,7 @@ async function destroyBackgroundWork() {
 
   try {
     logger.info('Stopping torrent client...');
-    await torrentClient.destroy();
+    await torrentStore.destroy();
     logger.info('Torrent client stopped.');
   } catch (error: unknown) {
     errors.push(error);

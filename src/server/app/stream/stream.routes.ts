@@ -12,8 +12,8 @@ import { useIsConfigured } from '../config/config.middleware';
 import { ncoreService } from '../ncore/index';
 import { type TorrentDetails, type ParsedTorrentFileDetails } from '../torrent/index';
 import {
-  getFileForHead,
   getOrAddTorrent,
+  getTorrentFileSizes,
   insertUserTorrentFileRecord,
 } from '../torrent/torrent.utils';
 import {
@@ -119,14 +119,14 @@ export const streamRoutes = new Hono()
     async (c) => {
       const { type, imdbId, torrentSourceId, infoHash, filePath } = c.req.valid('query');
       if (c.req.method === 'HEAD') {
-        const file = await getFileForHead({ infoHash, torrentSourceId, filePath });
-        if (!file) {
+        const fileSizes = await getTorrentFileSizes({ infoHash, torrentSourceId });
+        const fileSize = fileSizes[filePath];
+        if (!fileSize) {
           throwFileNotFound({ infoHash, torrentName: 'unknown', filePath });
         }
-
         return c.body(null, 200, {
-          'Content-Length': `${file.size}`,
-          'Content-Type': getMimeType(file.path) || 'application/octet-stream',
+          'Content-Length': `${fileSize}`,
+          'Content-Type': getMimeType(filePath) || 'application/octet-stream',
         });
       }
 
@@ -136,10 +136,6 @@ export const streamRoutes = new Hono()
         type,
         torrentSourceId,
         infoHash,
-      });
-      insertUserTorrentFileRecord({
-        userId: c.var.user.id,
-        torrentInfoHash: infoHash,
       });
 
       const file = torrent.files.find((f) => f.path === filePath);

@@ -13,6 +13,9 @@ importers:
 
   .:
     dependencies:
+      '@ctrl/torrent-file':
+        specifier: ^4.5.2
+        version: 4.5.2
       '@ctrl/video-filename-parser':
         specifier: ^5.11.0
         version: 5.11.0
@@ -395,6 +398,10 @@ packages:
   '@csstools/css-tokenizer@4.0.0':
     resolution: {integrity: sha512-QxULHAm7cNu72w97JUNCBFODFaXpbDg+dP8b/oWFAZ2MTRppA3U00Y2L1HqaS4J6yBqxwa/Y3nMBaxVKbB/NsA==}
     engines: {node: '>=20.19.0'}
+
+  '@ctrl/torrent-file@4.5.2':
+    resolution: {integrity: sha512-jCxALcowJolp0L5FDEfk2yRqAAydUY5WsgwbsO1OuNinyG/tvNieTWhMH2fk5NvW1gsVsLSt3eJI6vbLj7bLsw==}
+    engines: {node: '>20'}
 
   '@ctrl/video-filename-parser@5.11.0':
     resolution: {integrity: sha512-moAxON3TdWaBEJP5xWHIoh05mzjcmi2DFqevKuXGSJ5xy4rq7JWh1vzsu5O6gP/zzI+dR/TygF0cU7iAjfSdmw==}
@@ -899,9 +906,11 @@ packages:
 
   '@oslojs/asn1@1.0.0':
     resolution: {integrity: sha512-zw/wn0sj0j0QKbIXfIlnEcTviaCzYOY3V5rAyjR6YtOByFtJiT574+8p9Wlach0lZH9fddD4yb9laEAIl4vXQA==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   '@oslojs/binary@1.0.0':
     resolution: {integrity: sha512-9RCU6OwXU6p67H4NODbuxv2S3eenuQ4/WFLrsq+K/k682xrznH5EVWA7N4VFk9VYVcbFtKqur5YQQZc0ySGhsQ==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   '@oslojs/crypto@1.0.1':
     resolution: {integrity: sha512-7n08G8nWjAr/Yu3vu9zzrd0L9XnrJfpMioQcvCMxBIiF5orECHe5/3J0jmXRVvgfqMm/+4oxlQ+Sq39COYLcNQ==}
@@ -5001,6 +5010,8 @@ snapshots:
       css-tree: 3.2.1
 
   '@csstools/css-tokenizer@4.0.0': {}
+
+  '@ctrl/torrent-file@4.5.2': {}
 
   '@ctrl/video-filename-parser@5.11.0': {}
 

@@ -26,6 +26,7 @@
     "migration:generate": "source .env && drizzle-kit generate"
   },
   "dependencies": {
+    "@ctrl/torrent-file": "^4.5.2",
     "@ctrl/video-filename-parser": "^5.11.0",
     "@hono/node-server": "^2.0.8",
     "@hono/zod-validator": "^0.8.0",
