@@ -18,8 +18,13 @@ let cacheStore = new cacheStores.SqliteCacheStore({ location: cacheDbPath });
 
 export function createCacheAgent(
   opts: Omit<Interceptors.CacheInterceptorOpts, 'store'> = {},
+  retryOptions?: Interceptors.RetryInterceptorOpts,
 ): Dispatcher.ComposedDispatcher {
-  const agent = new Agent().compose(interceptors.cache({ ...opts, store: cacheStore }));
+  const agent = new Agent().compose(
+    ...(retryOptions ? [interceptors.retry(retryOptions)] : []),
+    // The last interceptor runs first, so retries happen on cache misses.
+    interceptors.cache({ ...opts, store: cacheStore }),
+  );
 
   return agent;
 }

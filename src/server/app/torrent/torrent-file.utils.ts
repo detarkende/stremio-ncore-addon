@@ -8,18 +8,28 @@ import { fetch } from 'undici';
 import type { DbTorrent, ParsedTorrentDetails } from './torrent.types';
 
 const CACHE_TTL = 1000 * 60 * 15; // 15 minutes
+const FETCH_TIMEOUT = 5_000;
 
-const cacheAgent = createCacheAgent({
-  cacheByDefault: CACHE_TTL,
-  methods: ['GET', 'HEAD'],
-});
+const cacheAgent = createCacheAgent(
+  {
+    cacheByDefault: CACHE_TTL,
+    methods: ['GET', 'HEAD'],
+  },
+  {
+    maxRetries: 2,
+    minTimeout: 250,
+    timeoutFactor: 2,
+    methods: ['GET'],
+    retryAfter: true,
+  },
+);
 
 export async function fetchTorrent(
   torrentUrl: string,
 ): Promise<{ torrentBuffer: Buffer }> {
   try {
     const response = await fetch(torrentUrl, {
-      signal: AbortSignal.timeout(5_000),
+      signal: AbortSignal.timeout(FETCH_TIMEOUT),
       dispatcher: cacheAgent,
     });
     if (!response.ok) {

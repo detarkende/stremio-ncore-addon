@@ -1,6 +1,10 @@
+import { randomUUID } from 'node:crypto';
+import { createServer, type Server } from 'node:http';
+
 import { logger } from '@server/logger';
 import mentalistMock from '@server/mocks/torrents/mentalist';
 import { fetchMock } from '@server/test-utils/fetch-mock';
+import * as undici from 'undici';
 
 import { fetchTorrent, downloadAndParseTorrent } from '../torrent-file.utils';
 
@@ -44,6 +48,104 @@ describe('Torrent file utils', () => {
           },
         ]
       `);
+    });
+  });
+
+  describe('torrent download retries', () => {
+    let server: Server;
+    let origin: string;
+    let statuses: number[];
+    let requests: number;
+    let requestTimes: number[];
+    let retryAfter: string | undefined;
+
+    beforeAll(async () => {
+      server = createServer((_request, response) => {
+        const status = statuses[Math.min(requests, statuses.length - 1)];
+        requests += 1;
+        requestTimes.push(Date.now());
+        if (retryAfter && status !== 200) {
+          response.setHeader('retry-after', retryAfter);
+        }
+        response.writeHead(status, { 'cache-control': 'public, max-age=60' });
+        response.end(status === 200 ? SAMPLE_TORRENT_BUFFER : 'error');
+      });
+      await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+      const address = server.address();
+      if (!address || typeof address === 'string') {
+        throw new Error('Expected the test server to have a TCP address');
+      }
+      origin = `http://127.0.0.1:${address.port}`;
+    });
+
+    beforeEach(async () => {
+      requests = 0;
+      requestTimes = [];
+      retryAfter = undefined;
+      const actual = await vi.importActual<typeof undici>('undici');
+      vi.mocked(undici.fetch).mockImplementation(actual.fetch);
+    });
+
+    afterAll(async () => {
+      await new Promise<void>((resolve, reject) =>
+        server.close((error) => (error ? reject(error) : resolve())),
+      );
+    });
+
+    it('retries a 503 and caches the successful response', async () => {
+      statuses = [503, 200];
+      const url = `${origin}/${randomUUID()}`;
+
+      await expect(fetchTorrent(url)).resolves.toEqual({
+        torrentBuffer: SAMPLE_TORRENT_BUFFER,
+      });
+      await expect(fetchTorrent(url)).resolves.toEqual({
+        torrentBuffer: SAMPLE_TORRENT_BUFFER,
+      });
+      expect(requests).toBe(2);
+    });
+
+    it('stops after two retries and does not cache the failed response', async () => {
+      statuses = [503, 503, 503, 200];
+      const url = `${origin}/${randomUUID()}`;
+
+      await expect(fetchTorrent(url)).rejects.toMatchObject({
+        cause: { cause: { statusCode: 503 } },
+      });
+      expect(requests).toBe(3);
+
+      await expect(fetchTorrent(url)).resolves.toEqual({
+        torrentBuffer: SAMPLE_TORRENT_BUFFER,
+      });
+      expect(requests).toBe(4);
+    });
+
+    it('waits for the Retry-After delay before retrying', async () => {
+      statuses = [503, 200];
+      retryAfter = '2';
+
+      await expect(fetchTorrent(`${origin}/${randomUUID()}`)).resolves.toEqual({
+        torrentBuffer: SAMPLE_TORRENT_BUFFER,
+      });
+      expect(requests).toBe(2);
+      expect(requestTimes[1] - requestTimes[0]).toBeGreaterThanOrEqual(2000);
+    });
+
+    it('times out rather than retrying before a longer Retry-After delay', async () => {
+      statuses = [503, 200];
+      retryAfter = '10';
+
+      await expect(fetchTorrent(`${origin}/${randomUUID()}`)).rejects.toMatchObject({
+        cause: { name: 'TimeoutError' },
+      });
+      expect(requests).toBe(1);
+    }, 8000);
+
+    it('does not retry a 404 response', async () => {
+      statuses = [404];
+
+      await expect(fetchTorrent(`${origin}/${randomUUID()}`)).rejects.toThrow();
+      expect(requests).toBe(1);
     });
   });
 
