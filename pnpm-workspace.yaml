@@ -1,4 +1,17 @@
-packages:
-  - 'client'
-  - 'server'
-  - 'torrent-server'
+allowUnusedPatches: true
+patchedDependencies:
+  '@types/parse-torrent': patches/@types__parse-torrent.patch
+  '@types/stremio-addon-sdk': patches/@types__stremio-addon-sdk.patch
+  'webtorrent': patches/webtorrent.patch
+allowBuilds:
+  '@heroui/shared-utils': true
+  '@parcel/watcher': true
+  better-sqlite3: true
+  bufferutil: true
+  esbuild: true
+  ip-set: true
+  node-datachannel: true
+  utf-8-validate: true
+  utp-native: true
+minimumReleaseAgeExclude:
+  - '@vite-fullstack/plugin@0.3.1'

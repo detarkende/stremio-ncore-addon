@@ -6,6 +6,8 @@ config.json
 .vscode/schemas/config.schema.json
 .eslintcache
 
+.turbo
+coverage
 dist
 .env
 .env.*
@@ -13,3 +15,4 @@ dist
 
 docker-compose.yaml
 downloads
+addon_dir

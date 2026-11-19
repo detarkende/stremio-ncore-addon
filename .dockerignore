@@ -1,8 +1,14 @@
 docs
 assets
 node_modules
+addon_dir
 downloads
 dist
+coverage
+docker-compose.yaml
 .github
 .vscode
 .husky
+.tanstack
+.env
+.env.example

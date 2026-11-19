@@ -1,0 +1,59 @@
+@reference "../../styles.css";
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+
+  @variant sm {
+    min-height: calc(var(--spacing) * 16);
+  }
+}
+
+.headerContainer {
+  @apply container;
+
+  padding-block: calc(var(--spacing) * 4);
+  display: grid;
+  align-items: center;
+  column-gap: calc(var(--spacing) * 4);
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.navLinks {
+  grid-column: 1 / -1;
+  width: 100%;
+
+  display: grid;
+  grid-template-rows: 0fr;
+  transition:
+    grid-template-rows 0.3s ease-in-out,
+    padding 0.3s ease-in-out;
+
+  & > * {
+    overflow: hidden;
+  }
+
+  &[data-open='true'] {
+    grid-template-rows: 1fr;
+    padding: calc(var(--spacing) * 4) 0;
+  }
+
+  @variant sm {
+    display: block;
+    grid-column: 2;
+    justify-self: end;
+    width: auto;
+  }
+}
+
+.navLinkList {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  gap: calc(var(--spacing) * 4);
+
+  @variant sm {
+    flex-direction: row;
+    align-items: center;
+  }
+}
