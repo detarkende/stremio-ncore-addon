@@ -10,7 +10,7 @@ function chunkArray<T>(array: T[], chunkSize: number): T[][] {
 
 /**
  * Takes an array of functions that return promises and returns an array of the same size,
- * where the functions are executed in batches with a delay between each batch.
+ * where each batch starts after the previous batch settles and the delay has elapsed.
  */
 export function batchAsyncFunctions<R>({
   functions,
@@ -23,20 +23,17 @@ export function batchAsyncFunctions<R>({
 }): Promise<R>[] {
   const result: Promise<R>[] = [];
   const batches = chunkArray(functions, batchSize);
+  let previousBatchFinished: Promise<void> = Promise.resolve();
+
   batches.forEach((batch, index) => {
-    const previousBatch = batches[index - 1];
-    const previousBatchFinisedPromise = previousBatch
-      ? Promise.allSettled(previousBatch)
-      : Promise.resolve();
-    const delayedFunctions = batch.map(
-      (fn) =>
-        new Promise<R>((resolve, reject) => {
-          previousBatchFinisedPromise.then(() =>
-            delay(delayMs * index).then(() => fn().then(resolve).catch(reject)),
-          );
-        }),
-    );
-    result.push(...delayedFunctions);
+    const batchStart =
+      index === 0
+        ? previousBatchFinished
+        : previousBatchFinished.then(() => delay(delayMs));
+    const batchPromises = batch.map((fn) => batchStart.then(fn));
+
+    result.push(...batchPromises);
+    previousBatchFinished = Promise.allSettled(batchPromises).then(() => {});
   });
 
   return result;
